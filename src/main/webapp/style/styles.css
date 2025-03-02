@@ -1,0 +1,171 @@
+/* Reset some basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding:auto;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    font-size: 1rem;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.submit-btn input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn2 input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2rem;
+    background-color: #9af953;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.submit-btn input:hover {
+    background-color: #0056b3;
+}
+
+.submit-btn input:active {
+    background-color: #004085;
+}
+.submit-btn2 input:hover {
+    background-color: #76ee42;
+}
+
+.submit-btn2 input:active {
+    background-color: #004085;
+}
+.registroC {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+/* Estilos para el botón de Registrarse */
+.submit-btn2 button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    background-color: #28a745; /* Verde */
+}
+
+.submit-btn2 button:hover {
+    background-color: #218838;
+}
+
+.submit-btn2 button:active {
+    background-color: #1e7e34;
+}
+
+/* Estilos generales para los inputs */
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    font-size: 1rem;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+/* Estilo cuando el usuario escribe en el input */
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Estilos para el select */
+.input-group select {
+    background-color: white;
+    cursor: pointer;
+}
+
