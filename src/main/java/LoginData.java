@@ -45,6 +45,12 @@ public class LoginData {
             return "login.xhtml?faces-redirect=true"; // Redirige al login si es incorrecto
         }
     }
+    
+    public String register() {
+        
+            return "RegisterForm.xhtml"; // Redirige a la página home si el login es correcto
+ 
+    }
 }
 
 

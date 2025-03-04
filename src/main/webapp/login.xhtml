@@ -1,35 +1,168 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" 
-        xmlns:h="jakarta.faces.html"
+      xmlns:h="jakarta.faces.html"
       xmlns:c="jakarta.tags.core"
       xmlns:t="jakarta.faces.facelets"
       >
     <h:head>
         <title>Login</title>
-        
+        <style>
+            /* General body styling */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f4f8;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Centering the login form */
+            .login-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f4f8;
+            }
+
+            /* Login form box styling */
+            .login-form {
+                background-color: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                width: 300px;
+            }
+
+            /* Title of the form */
+            h2 {
+                text-align: center;
+                color: #333;
+            }
+
+            /* Input styling */
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                font-size: 16px;
+            }
+
+            .form-control:focus {
+                border-color: #007BFF;
+                outline: none;
+            }
+
+            /* Error message styling */
+            .error-message {
+                color: red;
+                font-size: 12px;
+                margin-top: 5px;
+            }
+
+            /* Button styling */
+            .btn {
+                width: 100%;
+                padding: 12px;
+                background-color: #007BFF;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+            
+            .btn2 {
+                width: 100%;
+                padding: 12px;
+                background-color: #7ff043;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .btn2:hover {
+                background-color: #8bfb4f;
+            }
+             /* Additional link styling */
+            .forgot-password-link {
+                display: block;
+                text-align: center;
+                margin-top: 15px;
+                margin-bottom: 15px;
+                color: #007BFF;
+                text-decoration: none;
+            }
+
+            .forgot-password-link:hover {
+                text-decoration: underline;
+            }
+
+        </style>
+          <script type="text/javascript">
+            // Function to open modal
+            function openModal(message) {
+                document.getElementById("modalMessage").innerText = message;
+                document.getElementById("modal").style.display = "block";
+            }
+
+            // Function to close modal
+            function closeModal() {
+                document.getElementById("modal").style.display = "none";
+            }
+
+            // Validate login function
+            function validateLogin() {
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+
+                // Case 1: Check if fields are empty
+                if (username === "" || password === "") {
+                    openModal("Por favor, complete ambos campos.");
+                    return false;  // Prevent form submission
+                }}
+        </script>
     </h:head>
     <h:body>
         <div class="login-container">
             <h:form class="login-form">
                 <h2>Login</h2>
-                
+
                 <div class="form-group">
                     <h:outputLabel for="username" value="Username" />
-                    <h:inputText id="username" value="#{inputData.username}" required="true" class="form-control"/>
+                    <h:inputText id="username" value="#{loginData.username}"  class="form-control"/>
                     <h:message for="username" styleClass="error-message"/>
                 </div>
 
                 <div class="form-group">
                     <h:outputLabel for="password" value="Password" />
-                    <h:inputSecret id="password" value="#{inputData.password}" required="true" class="form-control"/>
+                    <h:inputSecret id="password" value="#{loginData.password}"  class="form-control"/>
                     <h:message for="password" styleClass="error-message"/>
                 </div>
 
-                <h:commandButton value="Login" action="#{inputData.login()}" 
+                <h:commandButton value="Login" action="#{loginData.login()}" 
                                  styleClass="btn btn-primary"/>
+                
+                <h:link value="¿Olvidaste tu contraseña?" outcome="RecuperarContraseña.xhtml" styleClass="forgot-password-link"/>
+       
+                <div>
+                    <h:commandButton value="Registrarse" action="#{loginData.register()}" 
+                                 styleClass="btn2 btn-primary"/>
+                </div>
             </h:form>
-        </div>
+       </div>
     </h:body>
 </html>
 

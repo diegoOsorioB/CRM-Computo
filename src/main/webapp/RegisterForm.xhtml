@@ -1,0 +1,229 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="jakarta.faces.html"
+      xmlns:c="jakarta.tags.core"
+      xmlns:t="jakarta.faces.facelets">
+    <h:head>
+        <title>Registro</title>
+        <style>
+            /* General body styling */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f4f8;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Centering the registration form */
+            .login-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f4f8;
+            }
+
+            /* Registration form box styling */
+            .login-form {
+                background-color: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                width: 350px;
+            }
+
+            /* Title of the form */
+            h2 {
+                text-align: center;
+                color: #333;
+            }
+
+            /* Input styling */
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                font-size: 16px;
+            }
+
+            .form-control:focus {
+                border-color: #007BFF;
+                outline: none;
+            }
+
+            /* Error message styling */
+            .error-message {
+                color: red;
+                font-size: 12px;
+                margin-top: 5px;
+            }
+
+            /* Button styling */
+            .btn {
+                width: 100%;
+                padding: 12px;
+                background-color: #007BFF;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+
+            .btn2 {
+                width: 100%;
+                padding: 12px;
+                background-color: #7ff043;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .btn2:hover {
+                background-color: #8bfb4f;
+            }
+
+            /* Hide second part initially */
+            .second-part {
+                display: none;
+            }
+            
+             /* Additional link styling */
+            .forgot-password-link {
+                display: block;
+                text-align: center;
+                margin-top: 15px;
+                margin-bottom: 15px;
+                color: #007BFF;
+                text-decoration: none;
+            }
+
+            .forgot-password-link:hover {
+                text-decoration: underline;
+            }
+
+        </style>
+
+        <script type="text/javascript">
+            function showSecondPart() {
+                // Hide the first part and show the second part
+                document.getElementById("firstPart").style.display = "none";
+                document.getElementById("secondPart").style.display = "block";
+            }
+        </script>
+
+    </h:head>
+    <h:body>
+        <div class="login-container">
+            <h:form class="login-form">
+                <h2>Registro</h2>
+
+                <!-- First part of the form (up to Domicilio) -->
+                <div id="firstPart">
+
+                    <!-- Nombre -->
+                    <div class="form-group">
+                        <h:outputLabel for="firstName" value="Nombre" />
+                        <h:inputText id="firstName" value="#{registroData.firstName}" required="true" class="form-control"/>
+                        <h:message for="firstName" styleClass="error-message"/>
+                    </div>
+
+                    <!-- Apellido -->
+                    <div class="form-group">
+                        <h:outputLabel for="lastName" value="Apellido" />
+                        <h:inputText id="lastName" value="#{registroData.lastName}" required="true" class="form-control"/>
+                        <h:message for="lastName" styleClass="error-message"/>
+                    </div>
+
+                    <!-- Correo electrónico -->
+                    <div class="form-group">
+                        <h:outputLabel for="email" value="Correo Electrónico" />
+                        <h:inputText id="email" value="#{registroData.email}" required="true" class="form-control"/>
+                        <h:message for="email" styleClass="error-message"/>
+                    </div>
+
+                    <!-- Usuario -->
+                    <div class="form-group">
+                        <h:outputLabel for="username" value="Usuario" />
+                        <h:inputText id="username" value="#{registroData.username}" required="true" class="form-control"/>
+                        <h:message for="username" styleClass="error-message"/>
+                    </div>
+                    
+                    <button type="button" onclick="showSecondPart()" class="btn">Continuar</button>
+                </div>
+
+                <!-- Second part of the form (Information and Registration) -->
+                <div id="secondPart" class="second-part">
+
+                    <!-- Contraseña -->
+                    <div class="form-group">
+                        <h:outputLabel for="password" value="Contraseña" />
+                        <h:inputSecret id="password" value="#{registroData.password}" required="true" class="form-control"/>
+                        <h:message for="password" styleClass="error-message"/>
+                    </div>
+
+                    <!-- Dirección - Detalle -->
+                    <div class="form-group">
+                        <h:outputLabel for="street" value="Calle" />
+                        <h:inputText id="street" value="#{registroData.street}" required="true" class="form-control"/>
+                        <h:message for="street" styleClass="error-message"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="neighborhood" value="Colonia" />
+                        <h:inputText id="neighborhood" value="#{registroData.neighborhood}" required="true" class="form-control"/>
+                        <h:message for="neighborhood" styleClass="error-message"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="city" value="Ciudad" />
+                        <h:inputText id="city" value="#{registroData.city}" required="true" class="form-control"/>
+                        <h:message for="city" styleClass="error-message"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="country" value="País" />
+                        <h:inputText id="country" value="#{registroData.country}" required="true" class="form-control"/>
+                        <h:message for="country" styleClass="error-message"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="postalCode" value="Código Postal" />
+                        <h:inputText id="postalCode" value="#{registroData.postalCode}" required="true" class="form-control"/>
+                        <h:message for="postalCode" styleClass="error-message"/>
+                    </div>
+
+                    <!-- Continue button -->
+                    
+
+                    <!-- Información bancaria -->
+                    <div class="form-group">
+                        <h:outputLabel for="bankInfo" value="Información Bancaria" />
+                        <h:inputText id="bankInfo" value="#{registroData.bankInfo}" required="true" class="form-control"/>
+                        <h:message for="bankInfo" styleClass="error-message"/>
+                    </div>
+
+                    <!-- Botón de registro -->
+                    <h:commandButton value="Registrar" action="#{registroData.register()}" styleClass="btn2"/>
+
+                </div>
+
+                <!-- Enlace para regresar al login -->
+                <h:link value="Ya tengo cuenta, iniciar sesión" outcome="login.xhtml" styleClass="forgot-password-link"/>
+            </h:form>
+        </div>
+    </h:body>
+</html>
