@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+        xmlns:h="jakarta.faces.html"
+      xmlns:c="jakarta.tags.core"
+      xmlns:t="jakarta.faces.facelets"
+      >
+    <h:head>
+        <title>Login</title>
+        
+    </h:head>
+    <h:body>
+        <div class="login-container">
+            <h:form class="login-form">
+                <h2>Login</h2>
+                
+                <div class="form-group">
+                    <h:outputLabel for="username" value="Username" />
+                    <h:inputText id="username" value="#{inputData.username}" required="true" class="form-control"/>
+                    <h:message for="username" styleClass="error-message"/>
+                </div>
+
+                <div class="form-group">
+                    <h:outputLabel for="password" value="Password" />
+                    <h:inputSecret id="password" value="#{inputData.password}" required="true" class="form-control"/>
+                    <h:message for="password" styleClass="error-message"/>
+                </div>
+
+                <h:commandButton value="Login" action="#{inputData.login()}" 
+                                 styleClass="btn btn-primary"/>
+            </h:form>
+        </div>
+    </h:body>
+</html>
+
