@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="jakarta.faces.html"
+      xmlns:c="jakarta.tags.core"
+      xmlns:t="jakarta.faces.facelets">
+    <h:head>
+        <title>Editar Perfil</title>
+        <style>
+            /* General body styling */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f4f8;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Centering the form */
+            .edit-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f4f8;
+            }
+
+            /* Form box styling */
+            .edit-form {
+                background-color: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                width: 350px;
+                text-align: center;
+            }
+
+            /* Title */
+            h2 {
+                text-align: center;
+                color: #333;
+            }
+
+            /* Profile Image */
+            .profile-img {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #007BFF;
+                margin-bottom: 15px;
+            }
+
+            /* Hidden file input */
+            .file-input {
+                display: none;
+            }
+
+            .upload-btn {
+                background-color: #007BFF;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                display: inline-block;
+            }
+
+            .upload-btn:hover {
+                background-color: #0056b3;
+            }
+
+            /* Input styling */
+            .form-group {
+                margin-bottom: 15px;
+                text-align: left;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                font-size: 16px;
+            }
+
+            .form-control:focus {
+                border-color: #007BFF;
+                outline: none;
+            }
+
+            /* Buttons */
+            .btn {
+                width: 100%;
+                padding: 12px;
+                background-color: #007BFF;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+
+            .btn2 {
+                width: 100%;
+                padding: 12px;
+                background-color: #28a745;
+                border: none;
+                color: white;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .btn2:hover {
+                background-color: #218838;
+            }
+
+            /* Hide second part initially */
+            .second-part {
+                display: none;
+            }
+        </style>
+
+        <script type="text/javascript">
+            function showSecondPart() {
+                document.getElementById("firstPart").style.display = "none";
+                document.getElementById("secondPart").style.display = "block";
+            }
+
+            function previewImage(event) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var output = document.getElementById('profileImage');
+                    output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        </script>
+
+    </h:head>
+    <h:body>
+        <div class="edit-container">
+            <h:form class="edit-form" enctype="multipart/form-data">
+                <h2>Editar Perfil</h2>
+
+                <!-- Imagen de perfil -->
+                <img id="profileImage" src="#{perfilData.imageUrl}" alt="Imagen de perfil" class="profile-img"/>
+                <br/>
+                <label for="imageUpload" class="upload-btn">Cambiar Imagen</label>
+                <h:inputFile id="imageUpload" value="#{perfilData.imageFile}" onchange="previewImage(event)" class="file-input"/>
+
+                <!-- Primera parte del formulario -->
+                <div id="firstPart">
+                    <div class="form-group">
+                        <h:outputLabel for="firstName" value="Nombre" />
+                        <h:inputText id="firstName" value="#{perfilData.firstName}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="lastName" value="Apellido" />
+                        <h:inputText id="lastName" value="#{perfilData.lastName}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="email" value="Correo Electrónico" />
+                        <h:inputText id="email" value="#{perfilData.email}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="username" value="Usuario" />
+                        <h:inputText id="username" value="#{perfilData.username}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="password" value="Nueva Contraseña" />
+                        <h:inputSecret id="password" value="#{perfilData.password}" class="form-control"/>
+                    </div>
+
+                    <button type="button" onclick="showSecondPart()" class="btn">Continuar</button>
+                </div>
+
+                <!-- Segunda parte del formulario -->
+                <div id="secondPart" class="second-part">
+                    <div class="form-group">
+                        <h:outputLabel for="street" value="Calle" />
+                        <h:inputText id="street" value="#{perfilData.street}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="city" value="Ciudad" />
+                        <h:inputText id="city" value="#{perfilData.city}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="country" value="País" />
+                        <h:inputText id="country" value="#{perfilData.country}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="postalCode" value="Código Postal" />
+                        <h:inputText id="postalCode" value="#{perfilData.postalCode}" required="true" class="form-control"/>
+                    </div>
+
+                    <div class="form-group">
+                        <h:outputLabel for="bankInfo" value="Información Bancaria" />
+                        <h:inputText id="bankInfo" value="#{perfilData.bankInfo}" required="true" class="form-control"/>
+                    </div>
+
+                    <h:commandButton value="Guardar Cambios" action="#{perfilData.updateProfile()}" styleClass="btn2"/>
+                </div>
+
+                <h:link value="Volver al perfil" outcome="perfil.xhtml"/>
+            </h:form>
+        </div>
+    </h:body>
+</html>
