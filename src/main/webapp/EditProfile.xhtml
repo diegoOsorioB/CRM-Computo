@@ -148,10 +148,10 @@
                 document.getElementById("firstPart").style.display = "none";
                 document.getElementById("secondPart").style.display = "block";
             }
-<![CDATA[
+
              function previewImage(event) {
         var input = event.target;
-        if (input.files && input.files[0]) {
+        if (input.files &amp; input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 document.getElementById('profileImage').src = e.target.result;
@@ -159,7 +159,6 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    ]]>
         </script>
 
     </h:head>

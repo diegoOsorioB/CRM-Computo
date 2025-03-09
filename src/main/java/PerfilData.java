@@ -1,4 +1,3 @@
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -7,6 +6,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import jakarta.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -33,16 +33,19 @@ public class PerfilData implements Serializable {
     private String country;
     private String postalCode;
     private String bankInfo;
-    private String imageUrl;
+    private String imageUrl;//="https://www.google.com/imgres?q=imagen%20png&imgurl=https%3A%2F%2Fraulperez.tieneblog.net%2Fwp-content%2Fuploads%2F2015%2F09%2Ftux.jpg&imgrefurl=https%3A%2F%2Fraulperez.tieneblog.net%2Fconvertir-imagen-jpg-a-png-con-gimp%2F&docid=5AKTfWxOhe2f3M&tbnid=c-606BS9DAzetM&vet=12ahUKEwiYsKTCjvyLAxVHHUQIHQT0BToQM3oECHQQAA..i&w=256&h=256&hcb=2&ved=2ahUKEwiYsKTCjvyLAxVHHUQIHQT0BToQM3oECHQQAA";
     private Part imageFile;
 
-    public PerfilData() {
+    private static final String UPLOAD_DIR = "/opt/uploads"; // Ruta donde se guardarán las imágenes
+
+    @PostConstruct
+    public void init() {
         cargarDatosDesdeJSON();
     }
 
     private void cargarDatosDesdeJSON() {
         // Simulación de la recepción del JSON desde el ERP
-        String jsonData = "{ \"firstName\": \"Juan\", \"lastName\": \"Perez\", \"email\": \"juan.perez@example.com\", \"username\": \"juanp\", \"street\": \"Av. Siempre Viva\", \"city\": \"Springfield\", \"country\": \"USA\", \"postalCode\": \"12345\", \"bankInfo\": \"Cuenta 123456\" }";
+        String jsonData = "{ \"firstName\": \"Juan\", \"lastName\": \"Perez\", \"email\": \"juan.perez@example.com\", \"username\": \"juanp\", \"street\": \"Av. Siempre Viva\", \"city\": \"Springfield\", \"country\": \"USA\", \"postalCode\": \"12345\", \"bankInfo\": \"Cuenta 123456\", \"imageUrl\": \"default.jpg\" }";
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -57,24 +60,52 @@ public class PerfilData implements Serializable {
             this.country = rootNode.path("country").asText();
             this.postalCode = rootNode.path("postalCode").asText();
             this.bankInfo = rootNode.path("bankInfo").asText();
-            this.imageUrl = rootNode.path("imageUrl").asText();  // Cargar la URL de la imagen desde el JSON
+            this.imageUrl = rootNode.path("imageUrl").asText();
+
+            // Si la imagen no está definida, asignar una por defecto
+            if (this.imageUrl == null || this.imageUrl.isEmpty()) {
+                this.imageUrl = "/home/diego/Descargas/linu.jpg";
+            }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error al procesar el JSON del ERP", e);
         }
     }
 
-    // Actualizar el perfil (guardar cambios)
+    // Método para actualizar el perfil
     public void updateProfile() {
         FacesContext context = FacesContext.getCurrentInstance();
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil actualizado correctamente", ""));
     }
 
-    // Subir la nueva imagen de perfil
+    // Método para subir la imagen de perfil
     public void uploadImage() {
-        if (imageFile != null) {
-            // Simula guardar la imagen en el servidor y actualizar la URL
-            this.imageUrl = "/uploads/" + imageFile.getSubmittedFileName();  // Aquí puedes manejar el archivo real y guardarlo en el servidor
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Imagen actualizada correctamente"));
+        if (imageFile != null && imageFile.getSize() > 0) {
+            try {
+                String fileName = Paths.get(imageFile.getSubmittedFileName()).getFileName().toString();
+                Path uploadPath = Paths.get(UPLOAD_DIR);
+
+                // Crear la carpeta si no existe
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                // Guardar el archivo en el servidor
+                Path filePath = uploadPath.resolve(fileName);
+                try (InputStream input = imageFile.getInputStream()) {
+                    Files.copy(input, filePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                // Actualizar la URL de la imagen para mostrarla en la interfaz
+                this.imageUrl = "/uploads/" + fileName;
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Imagen actualizada correctamente"));
+
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Error al subir la imagen", e);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al subir la imagen", ""));
+            }
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Debe seleccionar una imagen", ""));
         }
     }
 
