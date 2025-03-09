@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core">
+    <h:head>
+        <title>Recuperar Contraseña</title>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            .recover-form-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f7f7f7;
+            }
+
+            .recover-form {
+                background-color: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+                width: 400px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .btn-recover {
+                width: 100%;
+                padding: 12px;
+                background-color: #007BFF;
+                border: none;
+                color: white;
+                font-size: 18px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-recover:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <div class="recover-form-container">
+            <h:form class="recover-form">
+                <h3 class="text-center">Recuperar Contraseña</h3>
+
+                <h:outputLabel for="email" value="Correo Electrónico" />
+                <h:inputText id="email" value="#{passwordRecoveryBean.email}" required="true" class="form-control" />
+
+                <h:commandButton value="Enviar Enlace de Recuperación" action="#{passwordRecoveryBean.sendRecoveryLink}" class="btn-recover" />
+                <h:messages />
+            </h:form>
+        </div>
+    </h:body>
+</html>
+

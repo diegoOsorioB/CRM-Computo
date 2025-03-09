@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" 
-      xmlns:h="http://xmlns.jcp.org/jsf/html" 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
@@ -9,95 +9,241 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Productos</title>
     
-    <!-- Bootstrap 5 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
     
     <style>
         body {
-            background: mintcream;
+            background: #f8f9fa;
         }
         .container {
-            max-width: 1200px;  /* Aumenta el tamaño de la container */
+            max-width: 1200px;
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 100px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 80px;
+        }
+        .container2 {
+            background: #666666;
+            padding: 30px;
+            border-radius: 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            color: white;
+        }
+        .container2 .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .container2 .col-md-4 {
+            flex: 1 1 300px;
+            margin-bottom: 20px;
+        }
+        .container2 ul {
+            list-style: none;
+            padding: 0;
+        }
+        .container2 ul li {
+            margin-bottom: 5px;
         }
         .card {
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
-            height: 100%;  /* Asegura que las tarjetas se alineen uniformemente */
+            height: 100%;
         }
         .card:hover {
             transform: scale(1.05);
         }
         .card img {
-            height: 200px;
-            object-fit: cover;
+            width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
+            max-height: 200px; /* Limita la altura máxima de la imagen */
+            object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
+            margin-bottom: 15px; /* Espacio entre la imagen y el contenido debajo */
         }
-        .navbar-nav {
-            align-items: center;
+
+        .card-body img {
+            max-height: 250px; /* Limita la altura en la vista detalle, para que sea un poco más grande que en el listado */
+            object-fit: contain; /* Para que la imagen se muestre completa sin recortes en detalle */
+            margin-bottom: 10px; /* Espacio entre la imagen y el contenido */
         }
+
         .card-body {
-            padding: 15px;
+            text-align: center;
+        }
+
+        .card-body h5 {
+            font-size: 1.5rem; /* Aumenta ligeramente el tamaño del título */
+            margin-bottom: 10px;
+        }
+
+        .card-body p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .card-body .fw-bold {
+            font-size: 1.2rem;
+            color: #28a745; /* Verde para resaltar el precio */
+        }
+
+        /* Mejoras en la vista de detalle */
+        .card {
+            border-radius: 15px; /* Bordes redondeados más suaves para el detalle */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada en el detalle */
+        }
+
+        .card-body button {
+            margin-top: 15px;
+        }
+        
+        .btn-detalle {
+            width: 100%; 
+            padding: 12px; 
+            font-size: 1.1rem; 
+            background-color: #007BFF; 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
+
+        .btn-detalle:hover {
+            background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+            transform: translateY(-3px); /* Eleva el botón cuando el mouse está sobre él */
+        }
+
+        .btn-detalle:active {
+            background-color: #004085; /* Color más oscuro cuando se hace clic */
+            transform: translateY(0); /* El botón vuelve a su posición */
+        }
+        .navbar {
+            background: #007BFF;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .profile-dropdown .dropdown-toggle::after {
+            display: none;
+        }
+        .profile-dropdown .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+        footer {
+            background-color: white;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        footer h5 {
+            margin-bottom: 15px;
+        }
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+        footer ul li {
+            margin-bottom: 5px;
         }
     </style>
 </h:head>
 <h:body>
-    <!-- 🛒 HEADER -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: #333;">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">CRM PRODUCT</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-cart"></i> Carrito</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-heart"></i> Lista de deseos</a></li>
-                </ul>
-                <form class="d-flex" action="#" method="get">
-                    <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
-                    <input type="submit" value="Buscar" class="btn btn-primary"/>
-                </form>
-                <ul class="navbar-nav ms-3">
-                    <li class="nav-item"><a class="nav-link" href="login.xhtml"><i class="bi bi-box-arrow-in-right"></i> Ingresar</a></li>
-                </ul>
-            </div>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="#" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
+            </ul>
+            <form class="d-flex" action="#" method="get">
+                <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
+                <input type="submit" value="Buscar" class="btn" style="background-color: #00CC00; color: #FFFFFF; border: none;"/>
+            </form>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown profile-dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
+                        <i class="bi bi-person-circle fs-4"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#">Ver Cuenta</a></li>
+                        <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                        <li><hr class="dropdown-divider"/></li>
+                        <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
+    </div>
     </nav>
     
-    <!-- 🛍️ CONTENIDO DE PRODUCTOS -->
     <div class="container">
         <h2 class="text-center mb-4">Lista de Productos</h2>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             <ui:repeat value="#{productoBean.productos}" var="producto">
-            <div class="col">
-                <div class="card">
-                    <h:graphicImage library="images" name="#{producto.imagen}" class="card-img-top"/>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">#{producto.nombre}</h5>
-                        <p class="card-text">#{producto.descripcion}</p>
-                        <p class="fw-bold">$#{producto.precio}</p>
-                        <h:form>
-                            <h:commandButton value="Ver Detalle" action="ProductDetail.xhtml">
-                                <f:param name="id" value="#{producto.id}"/>
-                            </h:commandButton>
-                        </h:form>
+                <div class="col">
+                    <div class="card">
+                        <h:graphicImage library="images" name="#{producto.imagen}" class="card-img-top"/>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">#{producto.nombre}</h5>
+                            <p class="card-text">#{producto.descripcion}</p>
+                            <p class="fw-bold">$#{producto.precio}</p>
+                            <h:form>
+                                <h:commandButton value="Ver Detalle" action="ProductDetail.xhtml" styleClass="btn-detalle">
+                                    <f:param name="id" value="#{producto.id}"/>
+                                </h:commandButton>
+                            </h:form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </ui:repeat>
-
+            </ui:repeat>
         </div>
     </div>
-    
-    <!-- Bootstrap JS -->
+    <footer class="bg-light p-4 mt-4">
+        <div class="container2">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Sobre Nosotros</h5>
+                    <p>
+                        Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.<br/>
+                        Ofrecemos una amplia selección de productos blancos de alta calidad, desde ropa de cama y toallas hasta electrodomésticos y decoración.<br/>
+                        Renueva tu espacio con estilo y confort.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" style="color: white;">Inicio</a></li>
+                        <li><a href="#" style="color: white;">Productos</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <p>
+                        AV Tecnologico, Metepec, Estado de México<br/>
+                        contacto@crmproduct.com<br/>
+                        +52 000-000-0000
+                    </p>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+               <p>&#169; 2025 CRM PRODUCT. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</h:body>
+</h:body>  
 </html>

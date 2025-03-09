@@ -19,10 +19,10 @@ public class ProductoBean implements Serializable {
 
     public ProductoBean() {
         productos = new ArrayList<>();
-        productos.add(new Producto(1, "Camisa Blanca", "Camisa de algodón 100% blanca", "camisa_blanca.jpg", 500.00));
+        productos.add(new Producto(1, "Camisa Blanca", "Camisa de algodón 100% blanca", "camisa.jpg", 500.00));
         productos.add(new Producto(2, "Zapatos Blancos", "Zapatos deportivos blancos para correr", "zapatos_blancos.jpg", 1200.00));
         productos.add(new Producto(3, "Laptop Blanca", "Laptop ultradelgada con carcasa blanca", "laptop_blanca.jpg", 18000.00));
-        productos.add(new Producto(4, "Refrigerador Blanco", "Refrigerador de 400L color blanco", "refrigerador_blanco.jpg", 8500.00));
+        productos.add(new Producto(4, "Refrigerador Blanco", "Refrigerador de 400L color blanco", "refrigerador_blanco.jpg", 33500.00));
         productos.add(new Producto(5, "Taza Blanca", "Taza de cerámica blanca con diseño minimalista", "taza_blanca.jpg", 120.00));
 
         productosFiltrados = new ArrayList<>(productos);
