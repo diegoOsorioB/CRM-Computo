@@ -40,7 +40,7 @@ public class LoginData {
     // Método de login
     public String login() {
         if ("admin".equals(username) && "password".equals(password)) {
-            return "home.xhtml"; // Redirige a la página home si el login es correcto
+            return "Product.xhtml"; // Redirige a la página home si el login es correcto
         } else {
             return "login.xhtml?faces-redirect=true"; // Redirige al login si es incorrecto
         }

@@ -3,84 +3,88 @@
 <html xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:h="jakarta.faces.html"
       xmlns:c="jakarta.tags.core"
-      xmlns:t="jakarta.faces.facelets">
+      xmlns:t="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
     <h:head>
         <title>Editar Perfil</title>
+        <!-- Bootstrap 4 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-pzjw8f+ua7Kw1TIq0wJv1WrVe1GpzTjLlvhjmAGFvgtDJyQFNjN9WvTeFX16f1X3" crossorigin="anonymous"/>
+        
         <style>
-            /* General body styling */
             body {
-                font-family: Arial, sans-serif;
-                background-color: #f0f4f8;
+                font-family: 'Roboto', sans-serif;
+                background-color: #f7f7f7;
                 margin: 0;
                 padding: 0;
+                box-sizing: border-box;
             }
 
-            /* Centering the form */
             .edit-container {
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
-                background-color: #f0f4f8;
             }
 
-            /* Form box styling */
             .edit-form {
                 background-color: white;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-                width: 350px;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+                width: 400px;
                 text-align: center;
             }
-
-            /* Title */
-            h2 {
-                text-align: center;
-                color: #333;
+            
+            .profile-section {
+                display:flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 20px;
             }
 
-            /* Profile Image */
             .profile-img {
-                width: 100px;
-                height: 100px;
+                width: 90px;
+                height: 90px;
                 border-radius: 50%;
                 object-fit: cover;
-                border: 2px solid #007BFF;
-                margin-bottom: 15px;
+                border: 4px solid #007BFF;
+                margin-bottom: 10px;
+                transition: all 0.3s ease;
             }
 
-            /* Hidden file input */
-            .file-input {
-                display: none;
+            .profile-img:hover {
+                border-color: #0056b3;
             }
 
             .upload-btn {
                 background-color: #007BFF;
                 color: white;
-                padding: 8px 12px;
+                padding: 10px 15px;
                 border-radius: 4px;
                 cursor: pointer;
-                display: inline-block;
+                font-size: 16px;
+                margin-bottom: 15px;
+                transition: background-color 0.3s ease;
             }
 
             .upload-btn:hover {
                 background-color: #0056b3;
             }
 
-            /* Input styling */
             .form-group {
-                margin-bottom: 15px;
+                margin-bottom: 20px;
                 text-align: left;
+                
             }
 
             .form-control {
                 width: 100%;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                box-sizing: border-box;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
                 font-size: 16px;
+                box-sizing: border-box;
+                transition: border 0.3s ease;
             }
 
             .form-control:focus {
@@ -88,16 +92,17 @@
                 outline: none;
             }
 
-            /* Buttons */
             .btn {
                 width: 100%;
-                padding: 12px;
+                padding: 14px;
                 background-color: #007BFF;
                 border: none;
                 color: white;
-                font-size: 16px;
-                border-radius: 4px;
+                font-size: 18px;
+                border-radius: 8px;
                 cursor: pointer;
+                margin-top: 15px;
+                transition: background-color 0.3s ease;
             }
 
             .btn:hover {
@@ -106,22 +111,35 @@
 
             .btn2 {
                 width: 100%;
-                padding: 12px;
+                padding: 14px;
                 background-color: #28a745;
                 border: none;
                 color: white;
-                font-size: 16px;
-                border-radius: 4px;
+                font-size: 18px;
+                border-radius: 8px;
                 cursor: pointer;
+                margin-top: 15px;
+                transition: background-color 0.3s ease;
             }
 
             .btn2:hover {
                 background-color: #218838;
             }
 
-            /* Hide second part initially */
             .second-part {
                 display: none;
+            }
+
+            .link-back {
+                text-decoration: none;
+                color: #007BFF;
+                font-size: 16px;
+                margin-top: 20px;
+                display: inline-block;
+            }
+
+            .link-back:hover {
+                text-decoration: underline;
             }
         </style>
 
@@ -130,15 +148,18 @@
                 document.getElementById("firstPart").style.display = "none";
                 document.getElementById("secondPart").style.display = "block";
             }
-
-            function previewImage(event) {
-                var reader = new FileReader();
-                reader.onload = function () {
-                    var output = document.getElementById('profileImage');
-                    output.src = reader.result;
-                };
-                reader.readAsDataURL(event.target.files[0]);
-            }
+<![CDATA[
+             function previewImage(event) {
+        var input = event.target;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('profileImage').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    ]]>
         </script>
 
     </h:head>
@@ -148,10 +169,14 @@
                 <h2>Editar Perfil</h2>
 
                 <!-- Imagen de perfil -->
-                <img id="profileImage" src="#{perfilData.imageUrl}" alt="Imagen de perfil" class="profile-img"/>
-                <br/>
-                <label for="imageUpload" class="upload-btn">Cambiar Imagen</label>
-                <h:inputFile id="imageUpload" value="#{perfilData.imageFile}" onchange="previewImage(event)" class="file-input"/>
+                <div class="profile-section">
+                    
+                    <!-- Mostrar imagen de perfil si existe -->
+                    <h:graphicImage value="#{perfilData.imageUrl}" alt="Imagen de perfil" class="profile-img" id="profileImage" />
+                    <!-- Input para subir imagen -->
+                    <h:inputFile id="imageFile" value="#{perfilData.imageFile}" styleClass="file-input" onchange="previewImage(event)" />
+                    <h:commandButton value="Actualizar Imagen" action="#{perfilData.uploadImage}" class="upload-btn"/>
+                </div>
 
                 <!-- Primera parte del formulario -->
                 <div id="firstPart">
@@ -180,7 +205,7 @@
                         <h:inputSecret id="password" value="#{perfilData.password}" class="form-control"/>
                     </div>
 
-                    <button type="button" onclick="showSecondPart()" class="btn">Continuar</button>
+                    <button type="button" onclick="showSecondPart()" class="btn btn-primary">Continuar</button>
                 </div>
 
                 <!-- Segunda parte del formulario -->
@@ -210,11 +235,16 @@
                         <h:inputText id="bankInfo" value="#{perfilData.bankInfo}" required="true" class="form-control"/>
                     </div>
 
-                    <h:commandButton value="Guardar Cambios" action="#{perfilData.updateProfile()}" styleClass="btn2"/>
+                    <h:commandButton value="Guardar Cambios" action="#{perfilData.updateProfile()}" class="btn2 btn-success"/>
                 </div>
 
-                <h:link value="Volver al perfil" outcome="perfil.xhtml"/>
+                <h:link value="Volver al perfil" outcome="Product.xhtml" class="link-back"/>
             </h:form>
         </div>
+
+        <!-- Bootstrap JS, Popper.js, and jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy2p6W7hoP4F2sG9pZOnC5vQ5V2zJX8aLOh53t2w0" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-NR1oOe63p6B8ZGiV1mBeDNh9FqZ5F5Cv5RwiGqS9PcbzE7zOaP0cP/SFYQOYdq6P" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0wJv1WrVe1GpzTjLlvhjmAGFvgtDJyQFNjN9WvTeFX16f1X3" crossorigin="anonymous"></script>
     </h:body>
 </html>
