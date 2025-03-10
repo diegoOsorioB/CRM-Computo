@@ -58,7 +58,7 @@ public class ButtonController {
                 System.out.println(response.body());
                 System.out.println(response.statusCode());
                 System.out.println("Conexion exitosa");
-                FacesContext.getCurrentInstance().getExternalContext().redirect("Home.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
                 
 
                 // Guardar información del usuario en la sesión

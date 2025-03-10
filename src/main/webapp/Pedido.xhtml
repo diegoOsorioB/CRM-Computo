@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html">
+    <h:head>
+        <title>Rastreo de Pedido</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    </h:head>
+    <h:body class="container mt-5">
+        <h2 class="text-center">Rastreo de tu Pedido</h2>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4 class="card-title">Dirección de Entrega</h4>
+                <p class="card-text">#{PedidoResource.direccionCliente}</p>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4 class="card-title">Estatus del Pedido</h4>
+                <p class="card-text font-weight-bold text-primary">#{pedidoTrackingBean.estatusPedido}</p>
+            </div>
+        </div>
+
+        <h:button value="Volver a Mis Pedidos" outcome="misPedidos.xhtml" class="btn btn-primary mt-4"/>
+    </h:body>
+</html>
