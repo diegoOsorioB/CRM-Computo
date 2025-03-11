@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
-<head>
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Detalle del Producto</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-</head>
-<body>
-    <h:form>
+</h:head>
+<h:body> 
+    <h:form id="productoForm">
         <div class="container mt-5">
             <h2 class="text-center">Detalle del Producto</h2>
             <h:panelGroup rendered="#{productoBean.producto != null}">
@@ -19,7 +20,11 @@
                         <h5 class="card-title">#{productoBean.producto.nombre}</h5>
                         <p class="card-text">#{productoBean.producto.descripcion}</p>
                         <p class="fw-bold">$#{productoBean.producto.precio}</p>
-                        <h:commandButton value="Agregar al carrito" action="carrito.xhtml" styleClass="btn btn-primary"/>
+                        <h:commandButton value="Agregar al carrito" action="#{carritoBean.agregarProductoActual}" 
+                                         styleClass="btn btn-primary">
+                            <f:ajax execute="@form" render="@all"/>
+                        </h:commandButton>
+                        <h:button outcome="Carrito.xhtml" value="Ir al Carrito" styleClass="btn btn-success"/>
                         <h:button outcome="Product.xhtml" value="Volver a la tienda" styleClass="btn btn-secondary"/>
                     </div>
                 </div>
@@ -29,6 +34,5 @@
             </h:panelGroup>
         </div>
     </h:form>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</h:body>
 </html>

@@ -1,8 +1,7 @@
-
-
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +9,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Named("productoBean")
-@RequestScoped
+@ViewScoped
 public class ProductoBean implements Serializable {
+
     private List<Producto> productos;
     private List<Producto> productosFiltrados;
     private Producto producto;
@@ -27,7 +27,7 @@ public class ProductoBean implements Serializable {
 
         productosFiltrados = new ArrayList<>(productos);
 
-        // Cargar el producto según el parámetro en la URL
+        // Cargar el producto desde la URL
         cargarProducto();
     }
 
@@ -62,19 +62,35 @@ public class ProductoBean implements Serializable {
         }
     }
 
-    public void cargarProducto() {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
-        String idStr = params.get("id");
+   public void cargarProducto() {
+    FacesContext fc = FacesContext.getCurrentInstance();
+    Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
+    String idStr = params.get("id");
 
-        if (idStr != null) {
+    // Verifica si el parámetro 'id' está siendo recibido
+    System.out.println("Parámetro 'id' recibido: " + idStr);
+
+    if (idStr != null) {
+        try {
             int id = Integer.parseInt(idStr);
-            for (Producto p : productos) {
-                if (p.getId() == id) {
-                    producto = p;
-                    break;
-                }
+            System.out.println("ID convertido: " + id);  // Verifica si se convierte correctamente
+
+            // Filtrar el producto con el ID recibido
+            producto = productos.stream()
+                                .filter(p -> p.getId() == id)
+                                .findFirst()
+                                .orElse(null);
+
+            if (producto == null) {
+                System.out.println("No se encontró un producto con ID: " + id);  // Verifica si el producto es null
             }
+
+        } catch (NumberFormatException e) {
+            producto = null;
+            System.out.println("Error al convertir el id: " + idStr);
         }
     }
+}
+
+
 }

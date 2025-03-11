@@ -1,8 +1,5 @@
+public class Producto {
 
-
-import java.io.Serializable;
-
-public class Producto implements Serializable {
     private int id;
     private String nombre;
     private String descripcion;
@@ -17,6 +14,7 @@ public class Producto implements Serializable {
         this.precio = precio;
     }
 
+    // Getters y setters
     public int getId() {
         return id;
     }
