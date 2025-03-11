@@ -31,13 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contactForm");
     contactForm.addEventListener("submit", (e) => {
         e.preventDefault();
-
+        
         // Validación básica
-        const nombre = document.getElementById("nombre").value;
-        const email = document.getElementById("email").value;
-        const mensaje = document.getElementById("mensaje").value;
-
-        if (nombre && email && mensaje) {
+        if (document.getElementById("nombre").value && document.getElementById("email").value && document.getElementById("mensaje").value) {
             document.getElementById("confirmMessage").style.display = "block";
         } else {
             alert("Por favor, completa todos los campos.");
@@ -47,25 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Seguimiento de ticket
     document.getElementById("trackBtn").addEventListener("click", () => {
         const ticketInput = document.getElementById("ticketInput").value.trim();
-        if (ticketInput && /^[0-9]+$/.test(ticketInput)) {  // Verificar si es un número
-            document.getElementById("ticketStatus").textContent = `El ticket #${ticketInput} está en proceso.`;
-        } else {
-            document.getElementById("ticketStatus").textContent = "Ingrese un número de ticket válido.";
-        }
+        document.getElementById("ticketStatus").textContent = ticketInput
+            ? `El ticket #${ticketInput} está en proceso.`
+            : "Ingrese un número de ticket válido.";
     });
 
     // Evaluación del servicio
     document.getElementById("rateBtn").addEventListener("click", () => {
         const rating = document.getElementById("rating").value;
-
-        // Verificar que la calificación es un número válido entre 1 y 5
-        if (rating < 1 || rating > 5 || isNaN(rating)) {
-            alert("Por favor, ingresa una calificación válida entre 1 y 5.");
-            return;
-        }
-
         let previousRating = localStorage.getItem("userRating");
-
+        
         // Calcular promedio de calificaciones
         if (previousRating) {
             const totalRatings = parseInt(localStorage.getItem("totalRatings") || "0");
@@ -85,32 +72,4 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("averageRating").textContent = `Gracias por tu calificación de ${rating} estrellas.`;
         }
     });
-
-    // Definición de las funciones de los botones (las funciones faltantes)
-    window.handleChatSubmit = function() {
-        let userMessage = userInput.value.trim();
-        if (userMessage === "") return;
-
-        chatbox.insertAdjacentHTML("beforeend", `<p><strong>Tú:</strong> ${userMessage}</p>`);
-        userInput.value = "";
-
-        setTimeout(() => {
-            let botResponse = getBotResponse(userMessage);
-            chatbox.insertAdjacentHTML("beforeend", `<p><strong>Bot:</strong> ${botResponse}</p>`);
-            chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll
-        }, 1000);
-    };
-
-    window.handleRatingSubmit = function() {
-        // Similar a la funcionalidad de calificación que ya está, solo se le da acceso global
-        document.getElementById("rateBtn").click();
-    };
-
-    window.handleTicketConsult = function() {
-        document.getElementById("trackBtn").click();
-    };
-
-    window.handleContactSubmit = function() {
-        document.getElementById("contactForm").submit();
-    };
 });
