@@ -168,6 +168,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="#" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                 <li class="nav-item"><a class="nav-link" href="#" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
             </ul>
             <form class="d-flex" action="#" method="get">
                 <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
@@ -212,6 +213,7 @@
             </ui:repeat>
         </div>
     </div>
+
     <footer class="bg-light p-4 mt-4">
         <div class="container2">
             <div class="row">
@@ -224,26 +226,28 @@
                     </p>
                 </div>
                 <div class="col-md-4">
-                    <h5>Enlaces Rápidos</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" style="color: white;">Inicio</a></li>
-                        <li><a href="#" style="color: white;">Productos</a></li>
+                    <h5>Contáctanos</h5>
+                    <ul>
+                        <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
+                        <li>Teléfono: +1 800 123 4567</li>
+                        <li>Email: contacto@tienda.com</li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h5>Contacto</h5>
-                    <p>
-                        AV Tecnologico, Metepec, Estado de México<br/>
-                        contacto@crmproduct.com<br/>
-                        +52 000-000-0000
-                    </p>
+                    <h5>Enlaces Rápidos</h5>
+                    <ul>
+                        <li><a href="#" style="color: #007BFF;">Inicio</a></li>
+                        <li><a href="#" style="color: #007BFF;">Productos</a></li>
+                        <li><a href="#" style="color: #007BFF;">Carrito</a></li>
+                        <li><a href="#" style="color: #007BFF;">Atención a Cliente</a></li>
+                        <li><a href="#" style="color: #007BFF;">Política de Privacidad</a></li>
+                    </ul>
                 </div>
-            </div>
-            <div class="text-center mt-3">
-               <p>&#169; 2025 CRM PRODUCT. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</h:body>  
+</h:body>
 </html>
+
