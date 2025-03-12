@@ -16,8 +16,8 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>${jakartaee}</version>
-            <scope>provided</scope>
+            <version>9.1.0</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -30,11 +30,29 @@
             <version>1.6.2</version>
         </dependency>
         <dependency>
+
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
-        
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>1.0.3</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>2.0-EDR1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javax.faces</groupId>
+            <artifactId>javax.faces-api</artifactId>
+            <version>2.3-pfd</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
     <build>
