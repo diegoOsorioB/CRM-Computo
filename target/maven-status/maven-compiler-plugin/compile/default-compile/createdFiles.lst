@@ -1,0 +1,16 @@
+PedidoResource.class
+Producto.class
+PasswordRecoveryBean.class
+Database.class
+mx/tecnm/toluca/crm/computoen/resources/JakartaEE10Resource.class
+CarritoBean.class
+Compra.class
+ProductoBean.class
+mx/tecnm/toluca/crm/computoen/JakartaRestConfiguration.class
+PasswordRecoveryBean$1.class
+HistorialComprasBean.class
+PerfilData.class
+User.class
+PasswordResetBean.class
+ItemCarrito.class
+ButtonController.class
