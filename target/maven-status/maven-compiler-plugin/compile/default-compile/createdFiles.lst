@@ -12,5 +12,11 @@ HistorialComprasBean.class
 PerfilData.class
 User.class
 PasswordResetBean.class
+<<<<<<< HEAD
 ItemCarrito.class
+=======
+mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.class
+LoginData.class
+GenerarReporteServlet.class
+>>>>>>> origin/Alberto
 ButtonController.class
