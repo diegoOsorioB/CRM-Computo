@@ -1,13 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-
-/**
- *
- * @author bet10
- */
 public class User {
     
     private String id = "";
@@ -22,6 +12,19 @@ public class User {
     private String codigoPostal = "";
     private String numCuenta = "";
     private String passwordConfirm = "";
+
+    public User() {
+    }
+
+    
+    
+    public User(String id, String nombre, String apellidoPaterno, String email) {
+        this.id=id;
+        this.nombre=nombre;
+        this.apellidoPaterno=apellidoPaterno;
+        this.email=email;
+    }
+        
 
     public String getPasswordConfirm() {
         return passwordConfirm;

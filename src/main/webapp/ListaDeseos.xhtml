@@ -85,11 +85,11 @@
                                 <p class="fw-bold">$#{producto.precio}</p>
 
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <h:commandButton value="-" action="#{listaDeseosBean.disminuirCantidad(producto)}" styleClass="btn btn-outline-secondary mx-2">
+                                    <h:commandButton value="-" action="#" styleClass="btn btn-outline-secondary mx-2">
                                         <f:ajax execute="@this" render="cantidad#{producto.id}"/>
                                     </h:commandButton>
-                                    <span id="cantidad#{producto.id}" class="fw-bold">#{producto.cantidad}</span>
-                                    <h:commandButton value="+" action="#{listaDeseosBean.aumentarCantidad(producto)}" styleClass="btn btn-outline-primary mx-2">
+                                    <span id="cantidad#{producto.id}" class="fw-bold">3</span>
+                                    <h:commandButton value="+" action="#" styleClass="btn btn-outline-primary mx-2">
                                         <f:ajax execute="@this" render="cantidad#{producto.id}"/>
                                     </h:commandButton>
                                 </div>

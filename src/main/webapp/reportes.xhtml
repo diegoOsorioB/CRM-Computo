@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Generar Reportes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .navbar {
+                background: #007BFF;
+                padding: 10px 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .navbar-brand {
+                font-weight: bold;
+            }            
+            .profile-dropdown .dropdown-toggle::after {
+                display: none;
+            }
+            .profile-dropdown .dropdown-menu {
+                right: 0;
+                left: auto;
+            }            
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="ActualizarPedidos.xhtml" style="color: #FFFFFF;"><i class="bi bi-arrow-repeat"></i> Actualizar Pedidos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="reportes.xhtml" style="color: #FFFFFF;"><i class="bi bi-bar-chart"></i> Reportes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="GestionDevoluciones.xhtml" style="color: #FFFFFF;"><i class="bi bi-arrow-counterclockwise"></i> Gestionar Devoluciones</a></li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown profile-dropdown">                            
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="#">Ver Cuenta</a></li>
+                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                <li><hr class="dropdown-divider"/></li>
+                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>   
+    <div class="container">
+        <h2 class="text-center">Generar Reportes</h2>
+        <form action="GenerarReporteServlet" method="post" id="reporteForm">
+            <div class="mb-3">
+                <label for="tipoReporte" class="form-label">Seleccione el tipo de reporte:</label>
+                <select class="form-select" name="tipoReporte" id="tipoReporte" required="required">
+                    <option value="ventas">Ventas</option>
+                    <option value="inventario">Inventario</option>
+                    <option value="pedidos">Pedidos</option>
+                    <option value="usuarios">Usuarios</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="formato" class="form-label">Seleccione el formato de descarga:</label>
+                <select class="form-select" name="formato" id="formato" required="required">
+                    <option value="pdf">PDF</option>
+                    <option value="excel">Excel</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaInicio" class="form-label">Fecha de inicio:</label>
+                <input type="date" class="form-control" name="fechaInicio" id="fechaInicio"/>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaFin" class="form-label">Fecha de fin:</label>
+                <input type="date" class="form-control" name="fechaFin" id="fechaFin"/>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="btn btn-secondary" onclick="previewReport()">Vista Previa</button>
+                <button type="submit" class="btn btn-primary">Generar Reporte</button>
+            </div>
+        </form>
+
+        <div id="mensaje" class="alert d-none mt-3"></div>
+
+        <div class="mt-4">
+            <h5 class="text-center">Vista previa del reporte</h5>
+            <canvas id="reporteChart"></canvas>
+        </div>
+
+        <!-- Botón para regresar a Product.xhtml -->
+        <div class="mt-4 text-center">
+            <a href="Product.xhtml" class="btn btn-warning">Regresar a Productos</a>
+        </div>
+    </div>
+        <footer class="text-center bg-primary text-white p-3 mt-4">
+            <p>2025 CRM Producto. Todos los derechos reservados.</p>
+        </footer>
+
+    <script type="text/javascript">
+        function previewReport() {
+            var tipo = document.getElementById("tipoReporte").value;
+            var formato = document.getElementById("formato").value;
+            var mensaje = document.getElementById("mensaje");
+
+            mensaje.classList.remove("d-none", "alert-danger", "alert-success");
+            mensaje.textContent = "Mostrando vista previa del reporte de " + tipo + " en formato " + formato;
+            mensaje.classList.add("alert-info");
+
+            actualizarGrafico(tipo);
+        }
+
+        document.getElementById("reporteForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var mensaje = document.getElementById("mensaje");
+
+            mensaje.classList.remove("d-none", "alert-danger", "alert-success");
+            mensaje.textContent = "¡Reporte generado con éxito!";
+            mensaje.classList.add("alert-success");
+        });
+
+        function actualizarGrafico(tipo) {
+            var datos = {
+                ventas: [500, 700, 800, 600],
+                inventario: [100, 200, 150, 300],
+                pedidos: [50, 80, 90, 70],
+                usuarios: [10, 30, 20, 40]
+            };
+
+            var etiquetas = ["Enero", "Febrero", "Marzo", "Abril"];
+            var ctx = document.getElementById("reporteChart").getContext("2d");
+
+            if (window.miGrafico) {
+                window.miGrafico.destroy();
+            }
+
+            window.miGrafico = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: etiquetas,
+                    datasets: [{
+                        label: tipo.charAt(0).toUpperCase() + tipo.slice(1),
+                        data: datos[tipo],
+                        backgroundColor: "rgba(54, 162, 235, 0.5)"
+                    }]
+                }
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
