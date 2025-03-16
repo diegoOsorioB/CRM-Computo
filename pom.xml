@@ -1,11 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+<<<<<<< HEAD
     <groupId>com.mycompany</groupId>
     <artifactId>CRM-Computo</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
     <name>CRM-Computo-1.0</name>
+=======
+    <groupId>mx.tecnm.toluca</groupId>
+    <artifactId>CRM-ComputoEN</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+    <name>CRM-ComputoEN-1.0</name>
+>>>>>>> Diego
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,8 +24,54 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
+<<<<<<< HEAD
             <version>${jakartaee}</version>
             <scope>provided</scope>
+=======
+            <version>9.1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>1.0.3</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>2.0-EDR1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javax.faces</groupId>
+            <artifactId>javax.faces-api</artifactId>
+            <version>2.3-pfd</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+
+    <groupId>com.itextpdf</groupId>
+    <artifactId>itext7-core</artifactId>
+    <version>7.1.15</version>
+                <type>pom</type>
+>>>>>>> Diego
         </dependency>
     </dependencies>
     
@@ -28,8 +82,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
+<<<<<<< HEAD
                     <source>11</source>
                     <target>11</target>
+=======
+                    <source>17</source>
+                    <target>17</target>
+>>>>>>> Diego
                 </configuration>
             </plugin>
             <plugin>
