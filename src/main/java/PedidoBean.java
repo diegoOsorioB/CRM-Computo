@@ -1,4 +1,5 @@
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -23,6 +24,23 @@ public class PedidoBean implements Serializable {
     private EmailService emailService;
         
     private Compra pedidoSeleccionado;
+
+    @Inject
+    private PedidoService pedidoService;
+
+    public List<Pedido> getPedidos() {
+        List<Pedido> pedidos = pedidoService.obtenerPedidos();
+        
+        if (pedidos.isEmpty()) {
+            System.out.println("❌ No hay pedidos almacenados.");
+        } else {
+            System.out.println("📋 Mostrando pedidos: " + pedidos.size());
+        }
+
+        return pedidos;
+    }
+
+
 
     private void cargarPedidos() {
         listaPedidos = new ArrayList<>();
