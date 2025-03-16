@@ -2,14 +2,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="jakarta.faces.facelets"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Productos</title>
-        <style>
+        <title>Atención al Cliente</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+    </h:head>
+    <style>
             body {
                 font-family: Arial, sans-serif;
                 margin: 0;
@@ -64,111 +67,88 @@
                 background-color: #005bb5;
             }
         </style>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
-    </h:head>
 
     <h:body>
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="#" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
-                    </ul>
-                    
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown profile-dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
-                                <i class="bi bi-person-circle fs-4"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="#">Ver Cuenta</a></li>
-                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
-                                <li><hr class="dropdown-divider"/></li>
-                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+        <h:form>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">CRM PRODUCT</a>
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="Product.xhtml">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml">Atención a Cliente</a></li>
+                        </ul>
+                    </div>
                 </div>
+            </nav>
+
+            <header class="text-center bg-primary text-white p-3">
+                <h1>Atención al Cliente</h1>
+            </header>
+
+            <div class="container mt-4">
+                <!-- Chat en Vivo -->
+                <section class="mb-4">
+                    <h2>Chat en Vivo</h2>
+                    <h:panelGroup id="chatMessages">
+                        <ui:repeat value="#{atencionClienteBean.chatMensajes}" var="msg">
+                            <p>#{msg}</p>
+                        </ui:repeat>
+                    </h:panelGroup>
+                    <h:inputText value="#{atencionClienteBean.userInput}" />
+                    <h:commandButton value="Enviar" action="#{atencionClienteBean.enviarMensajeChat}">
+                        <f:ajax execute="@form" render="chatMessages" />
+                    </h:commandButton>
+                </section>
+
+                <!-- Formulario de Contacto -->
+                <section class="mb-4">
+                    <h2>Formulario de Contacto</h2>
+                    <h:panelGroup layout="block">
+                        <h:outputLabel for="nombre" value="Nombre:" />
+                        <h:inputText id="nombre" value="#{atencionClienteBean.nombre}" required="true"/>
+
+                        <h:outputLabel for="email" value="Correo Electrónico:" />
+                        <h:inputText id="email" value="#{atencionClienteBean.email}" required="true"/>
+
+                        <h:outputLabel for="mensaje" value="Mensaje:" />
+                        <h:inputTextarea id="mensaje" value="#{atencionClienteBean.mensaje}" required="true"/>
+
+                        <h:commandButton value="Enviar" action="#{atencionClienteBean.enviarFormulario}"/>
+                        <h:messages/>
+                    </h:panelGroup>
+                </section>
+
+                <!-- Seguimiento de Ticket -->
+                <section class="mb-4">
+                    <h2>Seguimiento de Ticket</h2>
+                    <h:inputText value="#{atencionClienteBean.numeroTicket}" />
+                    <h:commandButton value="Consultar" action="#{atencionClienteBean.consultarTicket}">
+                        <f:ajax execute="@form" render="ticketStatus" />
+                    </h:commandButton>
+                    <h:outputText id="ticketStatus" value="Estado: #{atencionClienteBean.estadoTicket}" />
+                </section>
+
+                <!-- Evaluación del Servicio -->
+                <section class="mb-4">
+                    <h2>Evalúa Nuestro Servicio</h2>
+                    <h:selectOneMenu value="#{atencionClienteBean.calificacion}">
+                        <f:selectItem itemValue="5" itemLabel="Excelente"/>
+                        <f:selectItem itemValue="4" itemLabel="Muy Bueno"/>
+                        <f:selectItem itemValue="3" itemLabel="Bueno"/>
+                        <f:selectItem itemValue="2" itemLabel="Regular"/>
+                        <f:selectItem itemValue="1" itemLabel="Malo"/>
+                    </h:selectOneMenu>
+                    <h:commandButton value="Enviar" action="#{atencionClienteBean.enviarCalificacion}">
+                        <f:ajax execute="@form" render="averageRating" />
+                    </h:commandButton>
+                    <h:outputText id="averageRating" value="Calificación promedio: #{atencionClienteBean.promedioCalificaciones}" />
+                </section>
             </div>
-        </nav>
-        <header>
-            <h1>Atención al Cliente - Tienda de Autoservicio</h1>
-        </header>
+        </h:form>
 
-
-        <section id="chatbot">
-            <h2>Chat en Vivo</h2>
-            <div id="chatbox">
-                <p><strong>Bot:</strong> ¡Hola! ¿Cómo puedo ayudarte?</p>
-            </div>
-            <input type="text" id="userInput" placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje"/>
-            <button id="sendBtn">Enviar</button>
-        </section>
-
-        <section id="contacto">
-            <h2>Formulario de Contacto</h2>
-            <form id="contactForm">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" required="true"/>
-
-                <label for="email">Correo Electrónico:</label>
-                <input type="email" id="email" required="true"/>
-
-                <label for="mensaje">Mensaje:</label>
-                <textarea id="mensaje" required="true"></textarea>
-
-                <button type="submit">Enviar</button>
-            </form>
-            <p id="confirmMessage" style="display: none; color: green;">¡Mensaje enviado con éxito!</p>
-        </section>
-
-        <section id="faqs">
-            <h2>Preguntas Frecuentes</h2>
-            <details>
-                <summary>¿Cuáles son los horarios de atención?</summary>
-                <p>Nuestro horario es de lunes a sábado de 8:00 AM a 8:00 PM.</p>
-            </details>
-            <details>
-                <summary>¿Cómo puedo hacer una devolución?</summary>
-                <p>Las devoluciones se pueden realizar dentro de los 30 días posteriores a la compra con el ticket original.</p>
-            </details>
-        </section>
-
-        <section id="seguimiento">
-            <h2>Seguimiento de Ticket</h2>
-            <input type="text" id="ticketInput" placeholder="Ingrese su número de ticket" aria-label="Número de ticket"/>
-            <button id="trackBtn">Consultar</button>
-            <p id="ticketStatus"></p>
-        </section>
-
-        <section id="evaluacion">
-            <h2>Evalúa Nuestro Servicio</h2>
-            <label for="rating">Califica nuestra atención:</label>
-            <select id="rating">
-                <option value="5">Excelente</option>
-                <option value="4">Muy Bueno</option>
-                <option value="3">Bueno</option>
-                <option value="2">Regular</option>
-                <option value="1">Malo</option>
-            </select>
-            <button id="rateBtn">Enviar</button>
-            <p id="averageRating"></p> <!-- Mensaje de calificación -->
-        </section>
-
-        <footer>
-            <p>© 2025 Tienda de Autoservicio | Todos los derechos reservados</p>
-            <a href="mailto:contacto@tienda.com">Contacto</a>
+        <footer class="text-center bg-primary text-white p-3 mt-4">
+            <p>&copy; 2025 CRM Producto. Todos los derechos reservados.</p>
         </footer>
-
-        <!-- Vincular el archivo de JavaScript -->
-        <script src="resources/js/script.js"></script>
     </h:body>
 </html>

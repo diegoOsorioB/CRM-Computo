@@ -8,6 +8,7 @@ PerfilData.class
 User.class
 PasswordResetBean.class
 mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.class
+AtencionClienteBean.class
 LoginData.class
 GenerarReporteServlet.class
 ButtonController.class
