@@ -1,3 +1,6 @@
+
+import java.util.Objects;
+
 public class Producto {
 
     private int id;
@@ -53,5 +56,17 @@ public class Producto {
 
     public void setPrecio(double precio) {
         this.precio = precio;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Producto producto = (Producto) obj;
+        return id == producto.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre, imagen);
     }
 }
