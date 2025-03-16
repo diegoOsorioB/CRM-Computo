@@ -24,4 +24,5 @@ EmailService$2.class
 PagoBean.class
 PasswordResetBean.class
 mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.class
+AtencionClienteBean.class
 EmailService.class
