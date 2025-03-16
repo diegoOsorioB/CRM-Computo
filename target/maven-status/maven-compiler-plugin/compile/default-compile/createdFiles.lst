@@ -1,22 +1,21 @@
 PedidoResource.class
-Producto.class
+mx\tecnm\toluca\crm\computoen\JakartaRestConfiguration.class
 PasswordRecoveryBean.class
+Producto.class
 Database.class
-mx/tecnm/toluca/crm/computoen/resources/JakartaEE10Resource.class
+EmailService$1.class
 CarritoBean.class
 Compra.class
 ProductoBean.class
-mx/tecnm/toluca/crm/computoen/JakartaRestConfiguration.class
-PasswordRecoveryBean$1.class
 HistorialComprasBean.class
+PasswordRecoveryBean$1.class
 PerfilData.class
+EmailService$2.class
 User.class
+PedidoBean.class
 PasswordResetBean.class
-<<<<<<< HEAD
-ItemCarrito.class
-=======
 mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.class
-LoginData.class
+ItemCarrito.class
+EmailService.class
 GenerarReporteServlet.class
->>>>>>> origin/Alberto
 ButtonController.class

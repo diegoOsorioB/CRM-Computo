@@ -1,30 +1,18 @@
-<<<<<<< HEAD
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/User.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/PedidoResource.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/PasswordResetBean.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/ItemCarrito.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/ProductoBean.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/Database.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/mx/tecnm/toluca/crm/computoen/JakartaRestConfiguration.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/Compra.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/Producto.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/ButtonController.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/mx/tecnm/toluca/crm/computoen/resources/JakartaEE10Resource.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/PasswordRecoveryBean.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/CarritoBean.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/PerfilData.java
-/home/diego/NetBeansProjects/CRM-ComputoNube/src/main/java/HistorialComprasBean.java
-=======
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\GenerarReporteServlet.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\PerfilData.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\Producto.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\mx\tecnm\toluca\crm\computoen\JakartaRestConfiguration.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\PasswordRecoveryBean.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\ButtonController.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\User.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\Database.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\ProductoBean.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\PasswordResetBean.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.java
-C:\Users\Alberto\NetBeansProjects\CRM-Computo\src\main\java\LoginData.java
->>>>>>> origin/Alberto
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\Compra.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\Producto.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\PedidoBean.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\PasswordRecoveryBean.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\User.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\PerfilData.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\Database.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\mx\tecnm\toluca\crm\computoen\JakartaRestConfiguration.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\CarritoBean.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\PedidoResource.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\ItemCarrito.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\EmailService.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\GenerarReporteServlet.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\HistorialComprasBean.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\PasswordResetBean.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\ProductoBean.java
+C:\Users\dell\Desktop\Uni\8 semestre\Computo en la nube\U2\CRM 1.0\CRM-Computo\src\main\java\ButtonController.java

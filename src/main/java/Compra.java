@@ -1,16 +1,33 @@
 import java.io.Serializable;
 
 public class Compra implements Serializable {
-    private int idPedido;
+    private int idPedido;    
     private String fecha;
     private double total;
     private String estado;
+    private User usuario;
 
     public Compra(int idPedido, String fecha, double total, String estado) {
         this.idPedido = idPedido;
         this.fecha = fecha;
         this.total = total;
         this.estado = estado;
+    }
+    
+    public Compra(int idPedido, String fecha, double total, String estado, User usuario) {
+        this.idPedido = idPedido;
+        this.fecha = fecha;
+        this.total = total;
+        this.estado = estado;
+        this.usuario=usuario;
+    }
+
+    public User getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
     }
 
     public int getIdPedido() {
