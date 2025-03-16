@@ -33,11 +33,16 @@ public class PedidoBean implements Serializable {
     }
 
     public void actualizarEstado(Compra pedido) {
-        FacesContext.getCurrentInstance().addMessage(null, 
-            new FacesMessage(FacesMessage.SEVERITY_INFO, "Estado actualizado:"+"El pedido #" + pedido.getIdPedido() + " ahora está en estado: " + pedido.getEstado(), 
-            "El pedido #" + pedido.getIdPedido() + " ahora está en estado: " + pedido.getEstado()));
-        pedidoSeleccionado=pedido;
-        actualizarEstadoPedido();
+        if (pedido.getEstado().equals(pedido.getEstadoInicial())){
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN, "No se realizó ningún cambio. El estatus es el mismo", ""));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, 
+                new FacesMessage(FacesMessage.SEVERITY_INFO, 
+                    "Estado actualizado:"+"El pedido #" + pedido.getIdPedido() + " ahora está en estado: " + pedido.getEstado(),""));
+            pedidoSeleccionado=pedido;
+            actualizarEstadoPedido();
+        }
     }
     
     public void actualizarEstadoPedido() {
@@ -56,16 +61,16 @@ public class PedidoBean implements Serializable {
 
                 FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, 
-                    "Éxito", 
-                    "Estado del pedido actualizado y correo enviado correctamente.")
+                    "Correo enviado correctamente", 
+                    "")
                 );
 
             } catch (Exception e) {
                 System.out.println("Error al actualizar pedido o enviar correo: " + e.getMessage());
                 FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                    "Error", 
-                    "No se pudo actualizar el estado del pedido o enviar el correo.")
+                    "No se pudo actualizar el estado del pedido o enviar el correo", 
+                    "")
                 );
             }
         }

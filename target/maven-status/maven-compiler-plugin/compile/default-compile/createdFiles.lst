@@ -6,7 +6,9 @@ Database.class
 EmailService$1.class
 CarritoBean.class
 Compra.class
+Devolucion.class
 ProductoBean.class
+DevolucionBean.class
 HistorialComprasBean.class
 PasswordRecoveryBean$1.class
 PerfilData.class

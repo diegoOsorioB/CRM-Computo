@@ -71,4 +71,21 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+    
+    public void enviarCorreoDevolucion(String email, String nombre, int idDevolucion, String estatus, String razon) {
+        String asunto = "Actualización de tu solicitud de devolución #" + idDevolucion;
+        String mensaje = "Hola " + nombre + ",\n\n"
+                + "Tu solicitud de devolución con ID #" + idDevolucion + " ha cambiado de estado a: " + estatus + ".\n"
+                + "Razón del cambio: " + razon + "\n\n"
+                + "Si tienes dudas, contáctanos.\n\n"
+                + "Saludos,\nEquipo de Atención al Cliente.";
+
+        try {
+            enviarCorreo(email, asunto, mensaje);
+            System.out.println("Correo enviado a " + email + " sobre la devolución #" + idDevolucion);
+        } catch (Exception e) {
+            System.out.println("Error al enviar correo sobre la devolución #" + idDevolucion);
+            e.printStackTrace();
+        }
+    }
 }

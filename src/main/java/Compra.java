@@ -5,6 +5,7 @@ public class Compra implements Serializable {
     private String fecha;
     private double total;
     private String estado;
+    private String estadoInicial;
     private User usuario;
 
     public Compra(int idPedido, String fecha, double total, String estado) {
@@ -12,6 +13,7 @@ public class Compra implements Serializable {
         this.fecha = fecha;
         this.total = total;
         this.estado = estado;
+        this.estadoInicial=estado;
     }
     
     public Compra(int idPedido, String fecha, double total, String estado, User usuario) {
@@ -19,6 +21,7 @@ public class Compra implements Serializable {
         this.fecha = fecha;
         this.total = total;
         this.estado = estado;
+        this.estadoInicial=estado;
         this.usuario=usuario;
     }
 
@@ -61,4 +64,14 @@ public class Compra implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public String getEstadoInicial() {
+        return estadoInicial;
+    }
+
+    public void setEstadoInicial(String estadoInicial) {
+        this.estadoInicial = estadoInicial;
+    }
+    
+    
 }
