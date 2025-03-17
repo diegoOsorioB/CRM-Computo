@@ -2,6 +2,7 @@ mx\tecnm\toluca\crm\computoen\JakartaRestConfiguration.class
 PasswordRecoveryBean.class
 Producto.class
 Database.class
+ReporteBean.class
 ProductoBean.class
 PasswordRecoveryBean$1.class
 PerfilData.class
