@@ -47,4 +47,5 @@ public class ListaDeseosBean implements Serializable {
     public void eliminarDeListaDeseos(Producto producto) {
         listaDeseos.removeIf(p -> p.equals(producto));
     }
+    
 }

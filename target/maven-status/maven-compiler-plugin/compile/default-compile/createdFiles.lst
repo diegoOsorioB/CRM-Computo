@@ -5,6 +5,7 @@ PedidoService.class
 PasswordRecoveryBean.class
 Producto.class
 Database.class
+com\mycompany\crm\computo\JakartaRestConfiguration.class
 CarritoBean.class
 Compra.class
 ProductoBean.class
@@ -16,6 +17,7 @@ User.class
 PedidoBean.class
 PagoBean.class
 PasswordResetBean.class
+com\mycompany\crm\computo\resources\JakartaEE10Resource.class
 mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.class
 ItemCarrito.class
 ButtonController.class
