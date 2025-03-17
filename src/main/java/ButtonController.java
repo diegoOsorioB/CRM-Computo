@@ -1,9 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -15,10 +9,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-/**
- *
- * @author bet10
- */
 @Named
 @RequestScoped
 public class ButtonController {
@@ -33,33 +23,31 @@ public class ButtonController {
         this.user = user;
     }
 
-    public String login() {
-        if ("admin@admin.com".equals(user.getEmail()) && "password".equals(user.getPassword())) {
-            return "Product.xhtml"; // Redirige a la página home si el login es correcto
-        } else {
-            return "login.xhtml?faces-redirect=true"; // Redirige al login si es incorrecto
-        }
-    }
-    
+    // Método para consultar el login del usuario
     public void consultar() {
         try {
+            System.out.println(user.getId() + " NO ID");
             HttpClient client = HttpClient.newHttpClient();
             String jsonBody = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://10.128.1.68:8080/ValidacionUsuarios/api/login_crm"))
+                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            System.out.println("Cuerpo de la respuesta: " + response.body());
+            System.out.println("Código de estado: " + response.statusCode());
+
             if (response.statusCode() == 200) {
-                // Respuesta exitosa
-                System.out.println(response.body());
-                System.out.println(response.statusCode());
                 System.out.println("Conexion exitosa");
+
+                // Aquí es donde deberías recibir el id del usuario después del login exitoso.
+                // Supongamos que la respuesta contiene el ID y lo asignamos a `user.setId()`
+                user.setId(response.body()); // Asigna el id obtenido del backend
+
                 FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
-                
 
                 // Guardar información del usuario en la sesión
                 FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -67,31 +55,30 @@ public class ButtonController {
                 session.setAttribute("userEmail", user.getEmail());
 
             } else {
-                System.out.println(response.statusCode());
-                System.out.println("No existe el correo");
+                System.out.println("Error en el login: " + response.body());
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error General: " + e);
         }
     }
 
+    // Método para cerrar sesión
     public void cerrarSesion() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
         if (session != null) {
-            session.invalidate(); // Invalida la sesión
+            session.invalidate();
         }
     }
 
+    // Método para registrar un nuevo usuario
     public void registrarUsuario() {
 
         // Validar que las contraseñas coincidan
         if (!user.getPassword().equals(user.getPasswordConfirm())) {
             System.out.println("Las contraseñas no coinciden");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Las contraseñas no coinciden.", null));
-            return; // Salir del método si las contraseñas no coinciden
+            return;
         }
 
         String calle = "Avenida las Torres";
@@ -129,7 +116,7 @@ public class ButtonController {
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://10.128.1.68:8080/ValidacionUsuarios/api/validar_crm"))
+                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/registrar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -137,23 +124,16 @@ public class ButtonController {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
-                // Respuesta exitosa
                 System.out.println("Usuario registrado con éxito");
                 System.out.println("Respuesta: " + response.body());
-                FacesContext.getCurrentInstance().getExternalContext().redirect("Home.xhtml");
-
+                FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
             } else {
-                // Error en la respuesta
                 System.out.println("Error al registrar el usuario: " + response.statusCode());
                 System.out.println("Detalle: " + response.body());
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hubo un error al registrar al usuario", null));
-
             }
         } catch (IOException | InterruptedException e) {
-            // Error durante la ejecución
             System.out.println("Error: " + e.getMessage());
         }
     }
-
-
 }

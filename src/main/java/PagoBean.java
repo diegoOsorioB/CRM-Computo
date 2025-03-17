@@ -76,7 +76,7 @@ public class PagoBean implements Serializable {
     }
 
     private void agregarPedido() {
-        String direccionCliente = perfilData.getStreet()+" "+perfilData.getCity(); // Obtener dirección del usuario logueado
+        String direccionCliente = perfilData.getDireccion()+" "+perfilData.getCiudad(); // Obtener dirección del usuario logueado
     Pedido nuevoPedido = new Pedido(items, total, "En proceso", direccionCliente);
         pedidoService.agregarPedido(items, total,direccionCliente);
         
@@ -135,7 +135,7 @@ public class PagoBean implements Serializable {
         document.add(table);
 
         // 📌 Agregar dirección de envío
-        String direccionCliente = perfilData.getStreet() + " " + perfilData.getCity();
+        String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
         document.add(new Paragraph("Dirección de Envío: " + direccionCliente));
 
         document.close();

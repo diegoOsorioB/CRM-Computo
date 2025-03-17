@@ -13,7 +13,7 @@
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
-                background-color: #f7f7f7;
+                background-color: #f0f2f5;
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
@@ -24,6 +24,7 @@
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
+                background: linear-gradient(135deg, #6c757d, #007bff);
             }
 
             .edit-form {
@@ -31,50 +32,19 @@
                 padding: 40px;
                 border-radius: 10px;
                 box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
-                width: 400px;
+                width: 70%;
                 text-align: center;
-            }
-            
-            .profile-section {
-                display:flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20px;
+                box-sizing: border-box;
             }
 
-            .profile-img {
-                width: 90px;
-                height: 90px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 4px solid #007BFF;
-                margin-bottom: 10px;
-                transition: all 0.3s ease;
-            }
-
-            .profile-img:hover {
-                border-color: #0056b3;
-            }
-
-            .upload-btn {
-                background-color: #007BFF;
-                color: white;
-                padding: 10px 15px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 16px;
-                margin-bottom: 15px;
-                transition: background-color 0.3s ease;
-            }
-
-            .upload-btn:hover {
-                background-color: #0056b3;
+            h1 {
+                color: #007BFF;
+                margin-bottom: 30px;
             }
 
             .form-group {
                 margin-bottom: 20px;
                 text-align: left;
-                
             }
 
             .form-control {
@@ -126,10 +96,6 @@
                 background-color: #218838;
             }
 
-            .second-part {
-                display: none;
-            }
-
             .link-back {
                 text-decoration: none;
                 color: #007BFF;
@@ -141,104 +107,83 @@
             .link-back:hover {
                 text-decoration: underline;
             }
-        </style>
 
-        <script type="text/javascript">
-            function showSecondPart() {
-                document.getElementById("firstPart").style.display = "none";
-                document.getElementById("secondPart").style.display = "block";
+            /* Estilo para las columnas */
+            .row {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
             }
 
-             function previewImage(event) {
-        var input = event.target;
-        if (input.files &amp; input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('profileImage').src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-        </script>
-
+            .col-left, .col-right {
+                flex: 0 0 48%; /* Cada columna ocupa el 48% del ancho */
+                margin-bottom: 20px;
+            }
+        </style>
     </h:head>
     <h:body>
         <div class="edit-container">
-            <h:form class="edit-form" enctype="multipart/form-data">
-                <h2>Editar Perfil</h2>
+            <div class="edit-form">
+                <h1>Editar Perfil</h1>
+                <h:form>
+                    <div class="row">
+                        <!-- Columna izquierda -->
+                        <div class="col-left">
+                            <div class="form-group">
+                                <h:outputText value="Nombre:" />
+                                <h:inputText value="#{perfilData.nombre}" class="form-control" />
+                            </div>
 
-                <!-- Imagen de perfil -->
-                <div class="profile-section">
-                    
-                    <!-- Mostrar imagen de perfil si existe -->
-                    <h:graphicImage value="#{perfilData.imageUrl}" alt="Imagen de perfil" class="profile-img" id="profileImage" />
-                    <!-- Input para subir imagen -->
-                    <h:inputFile id="imageFile" value="#{perfilData.imageFile}" styleClass="file-input" onchange="previewImage(event)" />
-                    <h:commandButton value="Actualizar Imagen" action="#{perfilData.uploadImage}" class="upload-btn"/>
-                </div>
+                            <div class="form-group">
+                                <h:outputText value="Apellido Paterno:" />
+                                <h:inputText value="#{perfilData.apellidoPaterno}" class="form-control" />
+                            </div>
 
-                <!-- Primera parte del formulario -->
-                <div id="firstPart">
-                    <div class="form-group">
-                        <h:outputLabel for="firstName" value="Nombre" />
-                        <h:inputText id="firstName" value="#{perfilData.firstName}" required="true" class="form-control"/>
+                            <div class="form-group">
+                                <h:outputText value="Teléfono:" />
+                                <h:inputText value="#{perfilData.telefono}" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <h:outputText value="Dirección:" />
+                                <h:inputText value="#{perfilData.direccion}" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <h:outputText value="Código Postal:" />
+                                <h:inputText value="#{perfilData.codigoPostal}" class="form-control" />
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha -->
+                        <div class="col-right">
+                            <div class="form-group">
+                                <h:outputText value="Apellido Materno:" />
+                                <h:inputText value="#{perfilData.apellidoMaterno}" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <h:outputText value="Email:" />
+                                <h:inputText value="#{perfilData.email}" readonly="true" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <h:outputText value="Ciudad:" />
+                                <h:inputText value="#{perfilData.ciudad}" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <h:outputText value="Número de Cuenta:" />
+                                <h:inputText value="#{perfilData.numCuenta}" class="form-control" />
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <h:outputLabel for="lastName" value="Apellido" />
-                        <h:inputText id="lastName" value="#{perfilData.lastName}" required="true" class="form-control"/>
-                    </div>
+                    <h:commandButton value="Guardar Cambios" action="#{perfilData.updateProfile()}" class="btn2" />
 
-                    <div class="form-group">
-                        <h:outputLabel for="email" value="Correo Electrónico" />
-                        <h:inputText id="email" value="#{perfilData.email}" required="true" class="form-control"/>
-                    </div>
-
-                    <div class="form-group">
-                        <h:outputLabel for="username" value="Usuario" />
-                        <h:inputText id="username" value="#{perfilData.username}" required="true" class="form-control"/>
-                    </div>
-
-                    <div class="form-group">
-                        <h:outputLabel for="password" value="Nueva Contraseña" />
-                        <h:inputSecret id="password" value="#{perfilData.password}" class="form-control"/>
-                    </div>
-
-                    <button type="button" onclick="showSecondPart()" class="btn btn-primary">Continuar</button>
-                </div>
-
-                <!-- Segunda parte del formulario -->
-                <div id="secondPart" class="second-part">
-                    <div class="form-group">
-                        <h:outputLabel for="street" value="Calle" />
-                        <h:inputText id="street" value="#{perfilData.street}" required="true" class="form-control"/>
-                    </div>
-
-                    <div class="form-group">
-                        <h:outputLabel for="city" value="Ciudad" />
-                        <h:inputText id="city" value="#{perfilData.city}" required="true" class="form-control"/>
-                    </div>
-
-                    <div class="form-group">
-                        <h:outputLabel for="country" value="País" />
-                        <h:inputText id="country" value="#{perfilData.country}" required="true" class="form-control"/>
-                    </div>
-
-                    <div class="form-group">
-                        <h:outputLabel for="postalCode" value="Código Postal" />
-                        <h:inputText id="postalCode" value="#{perfilData.postalCode}" required="true" class="form-control"/>
-                    </div>
-
-                    <div class="form-group">
-                        <h:outputLabel for="bankInfo" value="Información Bancaria" />
-                        <h:inputText id="bankInfo" value="#{perfilData.bankInfo}" required="true" class="form-control"/>
-                    </div>
-
-                    <h:commandButton value="Guardar Cambios" action="#{perfilData.updateProfile()}" class="btn2 btn-success"/>
-                </div>
-
-                <h:link value="Volver al perfil" outcome="Product.xhtml" class="link-back"/>
-            </h:form>
+                    <a href="Product.xhtml" class="link-back">Volver a la página anterior</a>
+                </h:form>
+            </div>
         </div>
 
         <!-- Bootstrap JS, Popper.js, and jQuery -->

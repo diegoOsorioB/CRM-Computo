@@ -84,7 +84,7 @@
                     <h:inputSecret id="password" value="#{buttonController.user.password}" required="true" requiredMessage="La contraseña es obligatoria" styleClass="form-control" />
                     <h:message for="password" styleClass="error-message"/>
                 </div>
-                <h:commandButton value="Ingresar" action="#{buttonController.login()}" styleClass="btn btn-primary"/>
+                <h:commandButton value="Ingresar" action="#{buttonController.consultar()}" styleClass="btn btn-primary"/>
                 <div class="forgot-password mt-3">
                     <h:link value="¿Olvidaste tu contraseña?" outcome="ForgotPass.xhtml"/>
                 </div>

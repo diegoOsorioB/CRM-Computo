@@ -1,129 +1,182 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import jakarta.servlet.http.Part;
-import java.io.File;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Named
-@RequestScoped
+@SessionScoped
 public class PerfilData implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(PerfilData.class.getName());
 
-    private String firstName;
-    private String lastName;
+    private String id;
+    private String nombre;
+    private String apellidoPaterno;
+    private String apellidoMaterno;
+    private String telefono;
     private String email;
-    private String username;
-    private String password;
-    private String street;
-    private String city;
-    private String country;
-    private String postalCode;
-    private String bankInfo;
-    private String imageUrl;//="https://www.google.com/imgres?q=imagen%20png&imgurl=https%3A%2F%2Fraulperez.tieneblog.net%2Fwp-content%2Fuploads%2F2015%2F09%2Ftux.jpg&imgrefurl=https%3A%2F%2Fraulperez.tieneblog.net%2Fconvertir-imagen-jpg-a-png-con-gimp%2F&docid=5AKTfWxOhe2f3M&tbnid=c-606BS9DAzetM&vet=12ahUKEwiYsKTCjvyLAxVHHUQIHQT0BToQM3oECHQQAA..i&w=256&h=256&hcb=2&ved=2ahUKEwiYsKTCjvyLAxVHHUQIHQT0BToQM3oECHQQAA";
-    private Part imageFile;
-
-    private static final String UPLOAD_DIR = "/opt/uploads"; // Ruta donde se guardarán las imágenes
+    private String password = "";
+    private String direccion = "";
+    private String ciudad = "";
+    private String codigoPostal = "";
+    private String numCuenta = "";
+    private String passwordConfirm = "";
+    private String imagenUrl = "";
 
     @PostConstruct
     public void init() {
-        cargarDatosDesdeJSON();
-    }
-
-    private void cargarDatosDesdeJSON() {
-        // Simulación de la recepción del JSON desde el ERP
-        String jsonData = "{ \"firstName\": \"Juan\", \"lastName\": \"Perez\", \"email\": \"juan.perez@example.com\", \"username\": \"juanp\", \"street\": \"Av. Siempre Viva\", \"city\": \"Springfield\", \"country\": \"USA\", \"postalCode\": \"12345\", \"bankInfo\": \"Cuenta 123456\", \"imageUrl\": \"default.jpg\" }";
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(jsonData);
-
-            this.firstName = rootNode.path("firstName").asText();
-            this.lastName = rootNode.path("lastName").asText();
-            this.email = rootNode.path("email").asText();
-            this.username = rootNode.path("username").asText();
-            this.street = rootNode.path("street").asText();
-            this.city = rootNode.path("city").asText();
-            this.country = rootNode.path("country").asText();
-            this.postalCode = rootNode.path("postalCode").asText();
-            this.bankInfo = rootNode.path("bankInfo").asText();
-            this.imageUrl = rootNode.path("imageUrl").asText();
-
-            // Si la imagen no está definida, asignar una por defecto
-            if (this.imageUrl == null || this.imageUrl.isEmpty()) {
-                this.imageUrl = "/home/diego/Descargas/linu.jpg";
-            }
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error al procesar el JSON del ERP", e);
-        }
-    }
-
-    // Método para actualizar el perfil
-    public void updateProfile() {
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil actualizado correctamente", ""));
-    }
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 
-    // Método para subir la imagen de perfil
-    public void uploadImage() {
-        if (imageFile != null && imageFile.getSize() > 0) {
-            try {
-                String fileName = Paths.get(imageFile.getSubmittedFileName()).getFileName().toString();
-                Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (session != null) {
+            this.email = (String) session.getAttribute("userEmail");
 
-                // Crear la carpeta si no existe
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                // Guardar el archivo en el servidor
-                Path filePath = uploadPath.resolve(fileName);
-                try (InputStream input = imageFile.getInputStream()) {
-                    Files.copy(input, filePath, StandardCopyOption.REPLACE_EXISTING);
-                }
-
-                // Actualizar la URL de la imagen para mostrarla en la interfaz
-                this.imageUrl = "/uploads/" + fileName;
-
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Imagen actualizada correctamente"));
-
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Error al subir la imagen", e);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al subir la imagen", ""));
+            if (this.email != null) {
+                cargarPerfilDesdeAPI(this.email);
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo no encontrado en la sesión", ""));
             }
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Debe seleccionar una imagen", ""));
         }
     }
+
+    private void cargarPerfilDesdeAPI(String email) {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            String url = "http://localhost:8080/ApiCRM/api/usuarios/consultarPorCorreo/" + email;
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode = mapper.readTree(response.body());
+
+                this.id = rootNode.path("_id").asText();
+                this.nombre = rootNode.path("nombre").asText();
+                this.apellidoPaterno = rootNode.path("apellidoPaterno").asText();
+                this.apellidoMaterno = rootNode.path("apellidoMaterno").asText();
+                this.telefono = rootNode.path("telefono").asText();
+                this.email = rootNode.path("email").asText();
+                this.direccion = rootNode.path("direccion").asText();
+                this.ciudad = rootNode.path("ciudad").asText();
+                this.codigoPostal = rootNode.path("codigoPostal").asText();
+                this.numCuenta = rootNode.path("numCuenta").asText();
+
+                if (this.imagenUrl == null || this.imagenUrl.isEmpty()) {
+                    this.imagenUrl = "/uploads/default.jpg";
+                }
+
+                FacesContext contextFaces = FacesContext.getCurrentInstance();
+                contextFaces.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil cargado correctamente", ""));
+            } else {
+                FacesContext contextFaces = FacesContext.getCurrentInstance();
+                contextFaces.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al obtener el perfil", ""));
+                LOGGER.log(Level.SEVERE, "Error al obtener el perfil: " + response.statusCode());
+            }
+
+        } catch (IOException | InterruptedException e) {
+            LOGGER.log(Level.SEVERE, "Error al procesar la solicitud de perfil", e);
+        }
+    }
+
+    public void updateProfile() {
+    System.out.println("Entró al método updateProfile");
+    if (this.id == null || this.id.isEmpty()) {
+        System.out.println(this.id+" "+this.email);
+    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
+    return;
+}
+
+    try {
+        if (this.id == null || this.id.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
+            return;
+        }
+        System.out.println("ID válido: " + this.id);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(this);
+        System.out.println("JSON generado para actualizar: " + json);
+
+        HttpClient client = HttpClient.newHttpClient();
+        String url = "http://localhost:8080/ApiCRM/api/usuarios/modificar/" + this.email;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil actualizado correctamente", ""));
+            // Redirigir a la página de éxito después de la actualización
+            context.getExternalContext().redirect("Product.xhtml");
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar el perfil", ""));
+        }
+    } catch (IOException | InterruptedException e) {
+        LOGGER.log(Level.SEVERE, "Error al actualizar el perfil", e);
+    }
+}
 
     // Getters y Setters
-    public String getFirstName() {
-        return firstName;
+    public String getId() {
+        return id;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellidoPaterno() {
+        return apellidoPaterno;
+    }
+
+    public void setApellidoPaterno(String apellidoPaterno) {
+        this.apellidoPaterno = apellidoPaterno;
+    }
+
+    public String getApellidoMaterno() {
+        return apellidoMaterno;
+    }
+
+    public void setApellidoMaterno(String apellidoMaterno) {
+        this.apellidoMaterno = apellidoMaterno;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public String getEmail() {
@@ -134,14 +187,6 @@ public class PerfilData implements Serializable {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -150,59 +195,51 @@ public class PerfilData implements Serializable {
         this.password = password;
     }
 
-    public String getStreet() {
-        return street;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
-    public String getCity() {
-        return city;
+    public String getCiudad() {
+        return ciudad;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
     }
 
-    public String getCountry() {
-        return country;
+    public String getCodigoPostal() {
+        return codigoPostal;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCodigoPostal(String codigoPostal) {
+        this.codigoPostal = codigoPostal;
     }
 
-    public String getPostalCode() {
-        return postalCode;
+    public String getNumCuenta() {
+        return numCuenta;
     }
 
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
+    public void setNumCuenta(String numCuenta) {
+        this.numCuenta = numCuenta;
     }
 
-    public String getBankInfo() {
-        return bankInfo;
+    public String getPasswordConfirm() {
+        return passwordConfirm;
     }
 
-    public void setBankInfo(String bankInfo) {
-        this.bankInfo = bankInfo;
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImagenUrl() {
+        return imagenUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public Part getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(Part imageFile) {
-        this.imageFile = imageFile;
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
     }
 }

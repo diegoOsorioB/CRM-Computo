@@ -77,6 +77,12 @@
             <version>7.1.15</version>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>5.4.0-alpha0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
     <build>
