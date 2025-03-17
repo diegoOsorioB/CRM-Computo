@@ -45,7 +45,7 @@ public class PedidoBean implements Serializable {
 
     private void cargarPedidos() {
         listaPedidos = new ArrayList<>();
-        listaPedidos.add(new Compra(101, "2025-03-01", 250.00, "Pendiente", new User("1", "Juan", "Perez","perez@gmail.com")));
+        listaPedidos.add(new Compra(101, "2025-03-01", 250.00, "Pendiente", new User("1", "Juan", "Perez","osoriodiego151@gmail.com")));
         listaPedidos.add(new Compra(102, "2025-03-05", 100.00, "En Proceso", new User("2", "Maria", "Lopez", "lopez@gmail.com")));
         listaPedidos.add(new Compra(103, "2025-03-07", 75.50, "Enviado", new User("3", "Carlos", "Hernandez", "hernanddez@gmail.com")));
         listaPedidos.add(new Compra(104, "2025-03-10", 300.75, "Entregado", new User("4", "Ana", "Ramirez", "leopablo26@gmail.com")));

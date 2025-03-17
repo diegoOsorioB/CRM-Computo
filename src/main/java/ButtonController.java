@@ -73,6 +73,12 @@ public class ButtonController {
 
     // Método para registrar un nuevo usuario
     public void registrarUsuario() {
+        
+        if (!user.isAceptaTerminos()) {
+        FacesContext.getCurrentInstance().addMessage(null, 
+            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe aceptar los términos y condiciones.", null));
+        return;
+    }
 
         // Validar que las contraseñas coincidan
         if (!user.getPassword().equals(user.getPasswordConfirm())) {
@@ -132,3 +138,4 @@ public class ButtonController {
         }
     }
 }
+    

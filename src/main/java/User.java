@@ -12,6 +12,7 @@ public class User {
     private String codigoPostal = "";
     private String numCuenta = "";
     private String passwordConfirm = "";
+     private boolean aceptaTerminos;
 
     public User() {
     }
@@ -119,4 +120,14 @@ public class User {
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
     }
+   
+
+public boolean isAceptaTerminos() {
+    return aceptaTerminos;
+}
+
+public void setAceptaTerminos(boolean aceptaTerminos) {
+    this.aceptaTerminos = aceptaTerminos;
+}
+
 }

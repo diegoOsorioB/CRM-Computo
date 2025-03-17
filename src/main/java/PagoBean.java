@@ -72,7 +72,7 @@ public class PagoBean implements Serializable {
 
     private boolean enviarDatosAlERP() {
         // Simulación de pago aceptado
-        return true;
+        return false;
     }
 
     private void agregarPedido() {
