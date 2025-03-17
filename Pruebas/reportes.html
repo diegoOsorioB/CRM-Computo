@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Generar Reportes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn-container .btn {
+            width: 48%;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+        .form-select {
+            border-radius: 5px;
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .container a {
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Generar Reportes</h2>
+        <form id="reporteForm" onsubmit="return false;">
+            <div class="mb-3">
+                <label for="tipoReporte" class="form-label">Seleccione el tipo de reporte:</label>
+                <select class="form-select" name="tipoReporte" id="tipoReporte" required="required">
+                    <option value="ventas">Ventas</option>
+                    <option value="inventario">Inventario</option>
+                    <option value="pedidos">Pedidos</option>
+                    <option value="usuarios">Usuarios</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="formato" class="form-label">Seleccione el formato de descarga:</label>
+                <select class="form-select" name="formato" id="formato" required="required">
+                    <option value="pdf">PDF</option>
+                    <option value="csv">CSV</option>
+                    <option value="excel">Excel</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaInicio" class="form-label">Fecha de inicio:</label>
+                <input type="date" class="form-control" name="fechaInicio" id="fechaInicio"/>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaFin" class="form-label">Fecha de fin:</label>
+                <input type="date" class="form-control" name="fechaFin" id="fechaFin"/>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="btn btn-primary" onclick="generateReport()">Generar Reporte</button>
+            </div>
+        </form>
+
+        <div class="mt-4 text-center">
+            <a href="Product.xhtml" class="btn btn-warning">Regresar a Productos</a>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function generateReport() {
+            var tipo = document.getElementById("tipoReporte").value;
+            var formato = document.getElementById("formato").value;
+            var fechaInicio = document.getElementById("fechaInicio").value;
+            var fechaFin = document.getElementById("fechaFin").value;
+
+            if (formato === "csv") {
+                generateCSVReport(tipo, fechaInicio, fechaFin);
+            } else if (formato === "pdf") {
+                generatePDFReport(tipo, fechaInicio, fechaFin);
+            } else if (formato === "excel") {
+                generateExcelReport(tipo, fechaInicio, fechaFin);
+            }
+        }
+
+        function generateCSVReport(tipo, fechaInicio, fechaFin) {
+            var datos = [
+                ["ID", "Producto", "Cantidad", "Precio", "Total"],
+                [1, "Café Robusta", 10, 8.0, 80.0],
+                [2, "Café Arábica", 5, 10.0, 50.0]
+            ];
+
+            var csvContent = "data:text/csv;charset=utf-8,";
+
+            datos.forEach(function(rowArray) {
+                let row = rowArray.join(",");
+                csvContent += row + "\r\n";
+            });
+
+            // Aquí simulamos las carpetas en el nombre del archivo
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "reportes/csv/reporte_" + tipo + ".csv");
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        function generatePDFReport(tipo, fechaInicio, fechaFin) {
+            var doc = new jsPDF();
+            doc.text("Reporte de " + tipo, 10, 10);
+
+            var data = [
+                ["Producto", "Cantidad", "Precio", "Total"],
+                ["Café Robusta", 10, 8.0, 80.0],
+                ["Café Arábica", 5, 10.0, 50.0]
+            ];
+
+            var y = 20;
+            data.forEach(function(row, index) {
+                doc.text(row.join(" "), 10, y);
+                y += 10;
+            });
+
+            // Simulamos las carpetas en el nombre del archivo
+            doc.save('reportes/pdf/reporte_' + tipo + '.pdf');
+        }
+
+        function generateExcelReport(tipo, fechaInicio, fechaFin) {
+            var data = [
+                ["ID", "Producto", "Cantidad", "Precio", "Total"],
+                [1, "Café Robusta", 10, 8.0, 80.0],
+                [2, "Café Arábica", 5, 10.0, 50.0]
+            ];
+
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, "Reporte " + tipo);
+
+            // Simulamos las carpetas en el nombre del archivo
+            XLSX.writeFile(wb, 'reportes/excel/reporte_' + tipo + '.xlsx');
+        }
+    </script>
+
+    <!-- Cargar la librería jsPDF desde CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Cargar la librería SheetJS desde CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+</body>
+</html>
