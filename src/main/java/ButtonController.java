@@ -81,15 +81,11 @@ public class ButtonController {
             return;
         }
 
-        String calle = "Avenida las Torres";
-        int numero = 1;
-        String colonia = "centro";
-        String estado = "México";
-        String fechaNacimiento = "1999-05-15T00:00:00Z";
+     
 
         System.out.println("Datos del usuario: " + user.getNombre() + " " + user.getApellidoPaterno() + " " + user.getApellidoMaterno()
-                + " " + user.getEmail() + " " + user.getPassword() + " " + user.getTelefono() + " " + calle + " " + numero + " " + colonia + " " + user.getCiudad()
-                + " " + estado + " " + user.getCodigoPostal() + " " + fechaNacimiento + " " + user.getNumCuenta());
+                + " " + user.getEmail() + " " + user.getPassword() + " " + user.getTelefono() + " " + user.getCiudad()
+                 + " " + user.getCodigoPostal()  + " " + user.getNumCuenta());
 
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -101,18 +97,14 @@ public class ButtonController {
                     + "\"email\": \"%s\","
                     + "\"password\": \"%s\","
                     + "\"telefono\": \"%s\","
-                    + "\"calle\": \"%s\","
-                    + "\"numero\": %d,"
-                    + "\"colonia\": \"%s\","
+                    + "\"direccion\": \"%s\","
                     + "\"ciudad\": \"%s\","
-                    + "\"estado\": \"%s\","
-                    + "\"cp\": \"%s\","
-                    + "\"fechaNacimiento\": \"%s\","
-                    + "\"noCuenta\": \"%s\""
+                    + "\"codigoPostal\": \"%s\","
+                    + "\"numCuenta\": \"%s\""
                     + "}",
                     user.getNombre(), user.getApellidoPaterno(), user.getApellidoMaterno(), user.getEmail(), user.getPassword(),
-                    user.getTelefono(), calle, numero, colonia, user.getCiudad(), estado, user.getCodigoPostal(),
-                    fechaNacimiento, user.getNumCuenta()
+                    user.getTelefono(), user.getDireccion(), user.getCiudad(), user.getCodigoPostal(),
+                     user.getNumCuenta()
             );
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -128,6 +120,9 @@ public class ButtonController {
                 System.out.println("Respuesta: " + response.body());
                 FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
             } else {
+                if (response.statusCode()==409) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo ya registrado", null));
+                }
                 System.out.println("Error al registrar el usuario: " + response.statusCode());
                 System.out.println("Detalle: " + response.body());
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hubo un error al registrar al usuario", null));

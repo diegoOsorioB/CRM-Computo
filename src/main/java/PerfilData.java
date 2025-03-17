@@ -29,9 +29,9 @@ public class PerfilData implements Serializable {
     private String email;
     private String password = "";
     private String direccion = "";
-    private String ciudad = "";
-    private String codigoPostal = "";
-    private String numCuenta = "";
+    private String ciudad;
+    private String codigoPostal;
+    private String numCuenta;
     private String passwordConfirm = "";
     private String imagenUrl = "";
 
@@ -46,7 +46,7 @@ public class PerfilData implements Serializable {
             if (this.email != null) {
                 cargarPerfilDesdeAPI(this.email);
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo no encontrado en la sesión", ""));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo no encontrado en la sesión", ""));
             }
         }
     }
@@ -62,11 +62,13 @@ public class PerfilData implements Serializable {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            System.out.println("📥 Respuesta del servidor: " + response.body()); // Verifica el JSON recibido
+
             if (response.statusCode() == 200) {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode rootNode = mapper.readTree(response.body());
 
-                this.id = rootNode.path("_id").asText();
+                this.id = rootNode.path("id").asText(); // ✅ Se obtiene el ID correctamente
                 this.nombre = rootNode.path("nombre").asText();
                 this.apellidoPaterno = rootNode.path("apellidoPaterno").asText();
                 this.apellidoMaterno = rootNode.path("apellidoMaterno").asText();
@@ -77,66 +79,65 @@ public class PerfilData implements Serializable {
                 this.codigoPostal = rootNode.path("codigoPostal").asText();
                 this.numCuenta = rootNode.path("numCuenta").asText();
 
+                System.out.println("✅ ID extraído correctamente: " + this.id);
+
+                // Guarda el ID en la sesión
+                FacesContext context = FacesContext.getCurrentInstance();
+                HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
+                session.setAttribute("userId", this.id);
+
                 if (this.imagenUrl == null || this.imagenUrl.isEmpty()) {
                     this.imagenUrl = "/uploads/default.jpg";
                 }
 
-                FacesContext contextFaces = FacesContext.getCurrentInstance();
-                contextFaces.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil cargado correctamente", ""));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil cargado correctamente", ""));
             } else {
-                FacesContext contextFaces = FacesContext.getCurrentInstance();
-                contextFaces.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al obtener el perfil", ""));
-                LOGGER.log(Level.SEVERE, "Error al obtener el perfil: " + response.statusCode());
+                LOGGER.log(Level.SEVERE, "❌ Error al obtener el perfil: " + response.statusCode());
             }
-
         } catch (IOException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "Error al procesar la solicitud de perfil", e);
+            LOGGER.log(Level.SEVERE, "❌ Error al procesar la solicitud de perfil", e);
         }
     }
 
     public void updateProfile() {
-    System.out.println("Entró al método updateProfile");
-    if (this.id == null || this.id.isEmpty()) {
-        System.out.println(this.id+" "+this.email);
-    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
-    return;
-}
+        System.out.println("🔄 Entró al método updateProfile");
 
-    try {
         if (this.id == null || this.id.isEmpty()) {
+            System.out.println("⚠️ ID no disponible. No se puede actualizar el perfil.");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
             return;
         }
-        System.out.println("ID válido: " + this.id);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(this);
-        System.out.println("JSON generado para actualizar: " + json);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(this);
+            System.out.println("📤 JSON generado para actualizar: " + json);
 
-        HttpClient client = HttpClient.newHttpClient();
-        String url = "http://localhost:8080/ApiCRM/api/usuarios/modificar/" + this.email;
+            HttpClient client = HttpClient.newHttpClient();
+            String url = "http://localhost:8080/ApiCRM/api/usuarios/modificar/" + this.email;
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(json))
-                .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() == 200) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil actualizado correctamente", ""));
-            // Redirigir a la página de éxito después de la actualización
-            context.getExternalContext().redirect("Product.xhtml");
-        } else {
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar el perfil", ""));
+            System.out.println("📥 Respuesta del servidor al actualizar: " + response.body());
+
+            if (response.statusCode() == 200) {
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil actualizado correctamente", ""));
+                context.getExternalContext().redirect("Product.xhtml");
+            } else {
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar el perfil", ""));
+            }
+        } catch (IOException | InterruptedException e) {
+            LOGGER.log(Level.SEVERE, "❌ Error al actualizar el perfil", e);
         }
-    } catch (IOException | InterruptedException e) {
-        LOGGER.log(Level.SEVERE, "Error al actualizar el perfil", e);
     }
-}
 
     // Getters y Setters
     public String getId() {

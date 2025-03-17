@@ -9,6 +9,55 @@
     <title>Carrito de Compras</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+    <style>
+        .container2 {
+            background: #666666;
+            padding: 30px;
+            border-radius: 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            color: white;
+        }
+        .container2 .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .container2 .col-md-4 {
+            flex: 1 1 300px;
+            margin-bottom: 20px;
+        }
+        .container2 ul {
+            list-style: none;
+            padding: 0;
+        }
+        .container2 ul li {
+            margin-bottom: 5px;
+        }
+        .navbar {
+            background: #007BFF;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        footer {
+            background-color: white;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        footer h5 {
+            margin-bottom: 15px;
+        }
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+        footer ul li {
+            margin-bottom: 5px;
+        }
+    </style>
 </h:head>
 <h:body>
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
@@ -23,12 +72,6 @@
                     <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
                 </ul>
-                <form class="d-flex" action="#" method="get">
-                    <input type="text" name="search" id="search" placeholder="Buscar Producto"
-                           class="form-control me-2" style="max-width: 250px;"/>
-                    <input type="submit" value="Buscar" class="btn" style="background-color: #00CC00; color: #FFFFFF; border: none;"/>
-                </form>
-
             </div>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
@@ -100,6 +143,39 @@
             </h:panelGroup>
         </div>
     </h:form>
+    
+    <footer class="bg-light p-4 mt-4">
+        <div class="container2">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Sobre Nosotros</h5>
+                    <p>
+                        Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.<br/>
+                        Ofrecemos una amplia selección de productos blancos de alta calidad, desde ropa de cama y toallas hasta electrodomésticos y decoración.<br/>
+                        Renueva tu espacio con estilo y confort.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contáctanos</h5>
+                    <ul>
+                        <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
+                        <li>Teléfono: +1 800 123 4567</li>
+                        <li>Email: contacto@tienda.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul>
+                        <li><a href="Product.xhtml" style="color: #007BFF;">Inicio</a></li>
+                        <li><a href="Product.xhtml" style="color: #007BFF;">Productos</a></li>
+                        <li><a href="Carrito.xhtml" style="color: #007BFF;">Carrito</a></li>
+                        <li><a href="atencionCliente.xhtml" style="color: #007BFF;">Atención a Cliente</a></li>
+                        <li><a href="#" style="color: #007BFF;">Política de Privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
 </h:body>

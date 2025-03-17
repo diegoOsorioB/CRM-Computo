@@ -42,6 +42,7 @@
                         <h:form class="row g-3">
                             <h:messages globalOnly="true" styleClass="error-message mb-3" />
                             <h:panelGroup layout="block">
+                                <h:messages globalOnly="true" styleClass="error-message mb-3" />
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <h:outputLabel for="firstName" value="Nombre: " styleClass="form-label"/>
@@ -78,7 +79,7 @@
                                                      required="true" requiredMessage="EL código postal es obligatorio" />
                                         <h:message for="cp" styleClass="error-message" />
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <h:outputLabel for="ciudad" value="Ciudad: " styleClass="form-label"/>
                                         <h:inputText id="ciudad" class="form-control" value="#{buttonController.user.ciudad}"
@@ -87,30 +88,37 @@
                                     </div>
 
                                 </div>
-                                <h:messages globalOnly="true" styleClass="error-message mb-3" />
+                                
                                 <div class="col-md-6">
 
                                     <div class="mb-3">
                                         <h:outputLabel for="phoneNumber" value="Teléfono: " styleClass="form-label"/>
                                         <h:inputText id="phoneNumber" class="form-control" maxlength="10" value="#{buttonController.user.telefono}"
-                                                     required="true" requiredMessage="El teléfono es obligatorio" />
+                                                     required="true" requiredMessage="El teléfono es obligatorio">
+                                            <f:validator validatorId="telefonoValidator" />
+                                        </h:inputText>
                                         <h:message for="phoneNumber" styleClass="error-message" />
                                     </div>
-                                    
+
+
                                     <div class="mb-3">
                                         <h:outputLabel for="cuenta" value="Número de cuenta: " styleClass="form-label"/>
                                         <h:inputText id="cuenta" class="form-control" maxlength="18" value="#{buttonController.user.numCuenta}"
                                                      required="true" requiredMessage="El número de cuenta es obligatorio" />
                                         <h:message for="cuenta" styleClass="error-message" />
                                     </div>
-                                    
+
                                     <div class="mb-3">
-                                        <h:outputLabel for="idcorreo" value="Correo eléctronico: " styleClass="form-label"/>
+                                        <h:outputLabel for="idcorreo" value="Correo electrónico: " styleClass="form-label"/>
                                         <h:inputText id="idcorreo" class="form-control" required="true" 
-                                                     requiredMessage="El correo electrónico es obligatorio" value="#{buttonController.user.email}"
-                                                     />
+                                                     requiredMessage="El correo electrónico es obligatorio" 
+                                                     value="#{buttonController.user.email}">
+                                            <f:validator validatorId="emailValidator" />
+                                        </h:inputText>
                                         <h:message for="idcorreo" styleClass="error-message" />
                                     </div>
+
+
 
                                     <div class="mb-3">
                                         <h:outputLabel for="password" value="Contraseña: " styleClass="form-label"/>
@@ -133,10 +141,10 @@
                                                  action="#{buttonController.registrarUsuario()}"
                                                  />
                             </h:panelGroup>
-                      
+
                         </h:form>
 
-                       <div class="col-12 d-flex justify-content-center flex-wrap mt-3">
+                        <div class="col-12 d-flex justify-content-center flex-wrap mt-3">
                             <a href="login.xhtml">¿Ya tienes cuenta?</a>
                         </div>
                     </div>

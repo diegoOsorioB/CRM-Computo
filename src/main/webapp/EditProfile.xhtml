@@ -1,15 +1,13 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" 
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:c="jakarta.tags.core"
-      xmlns:t="jakarta.faces.facelets"
       xmlns:f="jakarta.faces.core">
     <h:head>
         <title>Editar Perfil</title>
         <!-- Bootstrap 4 -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-pzjw8f+ua7Kw1TIq0wJv1WrVe1GpzTjLlvhjmAGFvgtDJyQFNjN9WvTeFX16f1X3" crossorigin="anonymous"/>
-        
+
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
@@ -108,7 +106,6 @@
                 text-decoration: underline;
             }
 
-            /* Estilo para las columnas */
             .row {
                 display: flex;
                 flex-wrap: wrap;
@@ -116,8 +113,14 @@
             }
 
             .col-left, .col-right {
-                flex: 0 0 48%; /* Cada columna ocupa el 48% del ancho */
+                flex: 0 0 48%;
                 margin-bottom: 20px;
+            }
+
+            .error-message {
+                color: red;
+                list-style: none;
+                padding: 0;
             }
         </style>
     </h:head>
@@ -126,32 +129,52 @@
             <div class="edit-form">
                 <h1>Editar Perfil</h1>
                 <h:form>
+                    <!-- Mensajes globales de error -->
+                    <h:messages globalOnly="true" styleClass="error-message mb-3" />
+
                     <div class="row">
                         <!-- Columna izquierda -->
                         <div class="col-left">
                             <div class="form-group">
                                 <h:outputText value="Nombre:" />
-                                <h:inputText value="#{perfilData.nombre}" class="form-control" />
+                                <h:inputText value="#{perfilData.nombre}" class="form-control" required="true" requiredMessage="El nombre es obligatorio" />
+                                <h:message for="nombre" styleClass="error-message" />
                             </div>
 
                             <div class="form-group">
                                 <h:outputText value="Apellido Paterno:" />
-                                <h:inputText value="#{perfilData.apellidoPaterno}" class="form-control" />
-                            </div>
-
+                                <h:inputText value="#{perfilData.apellidoPaterno}" class="form-control" required="true" requiredMessage="El apellido paterno es obligatorio" />
+                                <h:message for="apellidoPaterno" styleClass="error-message" />
+                            </div>                      
                             <div class="form-group">
                                 <h:outputText value="Teléfono:" />
-                                <h:inputText value="#{perfilData.telefono}" class="form-control" />
+                                <h:inputText 
+                                    id="telefono" 
+                                    value="#{perfilData.telefono}" 
+                                    class="form-control" 
+                                    maxlength="10" 
+                                    required="true" 
+                                    requiredMessage="El teléfono es obligatorio">
+                                    <f:validator validatorId="telefonoValidator" />
+                                </h:inputText>
+                                <h:message for="telefono" styleClass="error-message" />
+                            </div>
+                            
+                             <div class="form-group">
+                                <h:outputText value="Email:" />
+                                <h:inputText value="#{perfilData.email}" class="form-control" required="true" requiredMessage="El correo electrónico es obligatorio">
+                                    <f:validator validatorId="emailValidator" />
+                                </h:inputText>
+                                <!-- Mostrar mensaje específico para el campo de email -->
+                                <h:message for="email" styleClass="error-message" />
                             </div>
 
-                            <div class="form-group">
-                                <h:outputText value="Dirección:" />
-                                <h:inputText value="#{perfilData.direccion}" class="form-control" />
-                            </div>
+                            
 
                             <div class="form-group">
                                 <h:outputText value="Código Postal:" />
-                                <h:inputText value="#{perfilData.codigoPostal}" class="form-control" />
+                                <h:inputText value="#{perfilData.codigoPostal}" class="form-control" required="true" requiredMessage="El código postal es obligatorio" />
+                                <h:message for="codigoPostal" styleClass="error-message" />
                             </div>
                         </div>
 
@@ -159,28 +182,31 @@
                         <div class="col-right">
                             <div class="form-group">
                                 <h:outputText value="Apellido Materno:" />
-                                <h:inputText value="#{perfilData.apellidoMaterno}" class="form-control" />
+                                <h:inputText value="#{perfilData.apellidoMaterno}" class="form-control" required="true" requiredMessage="El apellido materno es obligatorio" />
+                                <h:message for="apellidoMaterno" styleClass="error-message" />
                             </div>
 
-                            <div class="form-group">
-                                <h:outputText value="Email:" />
-                                <h:inputText value="#{perfilData.email}" readonly="true" class="form-control" />
+                           <div class="form-group">
+                                <h:outputText value="Dirección:" />
+                                <h:inputText value="#{perfilData.direccion}" class="form-control" required="true" requiredMessage="La dirección es obligatoria" />
+                                <h:message for="direccion" styleClass="error-message" />
                             </div>
 
                             <div class="form-group">
                                 <h:outputText value="Ciudad:" />
-                                <h:inputText value="#{perfilData.ciudad}" class="form-control" />
+                                <h:inputText value="#{perfilData.ciudad}" class="form-control" required="true" requiredMessage="La ciudad es obligatoria" />
+                                <h:message for="ciudad" styleClass="error-message" />
                             </div>
 
                             <div class="form-group">
                                 <h:outputText value="Número de Cuenta:" />
-                                <h:inputText value="#{perfilData.numCuenta}" class="form-control" />
+                                <h:inputText value="#{perfilData.numCuenta}" class="form-control" required="true" requiredMessage="El número de cuenta es obligatorio" />
+                                <h:message for="numCuenta" styleClass="error-message" />
                             </div>
                         </div>
                     </div>
 
                     <h:commandButton value="Guardar Cambios" action="#{perfilData.updateProfile()}" class="btn2" />
-
                     <a href="Product.xhtml" class="link-back">Volver a la página anterior</a>
                 </h:form>
             </div>

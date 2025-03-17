@@ -4,7 +4,7 @@ public class User {
     private String nombre = "";
     private String apellidoPaterno = "";
     private String apellidoMaterno = "";
-    private String telefono = "";
+    private String telefono;
     private String email = "";
     private String password = "";
     private String direccion = "";
