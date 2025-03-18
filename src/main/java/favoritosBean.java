@@ -14,20 +14,16 @@ public class favoritosBean implements Serializable {
     @Inject
     private ProductoBean productoBean;
 
-    public String agregarProductoAFavoritos() {
-        if (productoBean.getProducto() != null) {
-            agregarAFavoritos(productoBean.getProducto());
-            return "Favoritos.xhtml";
-        } else {
-            System.out.println("Producto no encontrado.");
+    public void agregarProductoAFavoritos() {
+        Producto producto = productoBean.getProducto();
+        if (producto != null) {
+            agregarAFavoritos(producto);
         }
-        return "Producto no encontrado.";
     }
 
     public void agregarAFavoritos(Producto producto) {
-        if (!favoritos.contains(producto)) {
+        if (producto != null && !favoritos.contains(producto)) {
             favoritos.add(producto);
-            System.out.println("Producto agregado a favoritos: " + producto.getNombre());
         }
     }
 
