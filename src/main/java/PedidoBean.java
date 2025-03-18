@@ -1,4 +1,5 @@
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -19,7 +20,12 @@ public class PedidoBean implements Serializable {
         cargarPedidos();
     }
     
-     @Inject
+    @Inject
+    private EmailService emailService;
+        
+    private Compra pedidoSeleccionado;
+
+    @Inject
     private PedidoService pedidoService;
 
     public List<Pedido> getPedidos() {
@@ -33,15 +39,13 @@ public class PedidoBean implements Serializable {
 
         return pedidos;
     }
-    
-    @Inject
-    private EmailService emailService;
-        
-    private Compra pedidoSeleccionado;
+
+
+
 
     private void cargarPedidos() {
         listaPedidos = new ArrayList<>();
-        listaPedidos.add(new Compra(101, "2025-03-01", 250.00, "Pendiente", new User("1", "Juan", "Perez","perez@gmail.com")));
+        listaPedidos.add(new Compra(101, "2025-03-01", 250.00, "Pendiente", new User("1", "Juan", "Perez","osoriodiego151@gmail.com")));
         listaPedidos.add(new Compra(102, "2025-03-05", 100.00, "En Proceso", new User("2", "Maria", "Lopez", "lopez@gmail.com")));
         listaPedidos.add(new Compra(103, "2025-03-07", 75.50, "Enviado", new User("3", "Carlos", "Hernandez", "hernanddez@gmail.com")));
         listaPedidos.add(new Compra(104, "2025-03-10", 300.75, "Entregado", new User("4", "Ana", "Ramirez", "leopablo26@gmail.com")));
@@ -94,4 +98,5 @@ public class PedidoBean implements Serializable {
     public List<Compra> getListaPedidos() {
         return listaPedidos;
     }
+
 }

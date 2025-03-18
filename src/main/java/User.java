@@ -1,10 +1,10 @@
 public class User {
-    
-    private String id = "";
+
+    private String id; // Se inicializa como null por defecto
     private String nombre = "";
     private String apellidoPaterno = "";
     private String apellidoMaterno = "";
-    private String telefono = "";
+    private String telefono;
     private String email = "";
     private String password = "";
     private String direccion = "";
@@ -12,40 +12,19 @@ public class User {
     private String codigoPostal = "";
     private String numCuenta = "";
     private String passwordConfirm = "";
+     private boolean aceptaTerminos;
 
     public User() {
     }
 
-    
-    
     public User(String id, String nombre, String apellidoPaterno, String email) {
-        this.id=id;
-        this.nombre=nombre;
-        this.apellidoPaterno=apellidoPaterno;
-        this.email=email;
-    }
-        
-
-    public String getPasswordConfirm() {
-        return passwordConfirm;
+        this.id = id;
+        this.nombre = nombre;
+        this.apellidoPaterno = apellidoPaterno;
+        this.email = email;
     }
 
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
-    
-    
-
-    public String getNumCuenta() {
-        return numCuenta;
-    }
-
-    public void setNumCuenta(String numCuenta) {
-        this.numCuenta = numCuenta;
-    }
-    
-    
-
+    // Getters y setters para todos los atributos
     public String getId() {
         return id;
     }
@@ -86,8 +65,6 @@ public class User {
         this.telefono = telefono;
     }
 
-    
-    
     public String getEmail() {
         return email;
     }
@@ -103,8 +80,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
 
     public String getDireccion() {
         return direccion;
@@ -130,7 +105,29 @@ public class User {
         this.codigoPostal = codigoPostal;
     }
 
+    public String getNumCuenta() {
+        return numCuenta;
+    }
 
-    
-    
+    public void setNumCuenta(String numCuenta) {
+        this.numCuenta = numCuenta;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
+   
+
+public boolean isAceptaTerminos() {
+    return aceptaTerminos;
+}
+
+public void setAceptaTerminos(boolean aceptaTerminos) {
+    this.aceptaTerminos = aceptaTerminos;
+}
+
 }

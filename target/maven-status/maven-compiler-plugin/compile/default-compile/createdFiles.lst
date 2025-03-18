@@ -1,9 +1,11 @@
 PedidoResource.class
+EmailValidator.class
 Pedido.class
 PasswordRecoveryBean.class
 Producto.class
 Database.class
 Devolucion.class
+TelefonoValidator.class
 DevolucionBean.class
 HistorialComprasBean.class
 ListaDeseosBean.class
@@ -15,6 +17,7 @@ GenerarReporteServlet.class
 ButtonController.class
 mx\tecnm\toluca\crm\computoen\JakartaRestConfiguration.class
 PedidoService.class
+ReporteBean.class
 EmailService$1.class
 CarritoBean.class
 Compra.class
