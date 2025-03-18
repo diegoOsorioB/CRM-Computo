@@ -95,56 +95,29 @@
     </nav>
     <h:form id="carritoForm">
         <div class="container mt-5">
-            <h2 class="text-center">Carrito de Compras</h2>
-            
-            <h:panelGroup rendered="#{not empty carritoBean.items}">
+            <h2 class="text-center">Favoritos</h2>
+
+            <h:panelGroup rendered="#{not empty favoritosBean.favoritos}">
                 <div class="table-responsive">
-                    <h:dataTable value="#{carritoBean.items}" var="item" class="table table-bordered table-striped">
+                    <h:dataTable value="#{favoritosBean.favoritos}" var="item" class="table table-bordered table-striped">
                         <h:column>
                             <f:facet name="header">Producto</f:facet>
-                            #{item.producto.nombre}
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Cantidad</f:facet>
-                            <div class="d-flex">
-                                <h:commandButton value="-" action="#{carritoBean.decrementarCantidad(item.producto)}" 
-                                                 styleClass="btn btn-danger btn-sm"/>
-                                <h:outputText value=" #{item.cantidad} " styleClass="mx-2"/>
-                                <h:commandButton value="+" action="#{carritoBean.incrementarCantidad(item.producto)}" 
-                                                 styleClass="btn btn-success btn-sm"/>
-                            </div>
+                            #{favoritos.producto.nombre}
                         </h:column>
                         <h:column>
                             <f:facet name="header">Precio</f:facet>
-                            <span class="text-success">$#{item.producto.precio}</span>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Subtotal</f:facet>
-                            <span class="text-primary">$#{item.producto.precio * item.cantidad}</span>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Eliminar</f:facet>
-                            <h:commandButton value="Eliminar" action="#{carritoBean.eliminarProducto(item.producto)}" 
-                                             styleClass="btn btn-danger btn-sm"/>
+                            <span class="text-success">$#{favoritos.producto.precio}</span>
                         </h:column>
                     </h:dataTable>
                 </div>
-                <div class="d-flex justify-content-between mt-3">
-                    <p><strong>Total:</strong> <span class="text-success">$#{carritoBean.total}</span></p>
-                    <h:commandButton value="Vaciar Carrito" action="#{carritoBean.vaciarCarrito}" 
-                                     styleClass="btn btn-warning btn-lg"/>
-                </div>
-                <div class="text-center mt-4">
-                    <h:commandButton value="Pagar" action="#{pagoBean.procesarPago}" 
-                                     styleClass="btn btn-primary btn-lg"/>
-                </div>
             </h:panelGroup>
 
-            <h:panelGroup rendered="#{empty carritoBean.items}">
-                <p class="text-center text-danger">No hay productos en el carrito.</p>
+            <h:panelGroup rendered="#{empty favoritosBean.favoritos}">
+                <p class="text-center text-danger">No hay Favoritos.</p>
             </h:panelGroup>
         </div>
     </h:form>
+
     
     <footer class="bg-light p-4 mt-4">
         <div class="container2">
@@ -182,3 +155,5 @@
     
 </h:body>
 </html>
+
+

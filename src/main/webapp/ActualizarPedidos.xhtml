@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Actualizar Pedidos</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+        <style>
+            body {
+                background: #f8f9fa;
+            }
+            .container {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            .table-container {
+                overflow-x: auto;
+            }            
+            .navbar {
+                background: #007BFF;
+                padding: 10px 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .navbar-brand {
+                font-weight: bold;
+            }            
+            .profile-dropdown .dropdown-toggle::after {
+                display: none;
+            }
+            .profile-dropdown .dropdown-menu {
+                right: 0;
+                left: auto;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="Product.xhtml" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="ActualizarPedidos.xhtml" style="color: #FFFFFF;"><i class="bi bi-arrow-repeat"></i> Actualizar Pedidos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="reportes.xhtml" style="color: #FFFFFF;"><i class="bi bi-bar-chart"></i> Reportes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="GestionDevoluciones.xhtml" style="color: #FFFFFF;"><i class="bi bi-arrow-counterclockwise"></i> Gestionar Devoluciones</a></li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown profile-dropdown">                            
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="#">Ver Cuenta</a></li>
+                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                <li><hr class="dropdown-divider"/></li>
+                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>        
+        <div class="container" style="max-width: 90%;">
+            <h2 class="text-center">Actualizar Pedidos</h2>
+            <h:form id="formPedidos">
+                <!-- Tabla de pedidos -->
+                <div class="table-container">
+                    <p:dataTable value="#{pedidoBean.listaPedidos}" var="pedido" 
+                                 paginator="true" rows="20" paginatorPosition="bottom"
+                                 sortBy="#{pedido.fecha}" styleClass="table table-striped">
+                        <p:column headerText="ID Pedido">#{pedido.idPedido}</p:column>
+                        <p:column headerText="Cliente">#{pedido.usuario.nombre} #{pedido.usuario.apellidoPaterno}</p:column>
+                        <p:column headerText="Fecha" sortBy="#{pedido.fecha}">#{pedido.fecha}</p:column>
+                        <p:column headerText="Total">$#{pedido.total}</p:column>
+                        <p:column headerText="Estado">
+                            <h:selectOneMenu value="#{pedido.estado}">
+                                <f:selectItem itemValue="Pendiente" itemLabel="Pendiente"/>
+                                <f:selectItem itemValue="En Proceso" itemLabel="En Proceso"/>
+                                <f:selectItem itemValue="Enviado" itemLabel="Enviado"/>
+                                <f:selectItem itemValue="Entregado" itemLabel="Entregado"/>
+                                <f:selectItem itemValue="Cancelado" itemLabel="Cancelado"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column headerText="Acción">
+                            <h:commandButton value="Actualizar" action="#{pedidoBean.actualizarEstado(pedido)}" class="btn btn-primary"/>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+                <h:messages id="messages" globalOnly="true" showDetail="false" showSummary="true"
+                            styleClass="alert" errorClass="alert alert-danger" infoClass="alert alert-success" 
+                            warnClass="alert alert-warning"/>
+            </h:form>            
+        </div>        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <footer class="text-center bg-primary text-white p-3 mt-4">
+            <p>&copy; 2025 CRM Producto. Todos los derechos reservados.</p>
+        </footer>
+    </h:body>
+</html>

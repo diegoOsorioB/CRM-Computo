@@ -44,6 +44,8 @@
                     <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                     <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
                 </ul>
                 <form class="d-flex" action="#" method="get">
                     <input type="text" name="search" id="search" placeholder="Buscar Producto"
@@ -84,26 +86,11 @@
                                 <p class="card-text">#{producto.descripcion}</p>
                                 <p class="fw-bold">$#{producto.precio}</p>
 
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <h:commandButton value="-" action="#{listaDeseosBean.disminuirCantidad(producto)}" styleClass="btn btn-outline-secondary mx-2">
-                                        <f:ajax execute="@this" render="cantidad#{producto.id}"/>
-                                    </h:commandButton>
-                                    <span id="cantidad#{producto.id}" class="fw-bold">#{producto.cantidad}</span>
-                                    <h:commandButton value="+" action="#{listaDeseosBean.aumentarCantidad(producto)}" styleClass="btn btn-outline-primary mx-2">
-                                        <f:ajax execute="@this" render="cantidad#{producto.id}"/>
-                                    </h:commandButton>
-                                </div>
-
                                 <h:commandButton value="Eliminar" action="#{listaDeseosBean.eliminarDeListaDeseos(producto)}"
                                                  styleClass="btn btn-danger w-100 mt-2 eliminar-btn"
                                                  onclick="animarEliminacion(event, 'producto#{producto.id}')">
                                     <f:ajax execute="@this" render="@form"/>
                                 </h:commandButton>
-                                <h:commandButton value="Agregar a Favoritos" 
-                                                action="#{listaDeseosBean.agregarAFavoritos(producto)}"
-                                                styleClass="btn btn-warning w-100 mt-2">
-                                   <f:ajax execute="@this" render="@form"/>
-                               </h:commandButton>
 
                             </div>
                         </div>
