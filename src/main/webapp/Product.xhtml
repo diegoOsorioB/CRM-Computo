@@ -57,13 +57,10 @@
         .card:hover {
             transform: scale(1.05);
         }
-        .card img {
-            width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
-            max-height: 200px; /* Limita la altura máxima de la imagen */
-            object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            margin-bottom: 15px; /* Espacio entre la imagen y el contenido debajo */
+        .card-img-top {
+            object-fit: contain;
+            max-height: 200px;
+            width: 100%;
         }
         .card-body img {
             max-height: 250px; /* Limita la altura en la vista detalle, para que sea un poco más grande que en el listado */
@@ -144,6 +141,34 @@
         footer ul li {
             margin-bottom: 5px;
         }
+        .btn-favoritos {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            background-color: #FFC107; /* Amarillo */
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-favoritos:hover {
+            background-color: #e0a800; /* Amarillo más oscuro */
+            transform: translateY(-3px);
+        }
+
+        .btn-favoritos:active {
+            background-color: #d39e00;
+            transform: translateY(0);
+        }
     </style>
 </h:head>
 <h:body>
@@ -158,6 +183,7 @@
                 <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                 <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
+                <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
             </ul>
             <form class="d-flex" action="#" method="get">
                 <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
@@ -183,10 +209,10 @@
     <div class="container">
         <h2 class="text-center mb-4">Lista de Productos</h2>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            <ui:repeat value="#{productoBean.productos}" var="producto">
+            <ui:repeat value="#{productoController.productos}" var="producto">
                 <div class="col">
                     <div class="card">
-                        <h:graphicImage library="images" name="#{producto.imagen}" class="card-img-top"/>
+                        <h:graphicImage value="#{producto.imagen}" class="card-img-top"/>
                         <div class="card-body text-center">
                             <h5 class="card-title">#{producto.nombre}</h5>
                             <p class="card-text">#{producto.descripcion}</p>
@@ -195,6 +221,10 @@
                                 <h:commandButton value="Ver Detalle" action="ProductDetail.xhtml" styleClass="btn-detalle">
                                     <f:param name="id" value="#{producto.id}"/>
                                 </h:commandButton>
+                                <h:commandButton value="Agregar a Favoritos" action="#{favoritosBean.agregarAFavoritos}"
+                                                 styleClass="btn btn-favoritos"/>
+                                <h:button outcome="productos.xhtml" value="Volver a la tienda" styleClass="btn btn-secondary w-100"/>
+                                <h:messages id="messages" globalOnly="true" style="color: green; font-weight: bold;"/>
                             </h:form>
                         </div>
                     </div>

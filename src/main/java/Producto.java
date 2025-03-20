@@ -1,4 +1,4 @@
-
+import java.io.Serializable;
 import java.util.Objects;
 
 public class Producto {
@@ -9,7 +9,7 @@ public class Producto {
     private String imagen;
     private double precio;
 
-    public Producto(int id, String nombre, String descripcion, String imagen, double precio) {
+    public Producto(String nombre, String descripcion, String imagen, double precio, int id) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
