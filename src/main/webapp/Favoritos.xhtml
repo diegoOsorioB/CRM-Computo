@@ -71,7 +71,6 @@
                     <li class="nav-item"><a class="nav-link" href="#" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                     <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
-                    <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
                     <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
                 </ul>
             </div>
@@ -100,13 +99,21 @@
             <h:panelGroup rendered="#{not empty favoritosBean.favoritos}">
                 <div class="table-responsive">
                     <h:dataTable value="#{favoritosBean.favoritos}" var="item" class="table table-bordered table-striped">
+                        <!-- Columna de Imagen -->
+                        <h:column>
+                            <f:facet name="header">Imagen</f:facet>
+                            <h:graphicImage value="#{item.imagen}" width="80" height="80" alt="Imagen del producto"/>
+                        </h:column>
+
+                        <!-- Columna de Nombre del Producto -->
                         <h:column>
                             <f:facet name="header">Producto</f:facet>
-                            #{favoritos.producto.nombre}
+                            #{item.nombre}
                         </h:column>
+                        <!-- Columna de Precio -->
                         <h:column>
                             <f:facet name="header">Precio</f:facet>
-                            <span class="text-success">$#{favoritos.producto.precio}</span>
+                            <span class="text-success">$#{item.precio}</span>
                         </h:column>
                     </h:dataTable>
                 </div>
