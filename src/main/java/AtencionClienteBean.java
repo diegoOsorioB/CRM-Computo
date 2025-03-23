@@ -8,6 +8,8 @@ import java.util.List;
 @SessionScoped
 public class AtencionClienteBean implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+    
     private String userInput;
     private List<String> chatMensajes;
     private String nombre;
@@ -21,47 +23,66 @@ public class AtencionClienteBean implements Serializable {
     public AtencionClienteBean() {
         chatMensajes = new ArrayList<>();
         calificaciones = new ArrayList<>();
+        estadoTicket = "Esperando consulta...";
     }
 
     // Chat en Vivo
     public void enviarMensajeChat() {
-        if (userInput != null && !userInput.trim().isEmpty()) {
+        if (isValidInput(userInput)) {
             chatMensajes.add("Usuario: " + userInput);
             chatMensajes.add("Soporte: Gracias por tu mensaje, un asesor te responderá pronto.");
-            userInput = "";
+            userInput = ""; // Limpia la entrada después de enviarla
         }
+    }
+    
+    // Validación de la entrada del usuario
+    private boolean isValidInput(String input) {
+        return input != null && !input.trim().isEmpty();
     }
     
     // Formulario de Contacto
     public void enviarFormulario() {
-        if (nombre != null && email != null && mensaje != null) {
+        if (isValidInput(nombre) && isValidInput(email) && isValidInput(mensaje)) {
             System.out.println("Formulario enviado por: " + nombre + ", Email: " + email + ", Mensaje: " + mensaje);
-            nombre = "";
-            email = "";
-            mensaje = "";
+            // Lógica para enviar el formulario (ej. guardar en base de datos o enviar por correo)
+            limpiarFormulario();
+        } else {
+            System.out.println("Por favor, complete todos los campos.");
         }
+    }
+
+    // Limpieza del formulario después de enviarlo
+    private void limpiarFormulario() {
+        nombre = "";
+        email = "";
+        mensaje = "";
     }
     
     // Seguimiento de Ticket
     public void consultarTicket() {
-        if (numeroTicket != null && numeroTicket.equals("12345")) {
-            estadoTicket = "En proceso";
+        if (isValidInput(numeroTicket)) {
+            // Simulamos la consulta del estado del ticket con un ticket fijo
+            estadoTicket = "12345".equals(numeroTicket) ? "En proceso" : "No encontrado";
         } else {
-            estadoTicket = "No encontrado";
+            estadoTicket = "Número de ticket no válido.";
         }
     }
     
     // Evaluación del Servicio
     public void enviarCalificacion() {
-        calificaciones.add(calificacion);
+        if (calificacion >= 1 && calificacion <= 5) {
+            calificaciones.add(calificacion);
+        } else {
+            System.out.println("Calificación inválida. Debe ser entre 1 y 5.");
+        }
     }
     
+    // Obtener el promedio de las calificaciones
     public double getPromedioCalificaciones() {
         if (calificaciones.isEmpty()) {
             return 0.0;
         }
-        int suma = calificaciones.stream().mapToInt(Integer::intValue).sum();
-        return (double) suma / calificaciones.size();
+        return calificaciones.stream().mapToInt(Integer::intValue).average().orElse(0.0);
     }
     
     // Getters y Setters
@@ -76,7 +97,7 @@ public class AtencionClienteBean implements Serializable {
     public List<String> getChatMensajes() {
         return chatMensajes;
     }
-    
+
     public String getNombre() {
         return nombre;
     }
@@ -111,6 +132,10 @@ public class AtencionClienteBean implements Serializable {
 
     public String getEstadoTicket() {
         return estadoTicket;
+    }
+
+    public void setEstadoTicket(String estadoTicket) {
+        this.estadoTicket = estadoTicket;
     }
 
     public int getCalificacion() {

@@ -7,6 +7,7 @@ import java.util.List;
 @ApplicationScoped
 public class PedidoService {
     private List<Pedido> pedidos = new ArrayList<>();
+    private User user=new User();
 
     public void agregarPedido(List<ItemCarrito> items, double total,String direccion) {
         if (items == null || items.isEmpty()) {
@@ -14,7 +15,7 @@ public class PedidoService {
             return;
         }
 
-        Pedido nuevoPedido = new Pedido(items, total, "En proceso",direccion);
+        Pedido nuevoPedido = new Pedido(items, total, "En proceso",direccion,user.getEmail());
         pedidos.add(nuevoPedido);
 
         System.out.println("✅ Pedido agregado correctamente: ");

@@ -21,6 +21,10 @@
         <span class="text-secondary">#{pedido.id}</span>
     </h:column>
     <h:column>
+        <f:facet name="header">Productos</f:facet>
+        <span class="text-secondary">#{pedido.items}</span>
+    </h:column>
+    <h:column>
         <f:facet name="header">Total</f:facet>
         <span class="text-success">$#{pedido.total}</span>
     </h:column>

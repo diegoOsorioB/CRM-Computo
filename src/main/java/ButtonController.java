@@ -53,6 +53,7 @@ public class ButtonController {
                 FacesContext facesContext = FacesContext.getCurrentInstance();
                 HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
                 session.setAttribute("userEmail", user.getEmail());
+                System.out.println(user.getEmail());
 
             } else {
                 System.out.println("Error en el login: " + response.body());

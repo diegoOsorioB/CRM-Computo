@@ -33,6 +33,8 @@ public class PagoBean implements Serializable {
     private CarritoBean carritoBean;
     @Inject
     private PerfilData perfilData;
+    @Inject
+    private PedidoB pedidoB;
 
     public String procesarPago() {
         this.items = carritoBean.getItems();  // Asigna los productos del carrito
@@ -76,12 +78,26 @@ public class PagoBean implements Serializable {
     }
 
     private void agregarPedido() {
-        String direccionCliente = perfilData.getDireccion()+" "+perfilData.getCiudad(); // Obtener dirección del usuario logueado
-    Pedido nuevoPedido = new Pedido(items, total, "En proceso", direccionCliente);
-        pedidoService.agregarPedido(items, total,direccionCliente);
-        
-    System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+    FacesContext context = FacesContext.getCurrentInstance();
+    String emailUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
+        System.out.println(emailUsuario+"++++++++++++++-------------");
+
+    if (emailUsuario == null || emailUsuario.isEmpty()) {
+        System.out.println("❌ ERROR: No se encontró el email del usuario en la sesión.");
+        return;
     }
+
+    String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
+    Pedido nuevoPedido = new Pedido(items, total, "En proceso", direccionCliente, emailUsuario);
+
+    pedidoService.agregarPedido(items, total, direccionCliente);
+
+    System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+
+    pedidoB.setPedido(nuevoPedido);
+    pedidoB.insertarPedido();
+}
+
 
   private void generarComprobantePDF() {
     try {
