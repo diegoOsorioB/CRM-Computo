@@ -5,6 +5,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
+import jakarta.ws.rs.GET;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,7 +24,7 @@ public class ProductoController {
     private List<Producto> listaDeseos = new ArrayList<>();
 
 
-    @PostConstruct
+    @GET
     public void init() {
         consultarProductos();
     }
