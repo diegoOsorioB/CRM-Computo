@@ -56,7 +56,11 @@ public class PagoBean implements Serializable {
 
         if (pagoExitoso) {
             System.out.println("✅ Pago exitoso. Agregando pedido...");
-            agregarPedido();
+            try {
+                agregarPedido();
+            } catch (Exception e) {
+                System.out.println("Ocurrio un error "+e);
+            }
             generarComprobantePDF();
             carritoBean.vaciarCarrito();
             
@@ -77,7 +81,7 @@ public class PagoBean implements Serializable {
         return true;
     }
 
-    private void agregarPedido() {
+    private void agregarPedido() throws Exception {
     FacesContext context = FacesContext.getCurrentInstance();
     String emailUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
         System.out.println(emailUsuario+"++++++++++++++-------------");
@@ -88,7 +92,7 @@ public class PagoBean implements Serializable {
     }
 
     String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
-    Pedido nuevoPedido = new Pedido(items, total, "En proceso", direccionCliente, emailUsuario);
+    Pedido nuevoPedido = new Pedido("",items, total, "En proceso", direccionCliente, emailUsuario);
 
     pedidoService.agregarPedido(items, total, direccionCliente);
 
@@ -108,7 +112,7 @@ public class PagoBean implements Serializable {
         // 📌 Asegurar que la carpeta de descargas exista
         File downloadsDir = new File(Paths.get(userHome, "Downloads").toString());
         if (!downloadsDir.exists()) {
-            System.out.println("📁 La carpeta 'Downloads' no existe. Creándola...");
+            System.out.println("? La carpeta 'Downloads' no existe. Creándola...");
             boolean creada = downloadsDir.mkdirs();
             if (!creada) {
                 System.out.println("❌ ERROR: No se pudo crear la carpeta de descargas.");

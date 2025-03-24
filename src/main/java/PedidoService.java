@@ -15,7 +15,7 @@ public class PedidoService {
             return;
         }
 
-        Pedido nuevoPedido = new Pedido(items, total, "En proceso",direccion,user.getEmail());
+        Pedido nuevoPedido = new Pedido("",items, total, "En proceso",direccion,user.getEmail());
         pedidos.add(nuevoPedido);
 
         System.out.println("✅ Pedido agregado correctamente: ");
