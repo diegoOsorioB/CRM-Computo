@@ -5,7 +5,6 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import jakarta.ws.rs.GET;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,7 +23,7 @@ public class ProductoController {
     private List<Producto> listaDeseos = new ArrayList<>();
 
 
-    @GET
+    @PostConstruct
     public void init() {
         consultarProductos();
     }
@@ -57,7 +56,7 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://cec7-201-168-166-154.ngrok-free.app/APICRM2/api/productos"))
+                    .uri(URI.create("https://4bc0-2806-2f0-9020-9bac-b4b4-ae37-ad62-39de.ngrok-free.app/APICRM2/api/productos"))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
