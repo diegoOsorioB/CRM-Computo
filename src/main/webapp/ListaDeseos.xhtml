@@ -127,14 +127,14 @@
             <p:growl id="msgs" showDetail="true"/>
             
             <p:panel header="Mis Deseos">
-                <p:dataGrid var="producto" value="#{listaDeseosBean.listaDeseos}" columns="3" layout="grid">
+                <p:dataGrid var="producto" value="#{productoController.productos}" columns="3" layout="grid">
                     <p:panel style="text-align: center; padding: 10px;">
                         <h:graphicImage value="#{producto.imagen}" width="150" height="150" style="border-radius: 10px;"/>
                         <h:outputText value="#{producto.nombre}" styleClass="product-title"/><br/>
                         <h:outputText value="#{producto.descripcion}" styleClass="product-description"/><br/>
                         <h:outputText value="Precio: $#{producto.precio}" styleClass="product-price"/><br/>
                         
-                        <p:commandButton value="Eliminar" icon="pi pi-trash" action="#{listaDeseosBean.eliminarDeListaDeseos(producto)}" update="favoritosForm" styleClass="ui-button-danger"/>
+                        <p:commandButton value="Eliminar" icon="pi pi-trash" action="#{producto.eliminarDeListaDeseos(producto)}" update="favoritosForm" styleClass="ui-button-danger"/>
                     </p:panel>
                 </p:dataGrid>
             </p:panel>
