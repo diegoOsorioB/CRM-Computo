@@ -2,6 +2,7 @@ public class User {
 
     private String id; // Se inicializa como null por defecto
     private String nombre = "";
+    private String rol;
     private String apellidoPaterno = "";
     private String apellidoMaterno = "";
     private String telefono;
@@ -17,11 +18,12 @@ public class User {
     public User() {
     }
 
-    public User(String id, String nombre, String apellidoPaterno, String email) {
+    public User(String id, String nombre, String apellidoPaterno, String email,String rol) {
         this.id = id;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.email = email;
+        this.rol=rol;
     }
 
     // Getters y setters para todos los atributos
@@ -129,5 +131,19 @@ public boolean isAceptaTerminos() {
 public void setAceptaTerminos(boolean aceptaTerminos) {
     this.aceptaTerminos = aceptaTerminos;
 }
+
+    /**
+     * @return the rol
+     */
+    public String getRol() {
+        return rol;
+    }
+
+    /**
+     * @param rol the rol to set
+     */
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
 
 }

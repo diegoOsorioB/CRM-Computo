@@ -48,7 +48,7 @@ public class PedidoB implements Serializable {
     }
 
     // Token de autenticación
-    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDI4NTM4MjcsImlhdCI6MTc0Mjc2NzQyN30.jR_rILe4UmQ9HGs7NMNQlGFrXT3I7DGbhBCU6lXVlB8";
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDI5NjA3MzMsImlhdCI6MTc0Mjg3NDMzM30.4k3g47glCKqGRNsIsi5M7-NV5hOk8difYCqm2y_xRmg";
 
     @PostConstruct
     public void init() {
@@ -71,7 +71,7 @@ public class PedidoB implements Serializable {
         pedido.setCorreoUsuario(correoUsuario);
         pedido.setFecha(LocalDate.now());  // Asegura que la fecha esté asignada
 
-        String endpoint = "https://4770-2806-104e-16-d7a2-5a9e-cf86-7a9-1b10.ngrok-free.app/DatabaseService/api/service/pedidos";
+        String endpoint = "http://10.250.0.244:8080/DatabaseService/api/service/pedidos";
 
         Client client = ClientBuilder.newClient();
         Jsonb jsonb = JsonbBuilder.create();
@@ -121,7 +121,7 @@ public class PedidoB implements Serializable {
         }
 
         // Construcción del endpoint con el filtro por correoUsuario
-        String endpoint = "https://4770-2806-104e-16-d7a2-5a9e-cf86-7a9-1b10.ngrok-free.app/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
+        String endpoint = "http://10.250.0.244:8080/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
 
         Client client = ClientBuilder.newClient();
 

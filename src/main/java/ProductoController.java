@@ -56,7 +56,7 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://4bc0-2806-2f0-9020-9bac-b4b4-ae37-ad62-39de.ngrok-free.app/APICRM2/api/productos"))
+                    .uri(URI.create("http://localhost:8080/APICRM2/api/productos"))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
