@@ -78,7 +78,7 @@ public class EmailService {
         String mensaje = "Hola " + nombre + ",\n\n"
                 + "Tu solicitud de devolución con ID #" + idDevolucion + " ha cambiado de estado a: " + estatus + ".\n"
                 + "Razón del cambio: " + razon + "\n\n"
-                + "Si tienes dudas, contáctanos.\n\n"
+                + "Si tienes dudas, por favor, contáctanos.\n\n"
                 + "Saludos,\nEquipo de Atención al Cliente.";
 
         try {
