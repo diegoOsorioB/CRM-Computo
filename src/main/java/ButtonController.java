@@ -31,7 +31,7 @@ public class ButtonController {
             HttpClient client = HttpClient.newHttpClient();
             String jsonBody = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/login"))
+                    .uri(URI.create("http://10.250.1.37:8080/ApiCRM/api/usuarios/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -129,7 +129,7 @@ public class ButtonController {
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/registrar"))
+                    .uri(URI.create("http://10.250.1.37:8080/ApiCRM/api/usuarios/registrar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -170,7 +170,7 @@ public class ButtonController {
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/registrar"))
+                    .uri(URI.create("http://10.250.1.37:8080/ApiCRM/api/usuarios/registrar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();

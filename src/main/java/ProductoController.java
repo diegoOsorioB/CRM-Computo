@@ -56,12 +56,14 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/APICRM2/api/productos"))
+                    .uri(URI.create("http://192.168.207.1:8080/destinity/erp/api/products"))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            
+            System.out.println(response.body());
 
             if (response.statusCode() == 200) {
                 ObjectMapper objectMapper = new ObjectMapper();
