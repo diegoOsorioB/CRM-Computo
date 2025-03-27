@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -57,6 +58,36 @@
         footer ul li {
             margin-bottom: 5px;
         }
+        .btn-favoritos {
+            width: 100%;
+            padding: 12px;
+            font-size: 0.9rem; /* Tamaño de letra más pequeño */
+            background-color: #FFC107;
+            color: white; /* Texto en blanco */
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px; /* Espaciado entre botones */
+        }
+
+        .btn-favoritos:hover {
+            background-color: #e0a800;
+            transform: translateY(-3px);
+        }
+
+        .btn-favoritos:active {
+            background-color: #d39e00;
+            transform: translateY(0);
+        }
+
     </style>
 </h:head>
 <h:body> 
@@ -71,6 +102,7 @@
                         <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                         <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                         <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
                         <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
                     </ul>
                     
@@ -93,23 +125,30 @@
     <h:form id="productoForm">
         <div class="container mt-5">
             <h2 class="text-center">Detalle del Producto</h2>
-            <h:panelGroup rendered="#{productoBean.producto != null}">
-                <div class="card mx-auto" style="width: 24rem;">
-                    <h:graphicImage library="images" name="#{productoBean.producto.imagen}" styleClass="card-img-top"/>
-                    <div class="card-body text-center">
-                        <h5 class="card-title">#{productoBean.producto.nombre}</h5>
-                        <p class="card-text">#{productoBean.producto.descripcion}</p>
-                        <p class="fw-bold">$#{productoBean.producto.precio}</p>
-                        <h:commandButton value="Agregar al carrito" action="#{carritoBean.agregarProductoActual}" 
-                                         styleClass="btn btn-primary">
-                            <f:ajax execute="@form" render="@all"/>
-                        </h:commandButton>
-                        <h:button outcome="Product.xhtml" value="Volver a la tienda" styleClass="btn btn-secondary"/>
+            <ui:repeat value="#{productoController.productos}" var="producto">
+                <h:panelGroup rendered="#{producto != null}">
+                    <div class="card mx-auto" style="width: 24rem;">
+                        <h:graphicImage library="images" name="#{producto.imagen}" styleClass="card-img-top"/>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">#{producto.nombre}</h5>
+                            <p class="card-text">#{producto.descripcion}</p>
+                            <p class="fw-bold">$#{producto.precio}</p>
+                            <div class="d-grid gap-2">
+                                <h:commandButton value="Agregar al carrito" action="#{carritoBean.agregarProducto(producto)}" 
+                                                 styleClass="btn btn-primary">
+                                    <f:ajax execute="@form" render="@all"/>
+                                </h:commandButton>
+
+                                <h:commandButton value="Agregar a Favoritos" action="#{favoritosBean.agregarAFavoritos(producto)}" 
+                                                 styleClass="btn btn-favoritos"/>
+                                <h:button outcome="Product.xhtml" value="Volver a la tienda" styleClass="btn btn-secondary w-100"/>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </h:panelGroup>
-            <h:panelGroup rendered="#{productoBean.producto == null}">
-                <p class="text-center text-danger">Producto no encontrado.</p>
+                </h:panelGroup>
+            </ui:repeat>
+            <h:panelGroup rendered="#{empty productoController.productos}">
+                <p class="text-center text-danger">No hay productos disponibles.</p>
             </h:panelGroup>
         </div>
     </h:form>

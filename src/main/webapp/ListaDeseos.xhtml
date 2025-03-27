@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="jakarta.faces.facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -95,6 +96,8 @@
                 <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                 <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                 <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
+                <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
+                <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
             </ul>
             <form class="d-flex" action="#" method="get">
                 <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
@@ -119,37 +122,22 @@
 
     <div class="container mt-5">
         <h2 class="text-center">Lista de Deseos</h2>
-        <h:form id="formListaDeseos">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                <ui:repeat value="#{listaDeseosBean.listaDeseos}" var="producto">
-                    <div class="col">
-                        <div class="card producto-card" id="producto#{producto.id}">
-                            <h:graphicImage library="images" name="#{producto.imagen}" styleClass="card-img-top"/>
-                            <div class="card-body text-center">
-                                <h5 class="card-title">#{producto.nombre}</h5>
-                                <p class="card-text">#{producto.descripcion}</p>
-                                <p class="fw-bold">$#{producto.precio}</p>
-
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <h:commandButton value="-" action="#" styleClass="btn btn-outline-secondary mx-2">
-                                        <f:ajax execute="@this" render="cantidad#{producto.id}"/>
-                                    </h:commandButton>
-                                    <span id="cantidad#{producto.id}" class="fw-bold">3</span>
-                                    <h:commandButton value="+" action="#" styleClass="btn btn-outline-primary mx-2">
-                                        <f:ajax execute="@this" render="cantidad#{producto.id}"/>
-                                    </h:commandButton>
-                                </div>
-
-                                <h:commandButton value="Eliminar" action="#{listaDeseosBean.eliminarDeListaDeseos(producto)}"
-                                                 styleClass="btn btn-danger w-100 mt-2 eliminar-btn"
-                                                 onclick="animarEliminacion(event, 'producto#{producto.id}')">
-                                    <f:ajax execute="@this" render="@form"/>
-                                </h:commandButton>
-                            </div>
-                        </div>
-                    </div>
-                </ui:repeat>
-            </div>
+            
+        <h:form id="favoritosForm">
+            <p:growl id="msgs" showDetail="true"/>
+            
+            <p:panel header="Mis Deseos">
+                <p:dataGrid var="producto" value="#{productoController.productos}" columns="3" layout="grid">
+                    <p:panel style="text-align: center; padding: 10px;">
+                        <h:graphicImage value="#{producto.imagen}" width="150" height="150" style="border-radius: 10px;"/>
+                        <h:outputText value="#{producto.nombre}" styleClass="product-title"/><br/>
+                        <h:outputText value="#{producto.descripcion}" styleClass="product-description"/><br/>
+                        <h:outputText value="Precio: $#{producto.precio}" styleClass="product-price"/><br/>
+                        
+                        <p:commandButton value="Eliminar" icon="pi pi-trash" action="#{producto.eliminarDeListaDeseos(producto)}" update="favoritosForm" styleClass="ui-button-danger"/>
+                    </p:panel>
+                </p:dataGrid>
+            </p:panel>
         </h:form>
     </div>
 

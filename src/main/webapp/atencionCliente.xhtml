@@ -2,14 +2,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="jakarta.faces.facelets"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Productos</title>
-        <style>
+        <title>Atención al Cliente</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+    </h:head>
+    <style>
             body {
                 font-family: Arial, sans-serif;
                 margin: 0;
@@ -111,42 +114,22 @@
             margin-bottom: 5px;
         }
         </style>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
-    </h:head>
+
     <h:body>
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="Product.xhtml" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
-                    </ul>
-                    
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown profile-dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
-                                <i class="bi bi-person-circle fs-4"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="#">Ver Cuenta</a></li>
-                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
-                                <li><hr class="dropdown-divider"/></li>
-                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
         <h:form>
-        <header class="text-center bg-primary text-white p-3">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">CRM PRODUCT</a>
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="Product.xhtml">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml">Atención a Cliente</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <header class="text-center bg-primary text-white p-3">
                 <h1>Atención al Cliente</h1>
             </header>
 
@@ -210,37 +193,9 @@
                 </section>
             </div>
         </h:form>
-        <footer class="bg-light p-4 mt-4">
-        <div class="container2">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Sobre Nosotros</h5>
-                    <p>
-                        Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.<br/>
-                        Ofrecemos una amplia selección de productos blancos de alta calidad, desde ropa de cama y toallas hasta electrodomésticos y decoración.<br/>
-                        Renueva tu espacio con estilo y confort.
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contáctanos</h5>
-                    <ul>
-                        <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
-                        <li>Teléfono: +1 800 123 4567</li>
-                        <li>Email: contacto@tienda.com</li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Enlaces Rápidos</h5>
-                    <ul>
-                        <li><a href="Product.xhtml" style="color: #007BFF;">Inicio</a></li>
-                        <li><a href="Product.xhtml" style="color: #007BFF;">Productos</a></li>
-                        <li><a href="Carrito.xhtml" style="color: #007BFF;">Carrito</a></li>
-                        <li><a href="atencionCliente.xhtml" style="color: #007BFF;">Atención a Cliente</a></li>
-                        <li><a href="#" style="color: #007BFF;">Política de Privacidad</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
+
+        <footer class="text-center bg-primary text-white p-3 mt-4">
+            <p>&copy; 2025 CRM Producto. Todos los derechos reservados.</p>
+        </footer>
     </h:body>
 </html>

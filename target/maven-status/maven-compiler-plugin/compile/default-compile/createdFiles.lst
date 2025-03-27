@@ -5,6 +5,7 @@ PasswordRecoveryBean.class
 Producto.class
 Database.class
 Devolucion.class
+ProductoController.class
 TelefonoValidator.class
 DevolucionBean.class
 HistorialComprasBean.class
@@ -13,6 +14,7 @@ PerfilData.class
 User.class
 PedidoBean.class
 ItemCarrito.class
+PedidoB.class
 GenerarReporteServlet.class
 ButtonController.class
 mx\tecnm\toluca\crm\computoen\JakartaRestConfiguration.class
@@ -22,7 +24,9 @@ EmailService$1.class
 CarritoBean.class
 Compra.class
 ProductoBean.class
+favoritosBean.class
 PasswordRecoveryBean$1.class
+Reportes.class
 EmailService$2.class
 PagoBean.class
 PasswordResetBean.class

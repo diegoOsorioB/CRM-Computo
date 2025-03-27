@@ -1,4 +1,4 @@
-
+import java.io.Serializable;
 import java.util.Objects;
 
 public class Producto {
@@ -8,13 +8,19 @@ public class Producto {
     private String descripcion;
     private String imagen;
     private double precio;
+    private int stock;
 
-    public Producto(int id, String nombre, String descripcion, String imagen, double precio) {
+    public Producto() {
+    }
+    
+
+    public Producto(String nombre, String descripcion, String imagen, double precio, int id,int stock) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.imagen = imagen;
         this.precio = precio;
+        this.stock = stock;
     }
 
     // Getters y setters
@@ -24,6 +30,14 @@ public class Producto {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public int getStock() {
+        return stock;
     }
 
     public String getNombre() {

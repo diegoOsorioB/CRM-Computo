@@ -1,3 +1,4 @@
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
@@ -37,8 +38,8 @@ public class EmailService {
             e.printStackTrace();
         }
     }
-    
-    public void enviarCorreoActualizacion(String emailTo, String nombreCliente, int idPedido, String nuevoEstado) {
+
+    public void enviarCorreoActualizacion(String emailTo, String nombreCliente, String idPedido, String nuevoEstado) {
         String asunto = "Actualización de Estado de Pedido #" + idPedido;
         String cuerpo = "Hola " + nombreCliente + ",\n\n"
                 + "Tu pedido con ID " + idPedido + " ha sido actualizado al estado: " + nuevoEstado + ".\n\n"
@@ -71,7 +72,7 @@ public class EmailService {
             e.printStackTrace();
         }
     }
-    
+
     public void enviarCorreoDevolucion(String email, String nombre, int idDevolucion, String estatus, String razon) {
         String asunto = "Actualización de tu solicitud de devolución #" + idDevolucion;
         String mensaje = "Hola " + nombre + ",\n\n"

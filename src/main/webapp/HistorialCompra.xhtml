@@ -1,73 +1,203 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core">
-    <h:head>
-        <title>Historial de Compras</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-        <style>
-            body {
-                background-color: #f4f4f4;
-                padding: 20px;
-            }
-            .container {
-                background: white;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            }
-            .filter-container {
-                margin-bottom: 20px;
-                display: flex;
-                gap: 10px;
-            }
-            .table-container {
-                overflow-x: auto;
-            }
-        </style>
-    </h:head>
-    <h:body>
-        <div class="container">
-            <h2 class="text-center">Historial de Compras</h2>
-            <h:form>
-                <!-- Filtros -->
-                <div class="filter-container">
-                    <h:inputText value="#{historialComprasBean.filtroIdPedido}" 
-                                 
-                                 class="form-control" />
-                    <h:inputText value="#{historialComprasBean.filtroFecha}" 
-                                 
-                                 class="form-control" />
-                    <h:inputText value="#{historialComprasBean.filtroEstado}" 
-                                 
-                                 class="form-control" />
-                    <h:commandButton value="Filtrar" 
-                                     action="#{historialComprasBean.filtrarCompras}" 
-                                     class="btn btn-primary" />
-                </div>
-                
-                <!-- Tabla de compras -->
-                <div class="table-container">
-                    <h:dataTable value="#{historialComprasBean.comprasFiltradas}" var="compra" 
-                                 styleClass="table table-striped">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Historial de Pedidos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+    
+    <style>
+        /* Estilos generales */
+        body {
+            background: linear-gradient(to right, #a1c4fd, #c2e9fb); /* Degradado de azul claro a verde claro */
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        /* Estilos de navbar */
+        .navbar {
+            background: #007BFF;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+        .nav-link {
+            color: #FFFFFF;
+        }
+        .nav-link:hover {
+            color: #f8f9fa;
+        }
+
+        /* Estilos de la tabla */
+        .titulo {
+            color: #2a5d84;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tabla-pedidos {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .tabla-pedidos th {
+            background-color: #4a90e2;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .tabla-pedidos td {
+            background-color: #f1f1f1;
+            padding: 8px;
+        }
+
+        .tabla-pedidos tr:nth-child(even) {
+            background-color: #e6f2fc;
+        }
+
+        .tabla-pedidos tr:hover {
+            background-color: #cfe4f9;
+        }
+
+        /* Estilos para el filtro */
+        h:selectOneMenu {
+            padding: 5px;
+            margin-left: 10px;
+        }
+
+        h:outputLabel {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        footer {
+            background-color: white;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</h:head>
+<h:body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="Carrito.xhtml"><i class="bi bi-cart"></i> Carrito</a></li>
+                    <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml"><i class="bi bi-heart"></i> Lista de deseos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml"><i class="bi bi-person"></i> Atención a Cliente</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml"><i class="bi bi-star-fill"></i> Favoritos</a></li>
+                </ul>
+                <form class="d-flex" action="#" method="get">
+                    <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
+                    <input type="submit" value="Buscar" class="btn" style="background-color: #00CC00; color: #FFFFFF; border: none;"/>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <h:form>
+        <h:outputLabel for="estadoFiltro">Filtrar por Estado:</h:outputLabel>
+        <h:selectOneMenu id="estadoFiltro" value="#{pedidoB.estadoFiltro}">
+            <f:selectItem itemValue="" itemLabel="Selecciona un estado" />
+            <f:selectItem itemValue="En proceso" itemLabel="En proceso" />
+            <f:selectItem itemValue="Completado" itemLabel="Completado" />
+            <f:selectItem itemValue="Cancelado" itemLabel="Cancelado" />
+            <f:ajax listener="#{pedidoB.filtrarPedidosPorEstado}" render="pedidosTabla mensajeNoPedidos" />
+        </h:selectOneMenu>
+
+        <h:panelGroup rendered="#{not empty pedidoB.pedidos}">
+            <h:dataTable id="pedidosTabla" value="#{pedidoB.pedidos}" var="pedido" border="1" cellpadding="5" class="tabla-pedidos">
+                <h:column>
+                    <f:facet name="header">ID Pedido</f:facet>
+                    #{pedido.id}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Correo Usuario</f:facet>
+                    #{pedido.correoUsuario}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Dirección</f:facet>
+                    #{pedido.direccion}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Estado</f:facet>
+                    #{pedido.estado}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Total</f:facet>
+                    #{pedido.total}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Fecha</f:facet>
+                    #{pedido.fecha}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Items</f:facet>
+                    <h:dataTable value="#{pedido.items}" var="item">
                         <h:column>
-                            <f:facet name="header">ID Pedido</f:facet>
-                            #{compra.idPedido}
+                            <f:facet name="header">Producto</f:facet>
+                            #{item.producto.nombre}
                         </h:column>
                         <h:column>
-                            <f:facet name="header">Fecha</f:facet>
-                            #{compra.fecha}
+                            <f:facet name="header">Cantidad</f:facet>
+                            #{item.cantidad}
                         </h:column>
                         <h:column>
-                            <f:facet name="header">Total</f:facet>
-                            $#{compra.total}
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Estado</f:facet>
-                            #{compra.estado}
+                            <f:facet name="header">Precio</f:facet>
+                            #{item.producto.precio}
                         </h:column>
                     </h:dataTable>
+                </h:column>
+            </h:dataTable>
+        </h:panelGroup>
+
+        <h:panelGroup id="mensajeNoPedidos" rendered="#{empty pedidoB.pedidos}">
+            <h:outputText value="No se encontraron pedidos."/>
+        </h:panelGroup>
+    </h:form>
+
+    <footer>
+        <div class="container2">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Sobre Nosotros</h5>
+                    <p>Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.</p>
                 </div>
-            </h:form>
+                <div class="col-md-4">
+                    <h5>Contáctanos</h5>
+                    <ul>
+                        <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
+                        <li>Teléfono: +1 800 123 4567</li>
+                        <li>Email: contacto@tienda.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul>
+                        <li><a href="Product.xhtml" style="color: #007BFF;">Inicio</a></li>
+                        <li><a href="Product.xhtml" style="color: #007BFF;">Productos</a></li>
+                        <li><a href="Carrito.xhtml" style="color: #007BFF;">Carrito</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </h:body>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</h:body>
 </html>

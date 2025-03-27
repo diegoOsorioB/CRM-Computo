@@ -17,6 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -33,6 +37,8 @@ public class PagoBean implements Serializable {
     private CarritoBean carritoBean;
     @Inject
     private PerfilData perfilData;
+    @Inject
+    private PedidoB pedidoB;
 
     public String procesarPago() {
         this.items = carritoBean.getItems();  // Asigna los productos del carrito
@@ -54,7 +60,11 @@ public class PagoBean implements Serializable {
 
         if (pagoExitoso) {
             System.out.println("✅ Pago exitoso. Agregando pedido...");
-            agregarPedido();
+            try {
+                agregarPedido();
+            } catch (Exception e) {
+                System.out.println("Ocurrio un error "+e);
+            }
             generarComprobantePDF();
             carritoBean.vaciarCarrito();
             
@@ -71,17 +81,50 @@ public class PagoBean implements Serializable {
     }
 
     private boolean enviarDatosAlERP() {
-        // Simulación de pago aceptado
-        return false;
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            String jsonBody = String.format("{\"nombre\":\"%s\",\"correo\":\"%s\",\"tarjeta\":\"%s\"}",
+                    perfilData.getNombre(), perfilData.getEmail(), perfilData.getNumCuenta());
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:8080/ApiERP/api/pagos"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("Cuerpo de la respuesta: " + response.body());
+            System.out.println("Código de estado: " + response.statusCode());
+
+            return response.statusCode() == 200;
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error al enviar datos al ERP: " + e.getMessage());
+            return false;
+        }
     }
 
-    private void agregarPedido() {
-        String direccionCliente = perfilData.getDireccion()+" "+perfilData.getCiudad(); // Obtener dirección del usuario logueado
-    Pedido nuevoPedido = new Pedido(items, total, "En proceso", direccionCliente);
-        pedidoService.agregarPedido(items, total,direccionCliente);
-        
-    System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+    private void agregarPedido() throws Exception {
+    FacesContext context = FacesContext.getCurrentInstance();
+    String emailUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
+        System.out.println(emailUsuario+"++++++++++++++-------------");
+
+    if (emailUsuario == null || emailUsuario.isEmpty()) {
+        System.out.println("❌ ERROR: No se encontró el email del usuario en la sesión.");
+        return;
     }
+
+    String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
+    Pedido nuevoPedido = new Pedido("",items, total, "En proceso", direccionCliente, emailUsuario);
+
+    pedidoService.agregarPedido(items, total, direccionCliente);
+
+    System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+
+    pedidoB.setPedido(nuevoPedido);
+    pedidoB.insertarPedido();
+}
+
 
   private void generarComprobantePDF() {
     try {
@@ -92,7 +135,7 @@ public class PagoBean implements Serializable {
         // 📌 Asegurar que la carpeta de descargas exista
         File downloadsDir = new File(Paths.get(userHome, "Downloads").toString());
         if (!downloadsDir.exists()) {
-            System.out.println("📁 La carpeta 'Downloads' no existe. Creándola...");
+            System.out.println("? La carpeta 'Downloads' no existe. Creándola...");
             boolean creada = downloadsDir.mkdirs();
             if (!creada) {
                 System.out.println("❌ ERROR: No se pudo crear la carpeta de descargas.");

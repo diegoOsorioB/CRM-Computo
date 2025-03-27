@@ -3,6 +3,11 @@ public class ItemCarrito {
     private Producto producto;
     private int cantidad;
 
+    public ItemCarrito() {
+    }
+    
+    
+
     public ItemCarrito(Producto producto, int cantidad) {
         this.producto = producto;
         this.cantidad = cantidad;
