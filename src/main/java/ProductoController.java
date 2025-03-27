@@ -66,6 +66,9 @@ public class ProductoController {
             if (response.statusCode() == 200) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 productos = Arrays.asList(objectMapper.readValue(response.body(), Producto[].class));
+                Producto pr = new Producto();
+                System.out.println(pr.getStock()+" Este es mi stock");
+                
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, 
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al obtener los productos", null));

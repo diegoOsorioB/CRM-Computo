@@ -9,7 +9,7 @@ import java.util.List;
 public class ListaDeseosBean implements Serializable {
 
     private List<Producto> listaDeseos;
-
+/*
     public ListaDeseosBean() {
         listaDeseos = new ArrayList<>();
         listaDeseos.add(new Producto("Camisa Blanca", "Camisa de algodón 100% blanca", "camisa.jpg", 500.00, 1));
@@ -18,7 +18,7 @@ public class ListaDeseosBean implements Serializable {
         listaDeseos.add(new Producto("Refrigerador Blanco", "Refrigerador de 400L color blanco", "refrigerador_blanco.jpg", 33500.00, 4));
         listaDeseos.add(new Producto("Taza Blanca", "Taza de cerámica blanca con diseño minimalista", "taza_blanca.jpg", 120.00, 5));
     }
-
+*/
     public List<Producto> getListaDeseos() {
         return new ArrayList<>(listaDeseos); // Devuelve una copia para evitar modificaciones externas
     }

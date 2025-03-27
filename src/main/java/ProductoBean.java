@@ -16,7 +16,8 @@ public class ProductoBean implements Serializable {
     private List<Producto> productosFiltrados;
     private Producto producto;
     private String criterioBusqueda;
-
+    
+/*
     public ProductoBean() {
         productos = new ArrayList<>();
         productos.add(new Producto("Camisa Blanca", "Camisa de algodón 100% blanca", "camisa.jpg", 500.00, 1));
@@ -30,7 +31,7 @@ public class ProductoBean implements Serializable {
         // Cargar el producto desde la URL
         cargarProducto();
     }
-
+*/
     public List<Producto> getProductos() {
         return productos;
     }
