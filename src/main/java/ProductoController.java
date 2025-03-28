@@ -12,7 +12,6 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.json.JSONObject;
 
 @Named
 @RequestScoped
@@ -43,8 +42,7 @@ public class ProductoController {
     public void setProductoId(Integer productoId) {
         this.productoId = productoId;
     }
-        
-        
+
     public void setProductoSeleccionado(Producto productoSeleccionado) {
         this.productoSeleccionado = productoSeleccionado;
     }
@@ -64,11 +62,7 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-<<<<<<< HEAD
-                    .uri(URI.create("http://192.168.207.1:8080/destinity/erp/api/products"))
-=======
                     .uri(URI.create("https://4ccb-2806-2f0-9020-9bac-d4c-95c5-fa1-4e06.ngrok-free.app/APICRM2/api/productos"))
->>>>>>> Francisco
                     .header("Accept", "application/json")
                     .GET()
                     .build();
@@ -78,13 +72,13 @@ public class ProductoController {
             System.out.println(response.statusCode());
 
             if (response.statusCode() == 200) {
-    try {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.productos = Arrays.asList(objectMapper.readValue(response.body(), Producto[].class)); // Asignar a la variable de instancia
-    } catch (IOException e) {
-        System.err.println("Error al procesar la respuesta JSON: " + e.getMessage());
-    }
-}
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    this.productos = Arrays.asList(objectMapper.readValue(response.body(), Producto[].class)); // Asignar a la variable de instancia
+                } catch (IOException e) {
+                    System.err.println("Error al procesar la respuesta JSON: " + e.getMessage());
+                }
+            }
 
         } catch (IOException | InterruptedException e) {
             FacesContext.getCurrentInstance().addMessage(null,

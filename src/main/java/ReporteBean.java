@@ -4,14 +4,13 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
 
 @Named
 @ViewScoped
@@ -85,56 +84,50 @@ public class ReporteBean implements Serializable {
         return listaReportes;
     }
 
-    // Método para generar el reporte en PDF
-    public void generarReportePDF(Reportes reporte) {
-        // Nombre del archivo PDF a generar
-        String fileName = "reporte_" + reporte.getPedido().getIdPedido() + ".pdf";
+    // Método para generar el reporte en archivo de texto
+    public void generarReporteTexto(Reportes reporte) {
+        // Nombre del archivo de texto a generar
+        String fileName = "reporte_" + reporte.getPedido().getIdPedido() + ".txt";
 
-        // Ruta del archivo PDF (puedes personalizarla)
+        // Ruta del archivo de texto (puedes personalizarla)
         String rutaArchivo = "C:/reports/" + fileName;
 
         try {
-            // Crear PdfWriter (la salida donde se guardará el archivo PDF)
-            PdfWriter writer = new PdfWriter(rutaArchivo);
-
-            // Crear PdfDocument (el documento que vamos a construir)
-            PdfDocument pdf = new PdfDocument(writer);
-
-            // Crear el documento PDF (esto es lo que vas a ver como contenido)
-            Document document = new Document(pdf);
-
-            // Agregar título al reporte
-            document.add(new Paragraph("Reporte de Pedido #" + reporte.getPedido().getIdPedido())
-                    .setFont(com.itextpdf.layout.font.FontProgramFactory.createFont(StandardFonts.HELVETICA_BOLD))
-                    .setFontSize(18));
-
-            // Agregar detalles del pedido
-            document.add(new Paragraph("Detalles del Pedido:")
-                    .setFont(com.itextpdf.layout.font.FontProgramFactory.createFont(StandardFonts.HELVETICA))
-                    .setFontSize(12));
-
-            // Agregar detalles del cliente
-            document.add(new Paragraph("Cliente: " + reporte.getPedido().getUsuario().getNombre() + " " + 
-                                       reporte.getPedido().getUsuario().getApellidoPaterno()));
-            document.add(new Paragraph("Total: $" + reporte.getPedido().getTotal()));
-
-            // Agregar productos del carrito
-            for (Producto producto : reporte.getPedido().getCarrito().getProductos()) {
-                document.add(new Paragraph("Producto: " + producto.getNombre() + 
-                                           " - Precio: $" + producto.getPrecio() + 
-                                           " - Cantidad: " + producto.getCantidad()));
+            // Crear un archivo de texto
+            File archivo = new File(rutaArchivo);
+            if (!archivo.exists()) {
+                archivo.createNewFile(); // Si no existe, crear el archivo
             }
 
-            // Cerrar el documento
-            document.close();
+            // Crear un BufferedWriter para escribir en el archivo
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+                // Escribir título del reporte
+                writer.write("Reporte de Pedido #" + reporte.getPedido().getIdPedido() + "\n");
+                writer.write("===============================\n\n");
+
+                // Agregar detalles del pedido
+                writer.write("Detalles del Pedido:\n");
+                writer.write("Cliente: " + reporte.getPedido().getUsuario().getNombre() + " " + 
+                             reporte.getPedido().getUsuario().getApellidoPaterno() + "\n");
+                writer.write("Total: $" + reporte.getPedido().getTotal() + "\n\n");
+
+                // Agregar productos del carrito
+                writer.write("Productos:\n");
+                for (Producto producto : reporte.getPedido().getCarrito().getProductos()) {
+                    writer.write("Producto: " + producto.getNombre() + " - Precio: $" + producto.getPrecio() + 
+                                 " - Cantidad: " + producto.getCantidad() + "\n");
+                }
+
+                writer.write("\nReporte generado exitosamente.");
+            }
 
             // Notificar al usuario que el reporte ha sido generado correctamente
-            System.out.println("Reporte en PDF generado exitosamente: " + fileName);
+            System.out.println("Reporte en texto generado exitosamente: " + fileName);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             // En caso de error, mostrar un mensaje de error y logear la excepción
             FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo generar el reporte en PDF", ""));
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo generar el reporte en archivo de texto", ""));
             e.printStackTrace();
         }
     }

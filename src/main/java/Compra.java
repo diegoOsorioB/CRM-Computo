@@ -72,6 +72,5 @@ public class Compra implements Serializable {
     public void setEstadoInicial(String estadoInicial) {
         this.estadoInicial = estadoInicial;
     }
-    
-    
+
 }
