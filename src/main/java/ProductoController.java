@@ -22,6 +22,8 @@ public class ProductoController {
     private List<Producto> productos;
     private Producto productoSeleccionado;
     private List<Producto> listaDeseos = new ArrayList<>();
+    private String selectedProductId;
+    private Producto selectedProduct;
 
     @PostConstruct
     public void init() {
@@ -80,7 +82,30 @@ public class ProductoController {
     }
 
     public String verDetalle(Producto producto) {
-        this.productoSeleccionado = producto;
+        this.selectedProduct = producto;
         return "detalleProducto?faces-redirect=true";
+    }
+    
+    public void loadSelectedProduct() {
+        if (selectedProductId != null) {
+            selectedProduct = productos.stream()
+                .filter(p -> p.getId().equals(selectedProductId))
+                .findFirst()
+                .orElse(null);
+        }
+        System.out.println(selectedProductId+"####3");
+    }
+
+    // Getters y Setters
+    public String getSelectedProductId() {
+        return selectedProductId;
+    }
+
+    public void setSelectedProductId(String selectedProductId) {
+        this.selectedProductId = selectedProductId;
+    }
+
+    public Producto getSelectedProduct() {
+        return selectedProduct;
     }
 }
