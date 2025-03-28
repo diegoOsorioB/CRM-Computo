@@ -55,7 +55,7 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://192.168.207.1:8080/destinity/erp/api/products"))
+                    .uri(URI.create("http://localhost:8080/APICRM2/api/productos"))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
