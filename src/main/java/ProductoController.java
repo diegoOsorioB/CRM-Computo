@@ -1,4 +1,3 @@
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
@@ -20,6 +19,7 @@ import org.json.JSONObject;
 public class ProductoController {
 
     private List<Producto> productos;
+    private Integer productoId;
     private Producto productoSeleccionado;
     private List<Producto> listaDeseos = new ArrayList<>();
 
@@ -36,6 +36,15 @@ public class ProductoController {
         return productoSeleccionado;
     }
 
+    public Integer getProductoId() {
+        return productoId;
+    }
+
+    public void setProductoId(Integer productoId) {
+        this.productoId = productoId;
+    }
+        
+        
     public void setProductoSeleccionado(Producto productoSeleccionado) {
         this.productoSeleccionado = productoSeleccionado;
     }
@@ -55,7 +64,11 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
+<<<<<<< HEAD
                     .uri(URI.create("http://192.168.207.1:8080/destinity/erp/api/products"))
+=======
+                    .uri(URI.create("https://4ccb-2806-2f0-9020-9bac-d4c-95c5-fa1-4e06.ngrok-free.app/APICRM2/api/productos"))
+>>>>>>> Francisco
                     .header("Accept", "application/json")
                     .GET()
                     .build();
