@@ -62,7 +62,7 @@ public class ProductoBean implements Serializable {
                 .collect(Collectors.toList());
         }
     }
-
+/*
    public void cargarProducto() {
     FacesContext fc = FacesContext.getCurrentInstance();
     Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
@@ -92,5 +92,5 @@ public class ProductoBean implements Serializable {
         }
     }
 }
-
+*/
 }
