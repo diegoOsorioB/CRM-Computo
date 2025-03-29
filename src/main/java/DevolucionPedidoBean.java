@@ -16,17 +16,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
 public class DevolucionPedidoBean implements Serializable {
 
     private String direccionIp = "https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app";
-    private String coleccion = "devoluciones";
-    private Devolucion devolucion = new Devolucion();
-    private List<Devolucion> devoluciones = new ArrayList<>();
+    private String coleccionPedidos = "pedidos";
+    private List<Pedido> pedidos = new ArrayList<>();
     private String correoUsuario;
     private String estadoFiltro;
+    
+    // Datos para reportes
+    private double totalVentas;
+    private Map<String, Long> productosMasVendidos;
+    private Map<String, Long> ventasPorEstado;
+    private Map<String, Double> ventasPorMes;
     
     @Inject
     private EmailService emailService;
@@ -36,7 +43,8 @@ public class DevolucionPedidoBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        consultarDevolucionesUsuario();
+        consultarPedidos();
+        generarReportes();
     }
 
     public String getCorreoUsuario() {
@@ -56,19 +64,16 @@ public class DevolucionPedidoBean implements Serializable {
     }
 
     /**
-     * Consulta solo las devoluciones del usuario actual
+     * Consulta todos los pedidos para reportes
      */
-    public void consultarDevolucionesUsuario() {
+    public void consultarPedidos() {
         FacesContext context = FacesContext.getCurrentInstance();
         this.correoUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
 
-        if (this.correoUsuario == null || this.correoUsuario.isEmpty()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Error: Debes iniciar sesión para ver tus devoluciones", null));
-            return;
-        }
-
-        String endpoint = direccionIp + "/DatabaseService/api/" + coleccion + "?correoUsuario=" + this.correoUsuario;
+        String endpoint = direccionIp + "/DatabaseService/api/" + coleccionPedidos;
+        
+        // Para reportes generales, obtenemos todos los pedidos
+        // (podrías agregar filtros por fecha si es necesario)
 
         Client client = ClientBuilder.newClient();
 
@@ -81,12 +86,12 @@ public class DevolucionPedidoBean implements Serializable {
             if (response.getStatus() == 200) {
                 String jsonResponse = response.readEntity(String.class);
                 Jsonb jsonb = JsonbBuilder.create();
-                devoluciones = Arrays.asList(jsonb.fromJson(jsonResponse, Devolucion[].class));
+                pedidos = Arrays.asList(jsonb.fromJson(jsonResponse, Pedido[].class));
                 jsonb.close();
             } else {
                 String errorMsg = response.readEntity(String.class);
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                    "Error al obtener tus devoluciones: " + errorMsg, null));
+                    "Error al obtener los pedidos: " + errorMsg, null));
             }
             response.close();
         } catch (Exception e) {
@@ -98,101 +103,77 @@ public class DevolucionPedidoBean implements Serializable {
     }
 
     /**
-     * Registra una nueva devolución
+     * Genera reportes basados en los pedidos
      */
-    public void registrarDevolucion() throws Exception {
-        FacesContext context = FacesContext.getCurrentInstance();
-        this.correoUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
-
-        if (this.correoUsuario == null || this.correoUsuario.isEmpty()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Error: Debes iniciar sesión para registrar una devolución", null));
-            return;
-        }
-
-        // Validar campos obligatorios
-        if (devolucion.getMotivo() == null || devolucion.getMotivo().trim().isEmpty()) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Debes especificar el motivo de la devolución", null));
-            return;
-        }
-
-        // Configurar estado inicial
-        devolucion.setEstatus("Pendiente");
-        devolucion.setEstatusInicial("Pendiente");
-
-        String endpoint = direccionIp + "/DatabaseService/api/" + coleccion;
-
-        Client client = ClientBuilder.newClient();
-        Jsonb jsonb = JsonbBuilder.create();
-
-        try {
-            String json = jsonb.toJson(Arrays.asList(devolucion));
-
-            Response response = client.target(endpoint)
-                    .request(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .post(Entity.entity(json, MediaType.APPLICATION_JSON));
-
-            if (response.getStatus() == 200 || response.getStatus() == 201) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, 
-                    "Devolución registrada con éxito. Te notificaremos por correo sobre su estado.", null));
-                
-                // Enviar correo de confirmación
-                emailService.enviarCorreoDevolucion(
-                    this.correoUsuario,
-                    "Cliente", // Podrías obtener el nombre del usuario de la sesión
-                    devolucion.getIdDevolucion(),
-                    devolucion.getEstatus(),
-                    "Tu solicitud de devolución ha sido recibida"
-                );
-                
-                // Limpiar el formulario
-                devolucion = new Devolucion();
-                // Actualizar la lista
-                consultarDevolucionesUsuario();
-            } else {
-                String errorMsg = response.readEntity(String.class);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                    "Error al registrar la devolución: " + errorMsg, null));
-            }
-            response.close();
-        } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Error al conectar con el servidor", null));
-        } finally {
-            client.close();
-            jsonb.close();
-        }
+    public void generarReportes() {
+        // 1. Total de ventas (solo pedidos entregados)
+        this.totalVentas = pedidos.stream()
+            .filter(p -> "Entregado".equals(p.getEstado()))
+            .mapToDouble(Pedido::getTotal)
+            .sum();
+        
+        // 2. Productos más vendidos (nombre y cantidad)
+        this.productosMasVendidos = pedidos.stream()
+            .filter(p -> "Entregado".equals(p.getEstado()))
+            .flatMap(p -> p.getItems().stream())
+            .collect(Collectors.groupingBy(
+                item -> item.getProducto().getNombre(),
+                Collectors.summingLong(ItemCarrito::getCantidad)
+            ));
+            
+        // 3. Pedidos por estado
+        this.ventasPorEstado = pedidos.stream()
+            .collect(Collectors.groupingBy(
+                Pedido::getEstado,
+                Collectors.counting()
+            ));
+            
+        // 4. Ventas por mes (opcional)
+        /*this.ventasPorMes = pedidos.stream()
+            .filter(p -> "Entregado".equals(p.getEstado()))
+            .collect(Collectors.groupingBy(
+                p -> p.getFecha().getMonth().toString(),
+                Collectors.summingDouble(Pedido::getTotal)
+            ));*/
     }
 
     /**
-     * Filtra las devoluciones por estado
+     * Filtra los pedidos por estado
      */
-    public void filtrarDevoluciones() {
+    public void filtrarPedidos() {
         if (estadoFiltro == null || estadoFiltro.isEmpty()) {
-            consultarDevolucionesUsuario();
+            consultarPedidos();
         } else {
-            List<Devolucion> filtradas = new ArrayList<>();
-            for (Devolucion d : devoluciones) {
-                if (d.getEstatus().equalsIgnoreCase(estadoFiltro)) {
-                    filtradas.add(d);
-                }
-            }
-            devoluciones = filtradas;
+            List<Pedido> filtrados = pedidos.stream()
+                .filter(p -> p.getEstado().equalsIgnoreCase(estadoFiltro))
+                .collect(Collectors.toList());
+            pedidos = filtrados;
         }
     }
 
-    // Getters y Setters
-    public Devolucion getDevolucion() {
-        return devolucion;
+    // Métodos para acceder a los reportes desde la vista
+    public double getTotalVentas() {
+        return totalVentas;
     }
 
-    public void setDevolucion(Devolucion devolucion) {
-        this.devolucion = devolucion;
+    public Map<String, Long> getProductosMasVendidos() {
+        return productosMasVendidos;
     }
 
-    public List<Devolucion> getDevoluciones() {
-        return devoluciones;
+    public Map<String, Long> getVentasPorEstado() {
+        return ventasPorEstado;
+    }
+
+    public Map<String, Double> getVentasPorMes() {
+        return ventasPorMes;
+    }
+
+    // Getters y Setters originales
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 }
