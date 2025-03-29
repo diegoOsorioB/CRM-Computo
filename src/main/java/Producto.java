@@ -63,5 +63,9 @@ public class Producto {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    String getCantidad() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

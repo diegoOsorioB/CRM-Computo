@@ -96,4 +96,8 @@ public class Compra implements Serializable {
                 ", usuario=" + (usuario != null ? usuario.toString() : "null") +
                 '}';
     }
+
+    Object getCarrito() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
