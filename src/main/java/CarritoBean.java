@@ -27,6 +27,7 @@ public class CarritoBean implements Serializable {
     }
 
     public void agregarProducto(Producto producto) {
+        System.out.println(producto.getId()+"/*id ");
         // Verificar si el producto ya está en el carrito
         for (ItemCarrito item : items) {
             if (item.getProducto().getId() == producto.getId()) {
