@@ -6,15 +6,15 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
-    <h:head>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Reportes de Pedidos</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
-    </h:head>
-    <style>
-        body {
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Reportes de Pedidos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+</h:head>
+<style>
+    body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -152,134 +152,135 @@
             padding-bottom: 8px;
             border-bottom: 1px solid #eee;
         }
-    </style>
+</style>
 
-    <h:body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">CRM PRODUCT</a>
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="Product.xhtml">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
-                    </ul>
+<h:body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">CRM PRODUCT</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="Product.xhtml">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="text-center bg-primary text-white p-3">
+        <h1>Reportes de Pedidos</h1>
+    </header>
+
+    <div class="container mt-4">
+        <h:button value="Volver a Productos" outcome="Product" styleClass="btn btn-volver" />
+        
+        <section class="mb-4">
+            <h2>Estadísticas de Ventas</h2>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Total de Ventas</h3>
+                        <h4 style="color: #28a745;">$#{devolucionPedidoBean.totalVentas}</h4>
+                        <p>Suma total de pedidos entregados</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Pedidos por Estado</h3>
+                        <ui:repeat value="#{devolucionPedidoBean.ventasPorEstado.entrySet().toArray()}" var="entry">
+                            <div class="producto-vendido">
+                                <span>#{entry.key}:</span>
+                                <span>#{entry.value}</span>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Productos Más Vendidos</h3>
+                        <ui:repeat value="#{devolucionPedidoBean.productosMasVendidos.entrySet().toArray()}" var="entry">
+                            <div class="producto-vendido">
+                                <span>#{entry.key}:</span>
+                                <span>#{entry.value} unidades</span>
+                            </div>
+                        </ui:repeat>
+                    </div>
                 </div>
             </div>
-        </nav>
+        </section>
 
-        <header class="text-center bg-primary text-white p-3">
-            <h1>Reportes de Pedidos</h1>
-        </header>
-
-        <div class="container mt-4">
-            <!-- Botón para volver a Product.xhtml -->
-            <h:button value="Volver a Productos" outcome="Product" styleClass="btn btn-volver" />
+        <section class="mb-4">
+            <h2>Listado de Pedidos</h2>
             
-            <!-- Sección de Reportes -->
-            <section class="mb-4">
-                <h2>Estadísticas de Ventas</h2>
-                
-                <div class="row">
-                    <!-- Total de Ventas -->
-                    <div class="col-md-4">
-                        <div class="reporte-card">
-                            <h3 class="reporte-title">Total de Ventas</h3>
-                            <h4 style="color: #28a745;">$#{devolucionPedidoBean.totalVentas}</h4>
-                            <p>Suma total de pedidos entregados</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Pedidos por Estado -->
-                    <div class="col-md-4">
-                        <div class="reporte-card">
-                            <h3 class="reporte-title">Pedidos por Estado</h3>
-                            <ui:repeat value="#{devolucionPedidoBean.ventasPorEstado.entrySet().toArray()}" var="entry">
-                                <div class="producto-vendido">
-                                    <span>#{entry.key}:</span>
-                                    <span>#{entry.value}</span>
-                                </div>
-                            </ui:repeat>
-                        </div>
-                    </div>
-                    
-                    <!-- Productos Más Vendidos -->
-                    <div class="col-md-4">
-                        <div class="reporte-card">
-                            <h3 class="reporte-title">Productos Más Vendidos</h3>
-                            <ui:repeat value="#{devolucionPedidoBean.productosMasVendidos.entrySet().toArray()}" var="entry">
-                                <div class="producto-vendido">
-                                    <span>#{entry.key}:</span>
-                                    <span>#{entry.value} unidades</span>
-                                </div>
-                            </ui:repeat>
-                        </div>
-                    </div>
+            <h:form>
+                <div class="form-group">
+                    <h:outputLabel value="Filtrar por estado:" />
+                    <h:selectOneMenu value="#{devolucionPedidoBean.estadoFiltro}" styleClass="form-control">
+                        <f:selectItem itemValue="" itemLabel="Todos los pedidos" />
+                        <f:selectItem itemValue="Pendiente" itemLabel="Pendientes" />
+                        <f:selectItem itemValue="Procesando" itemLabel="En proceso" />
+                        <f:selectItem itemValue="Entregado" itemLabel="Entregados" />
+                        <f:selectItem itemValue="Cancelado" itemLabel="Cancelados" />
+                        <f:ajax event="change" listener="#{devolucionPedidoBean.filtrarPedidos}" 
+                               render="pedidosTable filtroMessages"/>
+                    </h:selectOneMenu>
                 </div>
-            </section>
-
-            <!-- Listado de Pedidos -->
-            <section class="mb-4">
-                <h2>Listado de Pedidos</h2>
                 
-                <!-- Filtro por estado -->
-                <h:form>
-                    <div class="form-group">
-                        <h:outputLabel value="Filtrar por estado:" />
-                        <h:selectOneMenu value="#{devolucionPedidoBean.estadoFiltro}" styleClass="form-control">
-                            <f:selectItem itemValue="" itemLabel="Todos los pedidos" />
-                            <f:selectItem itemValue="Pendiente" itemLabel="Pendientes" />
-                            <f:selectItem itemValue="Procesando" itemLabel="En proceso" />
-                            <f:selectItem itemValue="Entregado" itemLabel="Entregados" />
-                            <f:selectItem itemValue="Cancelado" itemLabel="Cancelados" />
-                            <f:ajax event="change" listener="#{devolucionPedidoBean.filtrarPedidos}" 
-                                   render="pedidosTable filtroMessages"/>
-                        </h:selectOneMenu>
-                    </div>
+                <h:messages id="filtroMessages" styleClass="alert" infoClass="alert-info"/>
+            </h:form>
+            
+            <h:form>
+                <h:dataTable id="pedidosTable" value="#{devolucionPedidoBean.pedidos}" var="pedido" 
+                           styleClass="table table-striped pedidos-table">
+                    <h:column>
+                        <f:facet name="header">ID Pedido</f:facet>
+                        #{pedido.id}
+                    </h:column>
                     
-                    <h:messages id="filtroMessages" styleClass="alert" infoClass="alert-info"/>
-                </h:form>
-                
-                <!-- Tabla de pedidos -->
-                <h:form>
-                    <h:dataTable id="pedidosTable" value="#{devolucionPedidoBean.pedidos}" var="pedido" 
-                               styleClass="table table-striped pedidos-table">
-                        <h:column>
-                            <f:facet name="header">ID Pedido</f:facet>
-                            #{pedido.id}
-                        </h:column>
-                        
-                        <h:column>
-                            <f:facet name="header">Fecha</f:facet>
-                            #{pedido.fecha}
-                        </h:column>
-                        
-                        <h:column>
-                            <f:facet name="header">Total</f:facet>
-                            $#{pedido.total}
-                        </h:column>
-                        
-                        <h:column>
-                            <f:facet name="header">Estado</f:facet>
-                            <h:outputText value="#{pedido.estado}" 
-                                       styleClass="status-#{pedido.estado.toLowerCase()}"/>
-                        </h:column>
-                        
-                        <h:column>
-                            <f:facet name="header">Dirección</f:facet>
-                            #{pedido.direccion}
-                        </h:column>
-                        
-                        <h:column>
-                            <f:facet name="header">Cliente</f:facet>
-                            #{pedido.correoUsuario}
-                        </h:column>
-                    </h:dataTable>
-                </h:form>
-            </section>
-        </div>
+                    <h:column>
+                        <f:facet name="header">Fecha</f:facet>
+                        #{pedido.fecha}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Total</f:facet>
+                        $#{pedido.total}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Estado</f:facet>
+                        <h:outputText value="#{pedido.estado}" 
+                                   styleClass="status-#{pedido.estado.toLowerCase()}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Dirección</f:facet>
+                        #{pedido.direccion}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Cliente</f:facet>
+                        #{pedido.correoUsuario}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Acciones</f:facet>
+                        <h:commandButton value="Solicitar Devolución" styleClass="btn btn-warning btn-sm"
+                                       action="#{devolucionPedidoBean.redirigirADevoluciones(pedido.id)}"
+                                       rendered="#{pedido.estado == 'Entregado'}">
+                            <f:ajax execute="@this" render="@none"/>
+                        </h:commandButton>
+                    </h:column>
+                </h:dataTable>
+            </h:form>
+        </section>
+    </div>
 
-        <footer class="text-center bg-primary text-white p-3 mt-4">
-            <p>&copy; 2025 CRM Producto. Todos los derechos reservados.</p>
-        </footer>
-    </h:body>
+    <footer class="text-center bg-primary text-white p-3 mt-4">
+        <p>&copy; 2025 CRM Producto. Todos los derechos reservados.</p>
+    </footer>
+</h:body>
 </html>

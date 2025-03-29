@@ -24,6 +24,12 @@ public class Producto {
         this.category = category;
         this.status = status;
     }
+    
+    public Producto(String id, String nombre, double precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
 
     // Getters y Setters
     public String getId() { return id; }
