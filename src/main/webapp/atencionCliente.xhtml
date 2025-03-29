@@ -134,6 +134,15 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
+        
+        .btn-volver {
+            margin-bottom: 20px;
+            background-color: #6c757d;
+        }
+        
+        .btn-volver:hover {
+            background-color: #5a6268;
+        }
     </style>
 
     <h:body>
@@ -154,6 +163,9 @@
         </header>
 
         <div class="container mt-4">
+            <!-- Botón para volver a Product.xhtml -->
+            <h:button value="Volver a Productos" outcome="Product" styleClass="btn btn-volver" />
+            
             <!-- Formulario para nueva devolución -->
             <section class="mb-4 form-container">
                 <h2>Solicitar Nueva Devolución</h2>
@@ -206,7 +218,7 @@
                     <h:dataTable id="devolucionesTable" value="#{devolucionPedidoBean.devoluciones}" var="dev" 
                                styleClass="table table-striped devoluciones-table">
                         <h:column>
-                            <f:facet name="header">ID Devolución</f:facet>
+                            <f:facet name="header">Token Devolucion</f:facet>
                             ##{dev.idDevolucion}
                         </h:column>
                         

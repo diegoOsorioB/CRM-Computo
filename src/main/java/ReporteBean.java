@@ -34,19 +34,15 @@ public class ReporteBean implements Serializable {
     private Map<String, Integer> ventasPorEstado = new HashMap<>();
     private Map<String, Double> ventasPorProducto = new HashMap<>();
 
-    // Token de autenticación
     private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
 
     @PostConstruct
     public void init() {
-        fechaInicio = LocalDate.now().withDayOfMonth(1); // Primer día del mes actual
-        fechaFin = LocalDate.now(); // Fecha actual
+        fechaInicio = LocalDate.now().withDayOfMonth(1);
+        fechaFin = LocalDate.now();
         consultarTodosPedidos();
     }
 
-    /**
-     * Consulta todos los pedidos sin filtrar por usuario
-     */
     public void consultarTodosPedidos() {
         FacesContext context = FacesContext.getCurrentInstance();
         String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccion;
@@ -79,9 +75,6 @@ public class ReporteBean implements Serializable {
         }
     }
 
-    /**
-     * Genera estadísticas basadas en los pedidos cargados
-     */
     private void generarEstadisticas() {
         // Filtrar por rango de fechas
         List<Pedido> pedidosFiltrados = todosPedidos.stream()
@@ -108,7 +101,7 @@ public class ReporteBean implements Serializable {
                         Collectors.summingInt(p -> 1)
                 ));
 
-        // Estadísticas por producto (asumiendo que ItemCarrito tiene getProducto() y getCantidad())
+        // Estadísticas por producto
         ventasPorProducto = new HashMap<>();
         pedidosFiltrados.forEach(pedido -> {
             pedido.getItems().forEach(item -> {
@@ -119,9 +112,6 @@ public class ReporteBean implements Serializable {
         });
     }
 
-    /**
-     * Filtra los pedidos según los criterios seleccionados
-     */
     public void filtrarReporte() {
         generarEstadisticas();
         FacesContext.getCurrentInstance().addMessage(null, 
@@ -129,47 +119,15 @@ public class ReporteBean implements Serializable {
     }
 
     // Getters y Setters
-    public LocalDate getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(LocalDate fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public LocalDate getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(LocalDate fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public String getEstadoFiltro() {
-        return estadoFiltro;
-    }
-
-    public void setEstadoFiltro(String estadoFiltro) {
-        this.estadoFiltro = estadoFiltro;
-    }
-
-    public double getTotalVentas() {
-        return totalVentas;
-    }
-
-    public int getTotalPedidos() {
-        return totalPedidos;
-    }
-
-    public Map<String, Integer> getVentasPorEstado() {
-        return ventasPorEstado;
-    }
-
-    public Map<String, Double> getVentasPorProducto() {
-        return ventasPorProducto;
-    }
-
-    public List<Pedido> getTodosPedidos() {
-        return todosPedidos;
-    }
+    public LocalDate getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(LocalDate fechaInicio) { this.fechaInicio = fechaInicio; }
+    public LocalDate getFechaFin() { return fechaFin; }
+    public void setFechaFin(LocalDate fechaFin) { this.fechaFin = fechaFin; }
+    public String getEstadoFiltro() { return estadoFiltro; }
+    public void setEstadoFiltro(String estadoFiltro) { this.estadoFiltro = estadoFiltro; }
+    public double getTotalVentas() { return totalVentas; }
+    public int getTotalPedidos() { return totalPedidos; }
+    public Map<String, Integer> getVentasPorEstado() { return ventasPorEstado; }
+    public Map<String, Double> getVentasPorProducto() { return ventasPorProducto; }
+    public List<Pedido> getTodosPedidos() { return todosPedidos; }
 }
