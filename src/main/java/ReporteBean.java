@@ -2,133 +2,174 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
 public class ReporteBean implements Serializable {
 
-    private List<Reportes> listaReportes;
-    private List<Devolucion> listaDevoluciones;
+    private String direccionIp = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app";
+    private String coleccion = "pedidos";
+    private List<Pedido> todosPedidos = new ArrayList<>();
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private String estadoFiltro;
+    private double totalVentas;
+    private int totalPedidos;
+    private Map<String, Integer> ventasPorEstado = new HashMap<>();
+    private Map<String, Double> ventasPorProducto = new HashMap<>();
 
-    @Inject
-    private EmailService emailService;
+    // Token de autenticación
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
 
     @PostConstruct
     public void init() {
-        cargarReportes();
-    }
-    
-    // Constructor
-    public ReporteBean() {
-        listaDevoluciones = new ArrayList<>();
+        fechaInicio = LocalDate.now().withDayOfMonth(1); // Primer día del mes actual
+        fechaFin = LocalDate.now(); // Fecha actual
+        consultarTodosPedidos();
     }
 
-    private void cargarReportes() {
-        listaReportes = new ArrayList<>();
-        listaDevoluciones.add(new Devolucion(201, new Compra(101, "2025-03-01", 3500.00, "Entregado", new User("1", "Juan", "Perez", "leopablo26@gmail.com", "cliente")), "Producto defectuoso", "Pendiente", ""));
-    }
-
-    public void actualizarEstatus(Reportes reporte) {
+    /**
+     * Consulta todos los pedidos sin filtrar por usuario
+     */
+    public void consultarTodosPedidos() {
         FacesContext context = FacesContext.getCurrentInstance();
+        String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccion;
 
-        if (reporte.getRazonCambioEstatus() == null || reporte.getRazonCambioEstatus().trim().isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Debe ingresar una razón para actualizar el reporte del pedido #" + reporte.getPedido().getIdPedido(), ""));
-            return;
-        } else if (reporte.getEstatus().equals(reporte.getEstatusInicial())) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "No se realizó ningún cambio. El estatus es el mismo", ""));
-        } else {
-            try {
-                FacesContext.getCurrentInstance().addMessage(null, 
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, 
-                    "Estado actualizado: El pedido #" + reporte.getPedido().getIdPedido() + " ahora está en estado: " + reporte.getEstatus(), ""));
-
-                System.out.println("Reporte #" + reporte.getIdDevolucion() + " actualizado a " + reporte.getEstatus());
-
-                // Enviar correo con la actualización del reporte
-                emailService.enviarCorreoDevolucion(
-                    reporte.getPedido().getUsuario().getEmail(),
-                    reporte.getPedido().getUsuario().getNombre(),
-                    reporte.getIdDevolucion(),
-                    reporte.getEstatus(),
-                    reporte.getRazonCambioEstatus()
-                );
-
-                FacesContext.getCurrentInstance().addMessage(null, 
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, 
-                    "Correo enviado correctamente", ""));
-
-                // Mantener los mensajes de flash
-                context.getExternalContext().getFlash().setKeepMessages(true);
-
-            } catch (Exception e) {
-                context.addMessage(null, 
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo actualizar el estado del reporte o enviar el correo", ""));
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public List<Reportes> getListaReportes() {
-        return listaReportes;
-    }
-
-    // Método para generar el reporte en archivo de texto
-    public void generarReporteTexto(Reportes reporte) {
-        // Nombre del archivo de texto a generar
-        String fileName = "reporte_" + reporte.getPedido().getIdPedido() + ".txt";
-
-        // Ruta del archivo de texto (puedes personalizarla)
-        String rutaArchivo = "C:/reports/" + fileName;
+        Client client = ClientBuilder.newClient();
 
         try {
-            // Crear un archivo de texto
-            File archivo = new File(rutaArchivo);
-            if (!archivo.exists()) {
-                archivo.createNewFile(); // Si no existe, crear el archivo
+            WebTarget target = client.target(endpoint);
+            Response response = target.request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .get();
+
+            if (response.getStatus() == 200) {
+                String jsonResponse = response.readEntity(String.class);
+                Jsonb jsonb = JsonbBuilder.create();
+                todosPedidos = Arrays.asList(jsonb.fromJson(jsonResponse, Pedido[].class));
+                jsonb.close();
+                generarEstadisticas();
+            } else {
+                String errorMsg = response.readEntity(String.class);
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                    "Error al obtener los pedidos: " + errorMsg, null));
             }
-
-            // Crear un BufferedWriter para escribir en el archivo
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
-                // Escribir título del reporte
-                writer.write("Reporte de Pedido #" + reporte.getPedido().getIdPedido() + "\n");
-                writer.write("===============================\n\n");
-
-                // Agregar detalles del pedido
-                writer.write("Detalles del Pedido:\n");
-                writer.write("Cliente: " + reporte.getPedido().getUsuario().getNombre() + " " + 
-                             reporte.getPedido().getUsuario().getApellidoPaterno() + "\n");
-                writer.write("Total: $" + reporte.getPedido().getTotal() + "\n\n");
-
-                // Agregar productos del carrito
-                writer.write("Productos:\n");
-                for (Producto producto : reporte.getPedido().getCarrito().getProductos()) {
-                    writer.write("Producto: " + producto.getNombre() + " - Precio: $" + producto.getPrecio() + 
-                                 " - Cantidad: " + producto.getCantidad() + "\n");
-                }
-
-                writer.write("\nReporte generado exitosamente.");
-            }
-
-            // Notificar al usuario que el reporte ha sido generado correctamente
-            System.out.println("Reporte en texto generado exitosamente: " + fileName);
-
-        } catch (IOException e) {
-            // En caso de error, mostrar un mensaje de error y logear la excepción
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo generar el reporte en archivo de texto", ""));
-            e.printStackTrace();
+            response.close();
+        } catch (Exception e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                "Error de conexión: " + e.getMessage(), null));
+        } finally {
+            client.close();
         }
+    }
+
+    /**
+     * Genera estadísticas basadas en los pedidos cargados
+     */
+    private void generarEstadisticas() {
+        // Filtrar por rango de fechas
+        List<Pedido> pedidosFiltrados = todosPedidos.stream()
+                .filter(p -> !p.getFecha().isBefore(fechaInicio) && !p.getFecha().isAfter(fechaFin))
+                .collect(Collectors.toList());
+
+        // Aplicar filtro de estado si existe
+        if (estadoFiltro != null && !estadoFiltro.isEmpty()) {
+            pedidosFiltrados = pedidosFiltrados.stream()
+                    .filter(p -> p.getEstado().equals(estadoFiltro))
+                    .collect(Collectors.toList());
+        }
+
+        // Calcular totales
+        totalPedidos = pedidosFiltrados.size();
+        totalVentas = pedidosFiltrados.stream()
+                .mapToDouble(Pedido::getTotal)
+                .sum();
+
+        // Estadísticas por estado
+        ventasPorEstado = pedidosFiltrados.stream()
+                .collect(Collectors.groupingBy(
+                        Pedido::getEstado,
+                        Collectors.summingInt(p -> 1)
+                ));
+
+        // Estadísticas por producto (asumiendo que ItemCarrito tiene getProducto() y getCantidad())
+        ventasPorProducto = new HashMap<>();
+        pedidosFiltrados.forEach(pedido -> {
+            pedido.getItems().forEach(item -> {
+                String nombreProducto = item.getProducto().getNombre();
+                double totalProducto = item.getProducto().getPrecio() * item.getCantidad();
+                ventasPorProducto.merge(nombreProducto, totalProducto, Double::sum);
+            });
+        });
+    }
+
+    /**
+     * Filtra los pedidos según los criterios seleccionados
+     */
+    public void filtrarReporte() {
+        generarEstadisticas();
+        FacesContext.getCurrentInstance().addMessage(null, 
+            new FacesMessage(FacesMessage.SEVERITY_INFO, "Reporte actualizado", null));
+    }
+
+    // Getters y Setters
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public String getEstadoFiltro() {
+        return estadoFiltro;
+    }
+
+    public void setEstadoFiltro(String estadoFiltro) {
+        this.estadoFiltro = estadoFiltro;
+    }
+
+    public double getTotalVentas() {
+        return totalVentas;
+    }
+
+    public int getTotalPedidos() {
+        return totalPedidos;
+    }
+
+    public Map<String, Integer> getVentasPorEstado() {
+        return ventasPorEstado;
+    }
+
+    public Map<String, Double> getVentasPorProducto() {
+        return ventasPorProducto;
+    }
+
+    public List<Pedido> getTodosPedidos() {
+        return todosPedidos;
     }
 }
