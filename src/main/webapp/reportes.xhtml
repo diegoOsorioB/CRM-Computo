@@ -182,6 +182,40 @@
                     </h:column>
                 </h:dataTable>
             </div>
+            
+            <!-- Agrega esta sección después del listado detallado de pedidos -->
+<div class="report-container">
+    <h3>Detalle de Productos Pedidos</h3>
+    <h:dataTable value="#{reporteBean.todosPedidos}" var="pedido" 
+               styleClass="table table-striped">
+        <h:column>
+            <f:facet name="header">Pedido ID</f:facet>
+            #{pedido.id}
+        </h:column>
+        
+        <h:column>
+            <f:facet name="header">Productos</f:facet>
+            <h:dataTable value="#{pedido.items}" var="item" styleClass="table table-sm">
+                <h:column>
+                    <f:facet name="header">Producto</f:facet>
+                    #{item.producto.nombre}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Cantidad</f:facet>
+                    #{item.cantidad}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Precio Unitario</f:facet>
+                    $#{item.producto.precio}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Subtotal</f:facet>
+                    $#{item.producto.precio * item.cantidad}
+                </h:column>
+            </h:dataTable>
+        </h:column>
+    </h:dataTable>
+</div>
         </div>
     </h:body>
 </html>
