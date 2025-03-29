@@ -31,7 +31,7 @@ public class ButtonController {
             HttpClient client = HttpClient.newHttpClient();
             String jsonBody = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://10.250.1.37:8080/ApiCRM/api/usuarios/login"))
+                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -69,6 +69,8 @@ public class ButtonController {
 
             } else {
                 System.out.println("Error en el login: " + response.body());
+                
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Credenciales Invalidas", null));
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error: " + e.getMessage());
@@ -129,7 +131,7 @@ public class ButtonController {
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://10.250.1.37:8080/ApiCRM/api/usuarios/registrar"))
+                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/registrar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();

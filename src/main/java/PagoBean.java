@@ -116,7 +116,7 @@ public class PagoBean implements Serializable {
     }
 
     String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
-    Pedido nuevoPedido = new Pedido("",items, total, "En proceso", direccionCliente, emailUsuario);
+    Pedido nuevoPedido = new Pedido(null,items, total, "En proceso", direccionCliente, emailUsuario);
 
     pedidoService.agregarPedido(items, total, direccionCliente);
 

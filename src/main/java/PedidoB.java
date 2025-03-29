@@ -71,7 +71,7 @@ public class PedidoB implements Serializable {
         pedido.setCorreoUsuario(correoUsuario);
         pedido.setFecha(LocalDate.now());  // Asegura que la fecha esté asignada
 
-        String endpoint = "http://10.250.1.73:8080/DatabaseService/api/service/pedidos";
+        String endpoint = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/pedidos";
 
         Client client = ClientBuilder.newClient();
         Jsonb jsonb = JsonbBuilder.create();
@@ -89,6 +89,7 @@ public class PedidoB implements Serializable {
 
             // Ver el código de estado de la respuesta
             System.out.println("Código de estado--: " + response.getStatus());
+            
 
             if (response.getStatus() == 200 || response.getStatus() == 201) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido insertado con éxito", null));
@@ -121,7 +122,7 @@ public class PedidoB implements Serializable {
         }
 
         // Construcción del endpoint con el filtro por correoUsuario
-        String endpoint = "http://10.250.1.73:8080/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
+        String endpoint = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
 
         Client client = ClientBuilder.newClient();
 
