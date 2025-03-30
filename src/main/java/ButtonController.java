@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Named
@@ -26,56 +27,62 @@ public class ButtonController {
 
     // Método para consultar el login del usuario
     public void consultar() {
-        try {
-            System.out.println(user.getId() + " NO ID");
-            HttpClient client = HttpClient.newHttpClient();
-            String jsonBody = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/ApiCRM/api/usuarios/login"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .build();
+    try {
+        System.out.println(user.getId() + " NO ID");
+        HttpClient client = HttpClient.newHttpClient();
+        String jsonBody = String.format("{\"correo\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/auth/login"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        System.out.println("Cuerpo de la respuesta: " + response.body());
+        System.out.println("Código de estado: " + response.statusCode());
+
+        if (response.statusCode() == 200) {
+            System.out.println("Conexión exitosa");
+
+            // Convertir la respuesta en JSON
+            JSONObject jsonResponse = new JSONObject(response.body());
             
+            // Extraer datos del usuario
+          //  String userId = jsonResponse.getString("id");
+            JSONArray rolesArray = jsonResponse.getJSONArray("roles"); 
+String userRole = rolesArray.getString(0); // Obtener el primer rol
+
+            String token = jsonResponse.getString("token"); // Asegúrate de que el backend envíe el token
+
+            // Asignar los valores al objeto `user`
+           // user.setId(userId);
+            user.setRol(userRole);
+
+            // Obtener el contexto de Faces y la sesión
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
             
+            // Guardar datos en la sesión
+            session.setAttribute("userEmail", user.getEmail());
+            session.setAttribute("userRole", user.getRol());
+            session.setAttribute("authToken", token); // Guardar el token en la sesión
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Usuario: " + user.getEmail() + " | Rol: " + user.getRol() + " | Token: " + token);
 
-            System.out.println("Cuerpo de la respuesta: " + response.body());
-            System.out.println("Código de estado: " + response.statusCode());
+            // Redireccionar a la página de productos
+            facesContext.getExternalContext().redirect("Product.xhtml");
 
-            if (response.statusCode() == 200) {
-                System.out.println("Conexion exitosa");
-                
-                System.out.println(response.body());
-                
-                JSONObject jsonResponse = new JSONObject(response.body());
-                user.setId(jsonResponse.getString("id"));
-                String userRole = jsonResponse.getString("rol");
-
-                // Aquí es donde deberías recibir el id del usuario después del login exitoso.
-                // Supongamos que la respuesta contiene el ID y lo asignamos a `user.setId()`
-                user.setId(response.body()); // Asigna el id obtenido del backend
-                user.setRol(userRole);
-                
-
-                FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
-
-                // Guardar información del usuario en la sesión
-                FacesContext facesContext = FacesContext.getCurrentInstance();
-                HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-                session.setAttribute("userEmail", user.getEmail());
-                session.setAttribute("userRole", user.getRol());
-                System.out.println(user.getEmail()+"  Rol  "+user.getRol());
-
-            } else {
-                System.out.println("Error en el login: " + response.body());
-                
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Credenciales Invalidas", null));
-            }
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
+        } else {
+            System.out.println("Error en el login: " + response.body());
+            FacesContext.getCurrentInstance().addMessage(null, 
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Credenciales inválidas", null));
         }
+    } catch (IOException | InterruptedException e) {
+        System.out.println("Error: " + e.getMessage());
     }
+}
+
 
     // Método para cerrar sesión
     public void cerrarSesion() {
