@@ -16,10 +16,11 @@ public class ProductoBean implements Serializable {
     private List<Producto> productosFiltrados;
     private Producto producto;
     private String criterioBusqueda;
-
+    
+/*
     public ProductoBean() {
     }
-
+*/
     public List<Producto> getProductos() {
         return productos;
     }
@@ -50,7 +51,7 @@ public class ProductoBean implements Serializable {
                 .collect(Collectors.toList());
         }
     }
-
+/*
    public void cargarProducto() {
     FacesContext fc = FacesContext.getCurrentInstance();
     Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
@@ -80,5 +81,5 @@ public class ProductoBean implements Serializable {
         }
     }
 }
-
+*/
 }

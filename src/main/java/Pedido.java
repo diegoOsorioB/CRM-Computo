@@ -1,3 +1,4 @@
+import jakarta.json.bind.annotation.JsonbProperty;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -5,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Pedido implements Serializable {
     private static final AtomicInteger contador = new AtomicInteger(1);
-
+ @JsonbProperty("_id")
     private String id;
     private List<ItemCarrito> items;
     private double total;

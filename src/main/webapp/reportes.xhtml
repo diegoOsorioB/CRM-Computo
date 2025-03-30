@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      lang="es">
 <head>
     <meta charset="UTF-8"/>
-    <title>Generar Reportes</title>
+    <title>Reporte de Pedidos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <form action="GenerarReporteServlet" method="post" id="reporteForm"/>
-    <style type="text/css">
+    <style>
         body {
             background-color: #f8f9fa;
         }
@@ -26,86 +28,55 @@
 </head>
 <body>
     <div class="container">
-        <h2 class="text-center">Generar Reportes</h2>
-        <form action="GenerarReporteServlet" method="post" id="reporteForm">
+        <h2 class="text-center">Reporte de Pedidos</h2>
+        
+        <!-- Formulario para seleccionar reporte -->
+        <h:form id="reporteForm">
             <div class="mb-3">
                 <label for="tipoReporte" class="form-label">Seleccione el tipo de reporte:</label>
-                <select class="form-select" name="tipoReporte" id="tipoReporte" required="required">
-                    <option value="ventas">Ventas</option>
-                    <option value="inventario">Inventario</option>
-                    <option value="pedidos">Pedidos</option>
-                    <option value="usuarios">Usuarios</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="formato" class="form-label">Seleccione el formato de descarga:</label>
-                <select class="form-select" name="formato" id="formato" required="required">
-                    <option value="pdf">PDF</option>
-                    <option value="excel">Excel</option>
-                </select>
+                <h:selectOneMenu id="tipoReporte" value="#{reporteController.tipoReporte}" class="form-select">
+                    <f:selectItem itemValue="totalVentas" itemLabel="Total de Ventas"/>
+                    <f:selectItem itemValue="pedidosPorEstado" itemLabel="Pedidos por Estado"/>
+                    <f:selectItem itemValue="pedidosPorFecha" itemLabel="Pedidos por Fecha"/>
+                </h:selectOneMenu>
             </div>
 
             <div class="mb-3">
                 <label for="fechaInicio" class="form-label">Fecha de inicio:</label>
-                <input type="date" class="form-control" name="fechaInicio" id="fechaInicio"/>
+                <h:inputText  id="fechaInicio" value="#{reporteController.fechaInicio}" class="form-control"/>
             </div>
 
             <div class="mb-3">
                 <label for="fechaFin" class="form-label">Fecha de fin:</label>
-                <input type="date" class="form-control" name="fechaFin" id="fechaFin"/>
+                <h:inputText  id="fechaFin" value="#{reporteController.fechaFin}" class="form-control"/>
             </div>
 
             <div class="btn-container">
-                <button type="button" class="btn btn-secondary" onclick="previewReport()">Vista Previa</button>
-                <button type="submit" class="btn btn-primary">Generar Reporte</button>
+                <h:commandButton value="Vista Previa" action="#{reporteController.generarVistaPrevia}" class="btn btn-secondary">
+                    <f:ajax execute="@form" render="chartContainer"/>
+                </h:commandButton>
+                <h:commandButton value="Generar Reporte" action="#{reporteController.generarReporte}" class="btn btn-primary"/>
             </div>
-        </form>
+        </h:form>
 
-        <div id="mensaje" class="alert d-none mt-3"></div>
+        <!-- Mensaje de estado -->
+        <h:messages id="mensaje" styleClass="alert mt-3" />
 
-        <div class="mt-4">
+        <!-- Contenedor del gráfico -->
+        <div id="chartContainer" class="mt-4">
             <h5 class="text-center">Vista previa del reporte</h5>
             <canvas id="reporteChart"></canvas>
         </div>
 
-        <!-- Botón para regresar a Product.xhtml -->
+        <!-- Botón para regresar a productos -->
         <div class="mt-4 text-center">
             <a href="Product.xhtml" class="btn btn-warning">Regresar a Productos</a>
         </div>
     </div>
 
-    <script type="text/javascript">
-        function previewReport() {
-            var tipo = document.getElementById("tipoReporte").value;
-            var formato = document.getElementById("formato").value;
-            var mensaje = document.getElementById("mensaje");
-
-            mensaje.classList.remove("d-none", "alert-danger", "alert-success");
-            mensaje.textContent = "Mostrando vista previa del reporte de " + tipo + " en formato " + formato;
-            mensaje.classList.add("alert-info");
-
-            actualizarGrafico(tipo);
-        }
-
-        document.getElementById("reporteForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            var mensaje = document.getElementById("mensaje");
-
-            mensaje.classList.remove("d-none", "alert-danger", "alert-success");
-            mensaje.textContent = "¡Reporte generado con éxito!";
-            mensaje.classList.add("alert-success");
-        });
-
-        function actualizarGrafico(tipo) {
-            var datos = {
-                ventas: [500, 700, 800, 600],
-                inventario: [100, 200, 150, 300],
-                pedidos: [50, 80, 90, 70],
-                usuarios: [10, 30, 20, 40]
-            };
-
-            var etiquetas = ["Enero", "Febrero", "Marzo", "Abril"];
+    <!-- Script para generar gráficos dinámicamente -->
+    <script>
+        function actualizarGrafico(datos, tipo) {
             var ctx = document.getElementById("reporteChart").getContext("2d");
 
             if (window.miGrafico) {
@@ -115,14 +86,22 @@
             window.miGrafico = new Chart(ctx, {
                 type: "bar",
                 data: {
-                    labels: etiquetas,
+                    labels: datos.labels,
                     datasets: [{
                         label: tipo.charAt(0).toUpperCase() + tipo.slice(1),
-                        data: datos[tipo],
+                        data: datos.valores,
                         backgroundColor: "rgba(54, 162, 235, 0.5)"
                     }]
                 }
             });
+        }
+
+        // Cargar los datos del backend
+        function cargarDatos() {
+            fetch("GenerarReporteServlet")
+                .then(response => response.json())
+                .then(data => actualizarGrafico(data, data.tipo))
+                .catch(error => console.error("Error al obtener datos:", error));
         }
     </script>
 </body>

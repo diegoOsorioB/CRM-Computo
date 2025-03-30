@@ -24,9 +24,9 @@ public class DevolucionBean implements Serializable {
 
     private void cargarDevoluciones() {
         listaDevoluciones = new ArrayList<>();
-        listaDevoluciones.add(new Devolucion(201, new Compra(101, "2025-03-01", 3500.00, "Entregado", new User("1", "Juan", "Perez", "leopablo26@gmail.com")), "Producto defectuoso", "Pendiente", ""));
-        listaDevoluciones.add(new Devolucion(202, new Compra(102, "2025-03-05", 500.00, "Entregado", new User("2", "Maria", "Lopez", "lopez@gmail.com")), "Talla incorrecta", "Pendiente", ""));
-        listaDevoluciones.add(new Devolucion(203, new Compra(103, "2025-03-07", 400.00, "Entregado", new User("3", "Carlos", "Hernandez", "hernandez@gmail.com")), "No era lo que esperaba", "Pendiente", ""));        
+        listaDevoluciones.add(new Devolucion(201, new Compra(101, "2025-03-01", 3500.00, "Entregado", new User("1", "Juan", "Perez", "leopablo26@gmail.com",null)), "Producto defectuoso", "Pendiente", ""));
+        listaDevoluciones.add(new Devolucion(202, new Compra(102, "2025-03-05", 500.00, "Entregado", new User("2", "Maria", "Lopez", "lopez@gmail.com",null)), "Talla incorrecta", "Pendiente", ""));
+        listaDevoluciones.add(new Devolucion(203, new Compra(103, "2025-03-07", 400.00, "Entregado", new User("3", "Carlos", "Hernandez", "hernandez@gmail.com",null)), "No era lo que esperaba", "Pendiente", ""));        
     }
 
     public void actualizarEstatus(Devolucion devolucion) {    

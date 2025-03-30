@@ -3,236 +3,261 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="jakarta.faces.facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-<h:head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Productos</title>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
-    
-    <style>
-        body {
-            background: #f8f9fa;
-        }
-        .container {
-            max-width: 1200px;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 80px;
-        }
-        .container2 {
-            background: #666666;
-            padding: 30px;
-            border-radius: 0;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            color: white;
-        }
-        .container2 .row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-        .container2 .col-md-4 {
-            flex: 1 1 300px;
-            margin-bottom: 20px;
-        }
-        .container2 ul {
-            list-style: none;
-            padding: 0;
-        }
-        .container2 ul li {
-            margin-bottom: 5px;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-            height: 100%;
-        }
-        .card:hover {
-            transform: scale(1.05);
-        }
-        .card-img-top {
-            object-fit: contain;
-            max-height: 200px;
-            width: 100%;
-        }
-        .card-body img {
-            max-height: 250px; /* Limita la altura en la vista detalle, para que sea un poco más grande que en el listado */
-            object-fit: contain; /* Para que la imagen se muestre completa sin recortes en detalle */
-            margin-bottom: 10px; /* Espacio entre la imagen y el contenido */
-        }
-        .card-body {
-            text-align: center;
-        }
-        .card-body h5 {
-            font-size: 1.5rem; /* Aumenta ligeramente el tamaño del título */
-            margin-bottom: 10px;
-        }
-        .card-body p {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-        .card-body .fw-bold {
-            font-size: 1.2rem;
-            color: #28a745; /* Verde para resaltar el precio */
-        }
-        .card {
-            border-radius: 15px; /* Bordes redondeados más suaves para el detalle */
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada en el detalle */
-        }
-        .card-body button {
-            margin-top: 15px;
-        }       
-        .btn-detalle {
-            width: 100%; 
-            padding: 12px; 
-            font-size: 1.1rem; 
-            background-color: #007BFF; 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-        }
-        .btn-detalle:hover {
-            background-color: #0056b3; /* Color más oscuro al pasar el mouse */
-            transform: translateY(-3px); /* Eleva el botón cuando el mouse está sobre él */
-        }
-        .btn-detalle:active {
-            background-color: #004085; /* Color más oscuro cuando se hace clic */
-            transform: translateY(0); /* El botón vuelve a su posición */
-        }
-        .navbar {
-            background: #007BFF;
-            padding: 10px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .profile-dropdown .dropdown-toggle::after {
-            display: none;
-        }
-        .profile-dropdown .dropdown-menu {
-            right: 0;
-            left: auto;
-        }
-        footer {
-            background-color: white;
-            padding: 20px;
-            margin-top: 40px;
-        }
-        footer h5 {
-            margin-bottom: 15px;
-        }
-        footer ul {
-            list-style: none;
-            padding: 0;
-        }
-        footer ul li {
-            margin-bottom: 5px;
-        }
-        .btn-favoritos {
-            width: 100%;
-            padding: 12px;
-            font-size: 1.1rem;
-            background-color: #FFC107; /* Amarillo */
-            color: #333;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Productos</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+        
+        <style>
+            body {
+                background: #f8f9fa;
+            }
+            .container {
+                max-width: 1200px;
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                margin-top: 80px;
+            }
+            .btn-detalle {
+                width: 100%;
+                padding: 12px;
+                font-size: 1.1rem;
+                background-color: #007BFF;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .btn-detalle:hover {
+                background-color: #0056b3;
+                transform: translateY(-3px);
+            }
+            .btn-carrito {
+                background-color: #28a745; /* Verde */
+                color: white;
+                border: none;
+                padding: 10px;
+                width: 100%;
+                font-size: 1rem;
+                border-radius: 8px;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .btn-carrito:hover {
+                background-color: #218838;
+                transform: scale(1.05);
+            }
+            .btn-favoritos {
+                background-color: #dc3545; /* Rojo */
+                color: white;
+                border: none;
+                padding: 10px;
+                width: 100%;
+                font-size: 1rem;
+                border-radius: 8px;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .btn-favoritos:hover {
+                background-color: #c82333;
+                transform: scale(1.05);
+            }
+            .btn-lista-deseos {
+                background-color: #ffc107; /* Amarillo */
+                color: black;
+                border: none;
+                padding: 10px;
+                width: 100%;
+                font-size: 1rem;
+                border-radius: 8px;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .btn-lista-deseos:hover {
+                background-color: #e0a800;
+                transform: scale(1.05);
+            }
 
-        .btn-favoritos:hover {
-            background-color: #e0a800; /* Amarillo más oscuro */
-            transform: translateY(-3px);
-        }
-
-        .btn-favoritos:active {
-            background-color: #d39e00;
-            transform: translateY(0);
-        }
-    </style>
-</h:head>
-<h:body>
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
-                <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
-                <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
-            </ul>
-            <form class="d-flex" action="#" method="get">
-                <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
-                <input type="submit" value="Buscar" class="btn" style="background-color: #00CC00; color: #FFFFFF; border: none;"/>
-            </form>
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown profile-dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
-                        <i class="bi bi-person-circle fs-4"></i>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="HistorialCompra.xhtml">Reportes</a></li>
-                        <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
-                        <li><hr class="dropdown-divider"/></li>
-                        <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                .container2 {
+                background: #666666;
+                padding: 30px;
+                border-radius: 0;
+                box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                color: white;
+            }
+            .container2 .row {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            .container2 .col-md-4 {
+                flex: 1 1 300px;
+                margin-bottom: 20px;
+            }
+            .container2 ul {
+                list-style: none;
+                padding: 0;
+            }
+            .container2 ul li {
+                margin-bottom: 5px;
+            }
+            .navbar {
+                background: #007BFF;
+                padding: 10px 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .navbar-brand {
+                font-weight: bold;
+            }
+            footer {
+                background-color: white;
+                padding: 20px;
+                margin-top: 40px;
+            }
+            footer h5 {
+                margin-bottom: 15px;
+            }
+            footer ul {
+                list-style: none;
+                padding: 0;
+            }
+            footer ul li {
+                margin-bottom: 5px;
+            }
+            
+            
+        </style>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="Product.xhtml" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
+                        <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
                     </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-    </nav>
-    
-    <div class="container">
-        <h2 class="text-center mb-4">Lista de Productos</h2>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            <ui:repeat value="#{productoController.productos}" var="producto">
-                <div class="col">
-                    <div class="card">
-                        <h:graphicImage value="#{producto.imagen}" class="card-img-top"/>
-                        <div class="card-body text-center">
-                            <h5 class="card-title">#{producto.nombre}</h5>
-                            <p class="card-text">#{producto.descripcion}</p>
-                            <p class="fw-bold">$#{producto.precio}</p>
-                            <h:form>
-                                <h:commandButton value="Ver Detalle" action="ProductDetail.xhtml" styleClass="btn-detalle">
-                                    <f:param name="id" value="#{productos.id}"/>
-                                </h:commandButton>
 
-                                <h:button outcome="Product.xhtml" value="Volver a la tienda" styleClass="btn btn-secondary w-100"/>
-                                <h:messages id="messages" globalOnly="true" style="color: green; font-weight: bold;"/>
-                            </h:form>
+                    <h:form styleClass="d-flex">
+                        <h:inputText value="#{productoController.selectedProductId}" 
+                                    id="search" 
+                                    styleClass="form-control me-2" />
+                       <script>
+                           document.getElementById('search').setAttribute('placeholder', 'Buscar Producto');
+                       </script>
+
+
+                        <h:commandButton value="Buscar" 
+                                         action="#{productoController.filtrarProductos}"
+                                         style="background-color: #00CC00; color: #FFFFFF; border: none;"
+                                         styleClass="btn" />
+                    </h:form>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown profile-dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+
+                                <!-- Mostrar solo si el usuario es administrador -->
+                                <c:if test="${sessionScope.userRole eq 'ADMIN'}">
+                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
+                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Administrador</a></li>
+                                </c:if>
+                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Reportes</a></li>
+                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                <li><hr class="dropdown-divider"/></li>
+                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container">
+            <h2 class="text-center mb-4">Lista de Productos</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                <ui:repeat value="#{productoController.productos}" var="producto">
+                    <div class="col">
+                        <div class="card">
+                            <h:graphicImage value="#{producto.imagen}" class="card-img-top"/>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">#{producto.nombre}</h5>
+                                <p class="card-text">#{producto.descripcion}</p>
+                                <p class="fw-bold">$#{producto.precio}</p>
+                                
+                                <button type="button" class="btn-detalle" data-bs-toggle="modal" data-bs-target="#detalleModal#{producto.id}">
+                                    Ver Detalle
+                                </button>
+                                
+                                <h:form>
+                                    <h:commandButton value="Agregar al carrito" action="#{carritoBean.agregarProducto(producto)}" 
+                                                     styleClass="btn-carrito mt-2">
+                                        <f:ajax execute="@form" render="@all"/>
+                                    </h:commandButton>
+                                    <h:commandButton value="Agregar a favoritos" action="#{carritoBean.agregarAFavoritos(producto)}" 
+                                                     styleClass="btn-favoritos mt-2">
+                                        <f:ajax execute="@form" render="@all"/>
+                                    </h:commandButton>
+                                    <h:commandButton value="Lista de deseos" 
+                                                    action="#{carritoBean.agregarAListaDeseos(producto)}"
+                                                    styleClass="btn-lista-deseos mt-2">
+                                       <f:ajax execute="@form" render="@all"/>
+                                   </h:commandButton>
+                                    
+                                </h:form>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </ui:repeat>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="detalleModal#{producto.id}" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="detalleModalLabel">Detalles de #{producto.nombre}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h:graphicImage value="#{producto.imagen}" style="width: 100%; height: auto;"/>
+                                    <p><strong>Descripción:</strong> #{producto.descripcion}</p>
+                                    <p><strong>Precio:</strong> $#{producto.precio}</p>
+                                    <p><strong>Stock:</strong> #{producto.stock}</p>
+                                    <p><strong>Categoría:</strong> #{producto.category}</p>
+                                    <p><strong>Estado:</strong> #{producto.status}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ui:repeat>
+            </div>
         </div>
-    </div>
-
-    <footer class="bg-light p-4 mt-4">
+        
+        <footer class="bg-light p-4 mt-4">
         <div class="container2">
             <div class="row">
                 <div class="col-md-4">
@@ -264,7 +289,7 @@
             </div>
         </div>
     </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</h:body>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </h:body>
 </html>

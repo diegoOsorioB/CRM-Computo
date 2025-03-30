@@ -48,7 +48,7 @@ public class PedidoB implements Serializable {
     }
 
     // Token de autenticación
-    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDI4NTM4MjcsImlhdCI6MTc0Mjc2NzQyN30.jR_rILe4UmQ9HGs7NMNQlGFrXT3I7DGbhBCU6lXVlB8";
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
 
     @PostConstruct
     public void init() {
@@ -71,7 +71,7 @@ public class PedidoB implements Serializable {
         pedido.setCorreoUsuario(correoUsuario);
         pedido.setFecha(LocalDate.now());  // Asegura que la fecha esté asignada
 
-        String endpoint = "https://4770-2806-104e-16-d7a2-5a9e-cf86-7a9-1b10.ngrok-free.app/DatabaseService/api/service/pedidos";
+        String endpoint = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/pedidos";
 
         Client client = ClientBuilder.newClient();
         Jsonb jsonb = JsonbBuilder.create();
@@ -89,6 +89,7 @@ public class PedidoB implements Serializable {
 
             // Ver el código de estado de la respuesta
             System.out.println("Código de estado--: " + response.getStatus());
+            
 
             if (response.getStatus() == 200 || response.getStatus() == 201) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido insertado con éxito", null));
@@ -121,7 +122,7 @@ public class PedidoB implements Serializable {
         }
 
         // Construcción del endpoint con el filtro por correoUsuario
-        String endpoint = "https://4770-2806-104e-16-d7a2-5a9e-cf86-7a9-1b10.ngrok-free.app/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
+        String endpoint = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
 
         Client client = ClientBuilder.newClient();
 

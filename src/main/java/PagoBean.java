@@ -17,6 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -77,8 +81,28 @@ public class PagoBean implements Serializable {
     }
 
     private boolean enviarDatosAlERP() {
-        // Simulación de pago aceptado
-        return true;
+      /*  try {
+            HttpClient client = HttpClient.newHttpClient();
+            String jsonBody = String.format("{\"nombre\":\"%s\",\"correo\":\"%s\",\"tarjeta\":\"%s\"}",
+                    perfilData.getNombre(), perfilData.getEmail(), perfilData.getNumCuenta());
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:8080/ApiERP/api/pagos"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("Cuerpo de la respuesta: " + response.body());
+            System.out.println("Código de estado: " + response.statusCode());
+
+            return response.statusCode() == 200;
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error al enviar datos al ERP: " + e.getMessage());
+            return false;
+        }*/
+      return true;
     }
 
     private void agregarPedido() throws Exception {
@@ -92,7 +116,7 @@ public class PagoBean implements Serializable {
     }
 
     String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
-    Pedido nuevoPedido = new Pedido("",items, total, "En proceso", direccionCliente, emailUsuario);
+    Pedido nuevoPedido = new Pedido(null,items, total, "En proceso", direccionCliente, emailUsuario);
 
     pedidoService.agregarPedido(items, total, direccionCliente);
 
