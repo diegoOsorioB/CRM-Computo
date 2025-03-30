@@ -1,4 +1,3 @@
-
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -24,8 +23,14 @@ import java.util.stream.Collectors;
 @ViewScoped
 public class ReporteBean implements Serializable {
 
-    private String direccionIp = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app";
-    private String coleccion = "pedidos";
+    private static final long serialVersionUID = 1L;
+    
+    // Configuración de conexión
+    private final String direccionIp = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app";
+    private final String coleccion = "pedidos";
+    private final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
+
+    // Datos y estadísticas
     private List<Pedido> todosPedidos = new ArrayList<>();
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
@@ -35,14 +40,53 @@ public class ReporteBean implements Serializable {
     private Map<String, Integer> ventasPorEstado = new HashMap<>();
     private Map<String, Double> ventasPorProducto = new HashMap<>();
 
-    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
-
     @PostConstruct
     public void init() {
         fechaInicio = LocalDate.now().withDayOfMonth(1);
         fechaFin = LocalDate.now();
-        //consultarTodosPedidos();
-        cargarDatosDePrueba(); // Usamos datos de prueba para desarrollo
+        consultarTodosPedidos();
+    }
+
+    public void consultarTodosPedidos() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccion;
+
+        Client client = ClientBuilder.newClient();
+
+        try {
+            WebTarget target = client.target(endpoint);
+            Response response = target.request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                String jsonResponse = response.readEntity(String.class);
+                Jsonb jsonb = JsonbBuilder.create();
+                Pedido[] pedidosArray = jsonb.fromJson(jsonResponse, Pedido[].class);
+                todosPedidos = Arrays.asList(pedidosArray);
+                generarEstadisticas();
+            } else {
+                String errorMsg = "Error en el servicio: " + response.getStatus();
+                try {
+                    errorMsg += " - " + response.readEntity(String.class);
+                } catch (Exception e) {
+                    errorMsg += " (No se pudo obtener mensaje de error)";
+                }
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMsg, null));
+                
+                // Cargar datos de prueba como fallback
+                cargarDatosDePrueba();
+            }
+        } catch (Exception e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error de conexión: " + e.getMessage(), null));
+            // Cargar datos de prueba como fallback
+            cargarDatosDePrueba();
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
     }
 
     private void cargarDatosDePrueba() {
@@ -83,7 +127,7 @@ public class ReporteBean implements Serializable {
                 new ItemCarrito(producto5, 1)
         );
 
-        // Crear pedidos de prueba usando el constructor disponible (sin fecha)
+        // Crear pedidos de prueba
         todosPedidos = Arrays.asList(
                 new Pedido("PED-001", itemsPedido1, 22300.0, "Entregado", "Av. Reforma 150", "cliente1@empresa.com"),
                 new Pedido("PED-002", itemsPedido2, 14750.0, "Procesando", "Calle Juárez 45", "cliente2@mail.com"),
@@ -92,7 +136,7 @@ public class ReporteBean implements Serializable {
                 new Pedido("PED-005", itemsPedido5, 19250.0, "Enviado", "Calle Central 89", "cliente5@negocio.com")
         );
 
-        // Asignar fechas después de crear los pedidos
+        // Asignar fechas
         todosPedidos.get(0).setFecha(LocalDate.now().minusDays(5));
         todosPedidos.get(1).setFecha(LocalDate.now().minusDays(3));
         todosPedidos.get(2).setFecha(LocalDate.now().minusDays(10));
@@ -102,48 +146,17 @@ public class ReporteBean implements Serializable {
         generarEstadisticas();
     }
 
-    public void consultarTodosPedidos() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccion;
-
-        Client client = ClientBuilder.newClient();
-
-        try {
-            WebTarget target = client.target(endpoint);
-            Response response = target.request(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .get();
-
-            if (response.getStatus() == 200) {
-                String jsonResponse = response.readEntity(String.class);
-                Jsonb jsonb = JsonbBuilder.create();
-                todosPedidos = Arrays.asList(jsonb.fromJson(jsonResponse, Pedido[].class));
-                jsonb.close();
-                generarEstadisticas();
-            } else {
-                String errorMsg = response.readEntity(String.class);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Error al obtener los pedidos: " + errorMsg, null));
-            }
-            response.close();
-        } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error de conexión: " + e.getMessage(), null));
-        } finally {
-            client.close();
-        }
-    }
-
     private void generarEstadisticas() {
         // Filtrar por rango de fechas
         List<Pedido> pedidosFiltrados = todosPedidos.stream()
+                .filter(p -> p.getFecha() != null)
                 .filter(p -> !p.getFecha().isBefore(fechaInicio) && !p.getFecha().isAfter(fechaFin))
                 .collect(Collectors.toList());
 
         // Aplicar filtro de estado si existe
         if (estadoFiltro != null && !estadoFiltro.isEmpty()) {
             pedidosFiltrados = pedidosFiltrados.stream()
-                    .filter(p -> p.getEstado().equals(estadoFiltro))
+                    .filter(p -> estadoFiltro.equals(p.getEstado()))
                     .collect(Collectors.toList());
         }
 
