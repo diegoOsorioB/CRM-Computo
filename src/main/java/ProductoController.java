@@ -23,6 +23,7 @@ public class ProductoController {
     private List<Producto> listaDeseos = new ArrayList<>();
     private String selectedProductId;
     private Producto selectedProduct;
+     private String message;
 
     @PostConstruct
     public void init() {
@@ -109,5 +110,45 @@ public class ProductoController {
     }
     
     
+    public List<Producto> buscarProducto(String criterio) {
+        if (criterio == null || criterio.trim().isEmpty()) {
+            return productos; // Si no hay criterio, devuelve la lista completa.
+        }
+
+        String criterioLower = criterio.toLowerCase();
+
+        return productos.stream()
+                .filter(p -> p.getNombre().toLowerCase().contains(criterioLower))
+                .toList();
+    }
+    private List<Producto> productosFiltrados;
+
+    public void filtrarProductos() {
+        if (selectedProductId == null || selectedProductId.trim().isEmpty()) {
+            productosFiltrados = productos; // Mostrar todos si no hay criterio
+        } else {
+            String criterioLower = selectedProductId.toLowerCase();
+            productosFiltrados = productos.stream()
+                    .filter(p -> p.getNombre().toLowerCase().contains(criterioLower))
+                    .toList();
+        }
+
+        // Mostrar mensaje si no se encuentran productos
+        if (productosFiltrados == null || productosFiltrados.isEmpty()) {
+            message = "Producto no encontrado";
+        } else {
+            message = null; // Si hay productos, limpiamos el mensaje
+        }
+    }
+
+
+    public List<Producto> getProductosFiltrados() {
+        return productosFiltrados;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+
     
 }
