@@ -1,20 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-
-/**
- *
- * @author bet10
- */
 public class User {
-    
-    private String id = "";
+
+    private String id; // Se inicializa como null por defecto
     private String nombre = "";
+    private String rol;
     private String apellidoPaterno = "";
     private String apellidoMaterno = "";
-    private String telefono = "";
+    private String telefono;
     private String email = "";
     private String password = "";
     private String direccion = "";
@@ -22,27 +13,20 @@ public class User {
     private String codigoPostal = "";
     private String numCuenta = "";
     private String passwordConfirm = "";
+     private boolean aceptaTerminos;
 
-    public String getPasswordConfirm() {
-        return passwordConfirm;
+    public User() {
     }
 
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
-    
-    
-
-    public String getNumCuenta() {
-        return numCuenta;
+    public User(String id, String nombre, String apellidoPaterno, String email,String rol) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellidoPaterno = apellidoPaterno;
+        this.email = email;
+        this.rol=rol;
     }
 
-    public void setNumCuenta(String numCuenta) {
-        this.numCuenta = numCuenta;
-    }
-    
-    
-
+    // Getters y setters para todos los atributos
     public String getId() {
         return id;
     }
@@ -83,8 +67,6 @@ public class User {
         this.telefono = telefono;
     }
 
-    
-    
     public String getEmail() {
         return email;
     }
@@ -100,8 +82,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
 
     public String getDireccion() {
         return direccion;
@@ -127,7 +107,43 @@ public class User {
         this.codigoPostal = codigoPostal;
     }
 
+    public String getNumCuenta() {
+        return numCuenta;
+    }
 
-    
-    
+    public void setNumCuenta(String numCuenta) {
+        this.numCuenta = numCuenta;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
+   
+
+public boolean isAceptaTerminos() {
+    return aceptaTerminos;
+}
+
+public void setAceptaTerminos(boolean aceptaTerminos) {
+    this.aceptaTerminos = aceptaTerminos;
+}
+
+    /**
+     * @return the rol
+     */
+    public String getRol() {
+        return rol;
+    }
+
+    /**
+     * @param rol the rol to set
+     */
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
 }

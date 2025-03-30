@@ -49,7 +49,7 @@ public class PasswordRecoveryBean {
 
     // Método para enviar el correo electrónico
    
-    private void sendEmail(String toEmail) {
+   private void sendEmail(String toEmail) {
     try {
         String fromEmail = "andchaosorder@gmail.com";  // Reemplazar con tu correo
         String password = "rupn nowv vqbb lfrt";  // Reemplazar con tu contraseña de correo
@@ -69,21 +69,24 @@ public class PasswordRecoveryBean {
             }
         });
 
-        // Crear mensaje de correo
+        // Crear mensaje de correo con enlace personalizado
+        String resetLink = "https://0459-2806-2f0-9020-9bac-d4c-95c5-fa1-4e06.ngrok-free.app/CRM-Computo/ResetPassword.xhtml?email=" + toEmail;
+
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(fromEmail));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         message.setSubject("Recuperación de Contraseña");
-        message.setText("Haz clic en el siguiente enlace para recuperar tu contraseña:https://99e0-2806-2f0-9020-9bac-87fd-55fb-7f53-4ce3.ngrok-free.app/CRM-ComputoEN2/ResetPassword.xhtml");
+        message.setText("Haz clic en el siguiente enlace para recuperar tu contraseña:\n" + resetLink);
 
         // Enviar el mensaje
         Transport.send(message);
         
         System.out.println("Correo enviado correctamente a: " + toEmail);
     } catch (MessagingException e) {
-        e.printStackTrace();  // Imprime el error completo
+        e.printStackTrace();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un error al enviar el correo: " + e.getMessage()));
     }
 }
+
 
 }

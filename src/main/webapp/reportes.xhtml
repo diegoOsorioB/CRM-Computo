@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Reporte de Pedidos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Reporte de Pedidos</h2>
+        
+        <!-- Formulario para seleccionar reporte -->
+        <h:form id="reporteForm">
+            <div class="mb-3">
+                <label for="tipoReporte" class="form-label">Seleccione el tipo de reporte:</label>
+                <h:selectOneMenu id="tipoReporte" value="#{reporteController.tipoReporte}" class="form-select">
+                    <f:selectItem itemValue="totalVentas" itemLabel="Total de Ventas"/>
+                    <f:selectItem itemValue="pedidosPorEstado" itemLabel="Pedidos por Estado"/>
+                    <f:selectItem itemValue="pedidosPorFecha" itemLabel="Pedidos por Fecha"/>
+                </h:selectOneMenu>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaInicio" class="form-label">Fecha de inicio:</label>
+                <h:inputText  id="fechaInicio" value="#{reporteController.fechaInicio}" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaFin" class="form-label">Fecha de fin:</label>
+                <h:inputText  id="fechaFin" value="#{reporteController.fechaFin}" class="form-control"/>
+            </div>
+
+            <div class="btn-container">
+                <h:commandButton value="Vista Previa" action="#{reporteController.generarVistaPrevia}" class="btn btn-secondary">
+                    <f:ajax execute="@form" render="chartContainer"/>
+                </h:commandButton>
+                <h:commandButton value="Generar Reporte" action="#{reporteController.generarReporte}" class="btn btn-primary"/>
+            </div>
+        </h:form>
+
+        <!-- Mensaje de estado -->
+        <h:messages id="mensaje" styleClass="alert mt-3" />
+
+        <!-- Contenedor del gráfico -->
+        <div id="chartContainer" class="mt-4">
+            <h5 class="text-center">Vista previa del reporte</h5>
+            <canvas id="reporteChart"></canvas>
+        </div>
+
+        <!-- Botón para regresar a productos -->
+        <div class="mt-4 text-center">
+            <a href="Product.xhtml" class="btn btn-warning">Regresar a Productos</a>
+        </div>
+    </div>
+
+    <!-- Script para generar gráficos dinámicamente -->
+    <script>
+        function actualizarGrafico(datos, tipo) {
+            var ctx = document.getElementById("reporteChart").getContext("2d");
+
+            if (window.miGrafico) {
+                window.miGrafico.destroy();
+            }
+
+            window.miGrafico = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: datos.labels,
+                    datasets: [{
+                        label: tipo.charAt(0).toUpperCase() + tipo.slice(1),
+                        data: datos.valores,
+                        backgroundColor: "rgba(54, 162, 235, 0.5)"
+                    }]
+                }
+            });
+        }
+
+        // Cargar los datos del backend
+        function cargarDatos() {
+            fetch("GenerarReporteServlet")
+                .then(response => response.json())
+                .then(data => actualizarGrafico(data, data.tipo))
+                .catch(error => console.error("Error al obtener datos:", error));
+        }
+    </script>
+</body>
+</html>
