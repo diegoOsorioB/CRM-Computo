@@ -24,6 +24,8 @@ public class ProductoController {
     private String selectedProductId;
     private Producto selectedProduct;
      private String message;
+     private String criterioBusqueda = "";
+     private List<Producto> productosFiltrados = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -31,8 +33,9 @@ public class ProductoController {
     }
 
     public List<Producto> getProductos() {
-        return productos;
+        return productosFiltrados.isEmpty() ? productos : productosFiltrados;
     }
+
 
     public Producto getProductoSeleccionado() {
         return productoSeleccionado;
@@ -121,34 +124,31 @@ public class ProductoController {
                 .filter(p -> p.getNombre().toLowerCase().contains(criterioLower))
                 .toList();
     }
-    private List<Producto> productosFiltrados;
 
     public void filtrarProductos() {
-        if (selectedProductId == null || selectedProductId.trim().isEmpty()) {
-            productosFiltrados = productos; // Mostrar todos si no hay criterio
+        if (criterioBusqueda == null || criterioBusqueda.trim().isEmpty()) {
+            productosFiltrados = new ArrayList<>(productos);
         } else {
-            String criterioLower = selectedProductId.toLowerCase();
+            String criterioLower = criterioBusqueda.toLowerCase();
             productosFiltrados = productos.stream()
                     .filter(p -> p.getNombre().toLowerCase().contains(criterioLower))
                     .toList();
         }
 
-        // Mostrar mensaje si no se encuentran productos
-        if (productosFiltrados == null || productosFiltrados.isEmpty()) {
-            message = "Producto no encontrado";
-        } else {
-            message = null; // Si hay productos, limpiamos el mensaje
+        if (productosFiltrados.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Producto no encontrado", null));
         }
     }
 
-
-    public List<Producto> getProductosFiltrados() {
-        return productosFiltrados;
-    }
-    
-    public String getMessage() {
-        return message;
+    // Getters y Setters
+    public String getCriterioBusqueda() {
+        return criterioBusqueda;
     }
 
-    
+    public void setCriterioBusqueda(String criterioBusqueda) {
+        this.criterioBusqueda = criterioBusqueda;
+        filtrarProductos();
+    }
+
 }
