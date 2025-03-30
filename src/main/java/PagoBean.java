@@ -121,6 +121,7 @@ public class PagoBean implements Serializable {
     pedidoService.agregarPedido(items, total, direccionCliente);
 
     System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+    
 
     pedidoB.setPedido(nuevoPedido);
     pedidoB.insertarPedido();

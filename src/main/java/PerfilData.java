@@ -57,7 +57,7 @@ public class PerfilData implements Serializable {
     
     try {
         HttpClient client = HttpClient.newHttpClient();
-        String url = "https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios?correo=" + correo;
+        String url = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios?correo=" + correo;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))

@@ -213,7 +213,7 @@ public class ButtonController {
             String jsonBody = String.format(
                     "{"
                     + "\"nombre\": \"%s\","
-                    + "\"apellidoPaterno\": \"%s\","
+                    + "\"apellido\": \"%s\","
                     + "\"rol\": \"%s\","
                     + "\"modulo\": \"%s\""
                     + "}",
@@ -221,7 +221,7 @@ public class ButtonController {
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://10.250.1.37:8080/ApiCRM/api/usuarios/registrar"))
+                    .uri(URI.create("https://7bb8-2806-265-401-8d89-95bb-7ef7-8189-582f.ngrok-free.app/Roles_Usuarios_API/api/usuarios/registrar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();

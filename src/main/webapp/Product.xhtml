@@ -10,10 +10,10 @@
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Productos</title>
-        
+
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
-        
+
         <style>
             body {
                 background: #f8f9fa;
@@ -138,7 +138,7 @@
             }
             footer ul li {
                 margin-bottom: 5px;
-            }    
+            }
         </style>
     </h:head>
     <h:body>
@@ -154,13 +154,13 @@
                         <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                         <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
                         <h:form class="d-flex">
-    <div class="input-group">
-        <span class="input-group-text"><i class="bi bi-search"></i></span>
-        <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
-                     onkeyup="this.form.submit()"/>
-        <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light"/>
-    </div>
-</h:form>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
+                                             onkeyup="this.form.submit()"/>
+                                <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light"/>
+                            </div>
+                        </h:form>
 
                     </ul>
 
@@ -186,99 +186,102 @@
                 </div>
             </div>
         </nav>
-        
+
 
         <div class="container">
             <h2 class="text-center mb-4">Lista de Productos</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 <ui:repeat value="#{productoController.productos}" var="producto">
-                    <div class="col">
-                        <div class="card">
-                            <h:graphicImage value="#{producto.imagen}" class="card-img-top"/>
-                            <div class="card-body text-center">
-                                <h5 class="card-title">#{producto.nombre}</h5>
-                                <p class="card-text">#{producto.descripcion}</p>
-                                <p class="fw-bold">$#{producto.precio}</p>
-                                
-                                <button type="button" class="btn-detalle" data-bs-toggle="modal" data-bs-target="#detalleModal#{producto.id}">
-                                    Ver Detalle
-                                </button>
-                                
-                                <h:form>
-                                    <h:commandButton value="Agregar al carrito" action="#{carritoBean.agregarProducto(producto)}" 
-                                                     styleClass="btn-carrito mt-2">
-                                        <f:ajax execute="@form" render="@all"/>
-                                    </h:commandButton>
-                                    <h:commandButton value="Lista de deseos" 
-                                                    action="#{carritoBean.agregarAListaDeseos(producto)}"
-                                                    styleClass="btn-lista-deseos mt-2">
-                                       <f:ajax execute="@form" render="@all"/>
-                                   </h:commandButton>
-                                    
-                                </h:form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Modal -->
-                    <div class="modal fade" id="detalleModal#{producto.id}" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="detalleModalLabel">Detalles de #{producto.nombre}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <h:graphicImage value="#{producto.imagen}" style="width: 100%; height: auto;"/>
-                                    <p><strong>Descripción:</strong> #{producto.descripcion}</p>
-                                    <p><strong>Precio:</strong> $#{producto.precio}</p>
-                                    <p><strong>Stock:</strong> #{producto.stock}</p>
-                                    <p><strong>Categoría:</strong> #{producto.category}</p>
-                                    <p><strong>Estado:</strong> #{producto.status}</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ui:repeat>
+    <div class="col">
+        <div class="card">
+            <h:graphicImage value="#{producto.imagen}" class="card-img-top"/>
+            <div class="card-body text-center">
+                <h5 class="card-title">#{producto.nombre}</h5>
+                <p class="card-text">#{producto.descripcion}</p>
+                <p class="fw-bold">$#{producto.precio}</p>
+
+                <button type="button" class="btn-detalle" data-bs-toggle="modal" data-bs-target="#detalleModal#{producto.id}">
+                    Ver Detalle
+                </button>
+
+                <h:form>
+                    <!-- Aseguramos que el producto es el correcto -->
+                    <h:commandButton value="Agregar al carrito" 
+                                     action="#{carritoBean.agregarProducto(producto)}" 
+                                     styleClass="btn-carrito mt-2">
+                        <f:ajax execute="@form" render="@all"/>
+                    </h:commandButton>
+
+                    <h:commandButton value="Lista de deseos" 
+                                     action="#{carritoBean.agregarAListaDeseos(producto)}"
+                                     styleClass="btn-lista-deseos mt-2">
+                        <f:ajax execute="@form" render="@all"/>
+                    </h:commandButton>
+                </h:form>
             </div>
         </div>
-        
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="detalleModal#{producto.id}" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detalleModalLabel">Detalles de #{producto.nombre}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h:graphicImage value="#{producto.imagen}" style="width: 100%; height: auto;"/>
+                    <p><strong>Descripción:</strong> #{producto.descripcion}</p>
+                    <p><strong>Precio:</strong> $#{producto.precio}</p>
+                    <p><strong>Stock:</strong> #{producto.stock}</p>
+                    <p><strong>Categoría:</strong> #{producto.category}</p>
+                    <p><strong>Estado:</strong> #{producto.status}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ui:repeat>
+
+            </div>
+        </div>
+
         <footer class="bg-light p-4 mt-4">
-        <div class="container2">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Sobre Nosotros</h5>
-                    <p>
-                        Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.<br/>
-                        Ofrecemos una amplia selección de productos blancos de alta calidad, desde ropa de cama y toallas hasta electrodomésticos y decoración.<br/>
-                        Renueva tu espacio con estilo y confort.
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Contáctanos</h5>
-                    <ul>
-                        <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
-                        <li>Teléfono: +1 800 123 4567</li>
-                        <li>Email: contacto@tienda.com</li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Enlaces Rápidos</h5>
-                    <ul>
-                        <li><a href="Product.xhtml" style="color: #007BFF;">Inicio</a></li>
-                        <li><a href="Product.xhtml" style="color: #007BFF;">Productos</a></li>
-                        <li><a href="Carrito.xhtml" style="color: #007BFF;">Carrito</a></li>
-                        <li><a href="atencionCliente.xhtml" style="color: #007BFF;">Atención a Cliente</a></li>
-                        <li><a href="#" style="color: #007BFF;">Política de Privacidad</a></li>
-                    </ul>
+            <div class="container2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Sobre Nosotros</h5>
+                        <p>
+                            Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.<br/>
+                            Ofrecemos una amplia selección de productos blancos de alta calidad, desde ropa de cama y toallas hasta electrodomésticos y decoración.<br/>
+                            Renueva tu espacio con estilo y confort.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Contáctanos</h5>
+                        <ul>
+                            <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
+                            <li>Teléfono: +1 800 123 4567</li>
+                            <li>Email: contacto@tienda.com</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Enlaces Rápidos</h5>
+                        <ul>
+                            <li><a href="Product.xhtml" style="color: #007BFF;">Inicio</a></li>
+                            <li><a href="Product.xhtml" style="color: #007BFF;">Productos</a></li>
+                            <li><a href="Carrito.xhtml" style="color: #007BFF;">Carrito</a></li>
+                            <li><a href="atencionCliente.xhtml" style="color: #007BFF;">Atención a Cliente</a></li>
+                            <li><a href="#" style="color: #007BFF;">Política de Privacidad</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
-        
+        </footer>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </h:body>
 </html>
