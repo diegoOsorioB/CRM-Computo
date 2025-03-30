@@ -89,6 +89,7 @@ public class PedidoB implements Serializable {
 
             // Ver el código de estado de la respuesta
             System.out.println("Código de estado--: " + response.getStatus());
+            
 
             if (response.getStatus() == 200 || response.getStatus() == 201) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido insertado con éxito", null));

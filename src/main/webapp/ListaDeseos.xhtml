@@ -82,6 +82,27 @@
         footer ul li {
             margin-bottom: 5px;
         }
+        .product-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .product-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .product-price {
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 10px;
+        }
+
+        .ui-button-sm {
+            margin-top: 5px;
+        }
     </style>
 </h:head>
 <h:body>
@@ -96,8 +117,8 @@
                 <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                 <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                 <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
-                <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
                 <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
+                <li class="nav-item"><a class="nav-link" href="productoFiltro.xhtml" style="color:#FFFFFF"><i class="bi bi-search"></i> Buscar</a></li>
             </ul>
             <form class="d-flex" action="#" method="get">
                 <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
@@ -125,20 +146,24 @@
             
         <h:form id="favoritosForm">
             <p:growl id="msgs" showDetail="true"/>
-            
+
             <p:panel header="Mis Deseos">
-                <p:dataGrid var="producto" value="#{productoController.productos}" columns="3" layout="grid">
-                    <p:panel style="text-align: center; padding: 10px;">
-                        <h:graphicImage value="#{producto.imagen}" width="150" height="150" style="border-radius: 10px;"/>
-                        <h:outputText value="#{producto.nombre}" styleClass="product-title"/><br/>
-                        <h:outputText value="#{producto.descripcion}" styleClass="product-description"/><br/>
-                        <h:outputText value="Precio: $#{producto.precio}" styleClass="product-price"/><br/>
-                        
-                        <p:commandButton value="Eliminar" icon="pi pi-trash" action="#{producto.eliminarDeListaDeseos(producto)}" update="favoritosForm" styleClass="ui-button-danger"/>
+                <p:dataGrid var="producto" value="#{listaDeseosBean.listaDeseos}" columns="3" layout="grid">
+                    <p:panel style="text-align: center; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        <h:graphicImage value="#{producto.imagen}" width="150" height="150" style="border-radius: 10px; margin-bottom: 10px;"/>
+                        <h:outputText value="#{producto.nombre}" styleClass="product-title" style="font-size: 1.2em; font-weight: bold; margin-top: 10px; display: block;" />
+                        <h:outputText value="#{producto.descripcion}" styleClass="product-description" style="font-size: 0.9em; color: #666; margin-top: 5px; display: block;" />
+                        <h:outputText value="Precio: $#{producto.precio}" styleClass="product-price" style="font-weight: bold; color: #28a745; margin-top: 10px; display: block;" />
+                        <p:commandButton value="Eliminar" icon="pi pi-trash" action="#{listaDeseosBean.eliminarDeListaDeseos(producto)}" update="favoritosForm"
+                                        styleClass="ui-button-danger ui-button-sm" title="Eliminar de lista de deseos" style="margin-right: 10px;"/>
+                       <p:commandButton value="Agregar al Carrito" action="#{carritoBean.agregarProducto(producto)}" update="favoritosForm"
+                                        styleClass="ui-button-success ui-button-sm" title="Agregar al carrito" />
+
                     </p:panel>
                 </p:dataGrid>
             </p:panel>
         </h:form>
+
     </div>
 
     <footer class="bg-light p-4 mt-4">
