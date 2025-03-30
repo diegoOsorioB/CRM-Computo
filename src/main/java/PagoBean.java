@@ -81,7 +81,7 @@ public class PagoBean implements Serializable {
     }
 
     private boolean enviarDatosAlERP() {
-        try {
+      /*  try {
             HttpClient client = HttpClient.newHttpClient();
             String jsonBody = String.format("{\"nombre\":\"%s\",\"correo\":\"%s\",\"tarjeta\":\"%s\"}",
                     perfilData.getNombre(), perfilData.getEmail(), perfilData.getNumCuenta());
@@ -101,7 +101,8 @@ public class PagoBean implements Serializable {
         } catch (IOException | InterruptedException e) {
             System.out.println("Error al enviar datos al ERP: " + e.getMessage());
             return false;
-        }
+        }*/
+      return true;
     }
 
     private void agregarPedido() throws Exception {
@@ -115,7 +116,7 @@ public class PagoBean implements Serializable {
     }
 
     String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
-    Pedido nuevoPedido = new Pedido("",items, total, "En proceso", direccionCliente, emailUsuario);
+    Pedido nuevoPedido = new Pedido(null,items, total, "En proceso", direccionCliente, emailUsuario);
 
     pedidoService.agregarPedido(items, total, direccionCliente);
 

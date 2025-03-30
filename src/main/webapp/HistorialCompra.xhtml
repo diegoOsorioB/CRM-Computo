@@ -115,7 +115,7 @@
         <h:selectOneMenu id="estadoFiltro" value="#{pedidoB.estadoFiltro}">
             <f:selectItem itemValue="" itemLabel="Selecciona un estado" />
             <f:selectItem itemValue="En proceso" itemLabel="En proceso" />
-            <f:selectItem itemValue="Completado" itemLabel="Completado" />
+            <f:selectItem itemValue="Enviado" itemLabel="Enviado" />
             <f:selectItem itemValue="Cancelado" itemLabel="Cancelado" />
             <f:ajax listener="#{pedidoB.filtrarPedidosPorEstado}" render="pedidosTabla mensajeNoPedidos" />
         </h:selectOneMenu>

@@ -8,9 +8,11 @@ Devolucion.class
 ProductoController.class
 TelefonoValidator.class
 DevolucionBean.class
+ReporteController.class
 HistorialComprasBean.class
 ListaDeseosBean.class
 PerfilData.class
+DevolucionPedidoBean.class
 User.class
 PedidoBean.class
 ItemCarrito.class
@@ -31,5 +33,6 @@ EmailService$2.class
 PagoBean.class
 PasswordResetBean.class
 mx\tecnm\toluca\crm\computoen\resources\JakartaEE10Resource.class
+ReportePedidosServlet.class
 AtencionClienteBean.class
 EmailService.class

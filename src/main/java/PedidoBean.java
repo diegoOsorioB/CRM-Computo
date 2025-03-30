@@ -1,4 +1,3 @@
-
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -26,6 +25,8 @@ public class PedidoBean implements Serializable {
 
     private List<Pedido> listaPedidos;
     private Pedido pedidoSeleccionado;
+    
+    String apiUrl = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/pedidos";
 
     @PostConstruct
     public void init() {
@@ -35,19 +36,38 @@ public class PedidoBean implements Serializable {
     @Inject
     private EmailService emailService;
 
+    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
+
     private void cargarPedidosDesdeAPI() {
         listaPedidos = new ArrayList<>();
-        String apiUrl = "http://localhost:8080/api/pedidos";
+        
 
         try {
             URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Authorization", "Bearer " + token);
 
-            if (connection.getResponseCode() == 200) {
+            int responseCode = connection.getResponseCode();
+            System.out.println("📡 Código de respuesta de la API: " + responseCode);
+
+            if (responseCode == 200) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                JsonReader jsonReader = Json.createReader(reader);
+
+                // Leer la respuesta completa
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                // Mostrar la respuesta JSON completa
+                System.out.println("📦 Respuesta completa de la API:");
+                System.out.println(response.toString());
+
+                // Convertir la respuesta a JSON
+                JsonReader jsonReader = Json.createReader(new java.io.StringReader(response.toString()));
                 JsonArray jsonArray = jsonReader.readArray();
 
                 for (JsonValue jsonValue : jsonArray) {
@@ -56,17 +76,28 @@ public class PedidoBean implements Serializable {
                     pedido.setId(jsonPedido.getString("_id"));
                     pedido.setTotal(jsonPedido.getJsonNumber("total").doubleValue());
                     pedido.setEstado(jsonPedido.getString("estado"));
-                    pedido.setFecha(LocalDate.parse(jsonPedido.getString("fecha")));
+
+                    // ✅ Asignar el estado inicial al cargar el pedido
+                    pedido.setEstadoInicial(jsonPedido.getString("estado"));
+
+                    if (jsonPedido.containsKey("fecha")) {
+                        pedido.setFecha(LocalDate.parse(jsonPedido.getString("fecha")));
+                    }
+
                     pedido.setDireccion(jsonPedido.getString("direccion"));
                     pedido.setCorreoUsuario(jsonPedido.getString("correoUsuario"));
 
                     listaPedidos.add(pedido);
                 }
+
                 reader.close();
                 connection.disconnect();
+
             } else {
-                System.out.println("Error al conectar con la API: " + connection.getResponseMessage());
+                System.out.println("❌ Error: " + connection.getResponseMessage());
+                System.out.println("Código de respuesta: " + responseCode);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
@@ -80,64 +111,77 @@ public class PedidoBean implements Serializable {
     }
 
     public void actualizarEstado(Pedido pedido) {
+        // Verificar si el estado ha cambiado antes de enviar la solicitud
+        System.out.println("📌 Estado actual: " + pedido.getEstado());
+        System.out.println("🔍 Estado inicial: " + pedido.getEstadoInicial());
+
         if (pedido.getEstado().equals(pedido.getEstadoInicial())) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "No se realizó ningún cambio. El estatus es el mismo", ""));
-        } else {
-            String apiUrl = "http://localhost:8080/api/pedidos/" + pedido.getId();
-            try {
-                URL url = new URL(apiUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("PUT");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setDoOutput(true);
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, 
+                    "No se realizó ningún cambio. El estado es el mismo.", ""));
+            return; // No continuar si no hay cambios
+        }
 
-                // Crear JSON con la nueva información
-                JsonObject json = Json.createObjectBuilder()
-                        .add("estado", pedido.getEstado())
-                        .build();
+        apiUrl += "/" + pedido.getId();
 
-                OutputStream os = connection.getOutputStream();
-                os.write(json.toString().getBytes());
-                os.flush();
-                os.close();
+        try {
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Authorization", "Bearer " + token);
+            connection.setDoOutput(true);
 
-                if (connection.getResponseCode() == 200) {
+            // Crear JSON con la nueva información
+            JsonObject json = Json.createObjectBuilder()
+                    .add("estado", pedido.getEstado())
+                    .build();
+
+            OutputStream os = connection.getOutputStream();
+            os.write(json.toString().getBytes());
+            os.flush();
+            os.close();
+
+            int responseCode = connection.getResponseCode();
+            System.out.println("📡 Código de respuesta al actualizar: " + responseCode);
+
+            if (responseCode == 200) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                "Estado actualizado: Pedido #" + pedido.getId() + " ahora está en estado: " + pedido.getEstado(), ""));
+
+                // Enviar correo solo si el estado realmente cambió
+                try {
+                    emailService.enviarCorreoActualizacion(
+                            pedido.getCorreoUsuario(),
+                            "Cliente",
+                            pedido.getId(),
+                            pedido.getEstado());
                     FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage(FacesMessage.SEVERITY_INFO,
-                                    "Estado actualizado: Pedido #" + pedido.getId() + " ahora está en estado: " + pedido.getEstado(), ""));
-
-                    try {
-                        emailService.enviarCorreoActualizacion(
-                                pedido.getCorreoUsuario(),
-                                "Cliente",
-                                pedido.getId(),
-                                pedido.getEstado());
-                        FacesContext.getCurrentInstance().addMessage(null,
-                                new FacesMessage(FacesMessage.SEVERITY_INFO, "Correo enviado correctamente", ""));
-                    } catch (Exception e) {
-                        FacesContext.getCurrentInstance().addMessage(null,
-                                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al enviar el correo", ""));
-                        e.printStackTrace();
-                    }
-
-                    cargarPedidosDesdeAPI(); // Recargar pedidos después de la actualización
-                } else {
+                            new FacesMessage(FacesMessage.SEVERITY_INFO, "Correo enviado correctamente", ""));
+                } catch (Exception e) {
                     FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar pedido", ""));
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al enviar el correo", ""));
+                    e.printStackTrace();
                 }
 
-                connection.disconnect();
-            } catch (Exception e) {
-                e.printStackTrace();
+                cargarPedidosDesdeAPI(); // Recargar pedidos después de la actualización
+            } else {
+                System.out.println("❌ Error al actualizar: " + connection.getResponseMessage());
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al conectar con la API", ""));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar pedido", ""));
             }
+
+            connection.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al conectar con la API", ""));
         }
     }
 
     public List<Pedido> getListaPedidos() {
         return listaPedidos;
     }
-
 }

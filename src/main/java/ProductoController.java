@@ -1,4 +1,3 @@
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
@@ -19,6 +18,7 @@ import java.util.List;
 public class ProductoController {
 
     private List<Producto> productos;
+    private Integer productoId;
     private Producto productoSeleccionado;
     private List<Producto> listaDeseos = new ArrayList<>();
 
@@ -36,6 +36,15 @@ public class ProductoController {
         return productoSeleccionado;
     }
 
+    public Integer getProductoId() {
+        return productoId;
+    }
+
+    public void setProductoId(Integer productoId) {
+        this.productoId = productoId;
+    }
+        
+        
     public void setProductoSeleccionado(Producto productoSeleccionado) {
         this.productoSeleccionado = productoSeleccionado;
     }
@@ -56,7 +65,7 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/APICRM2/api/productos"))
+                    .uri(URI.create("https://4ccb-2806-2f0-9020-9bac-d4c-95c5-fa1-4e06.ngrok-free.app/APICRM2/api/productos"))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
@@ -66,9 +75,6 @@ public class ProductoController {
             if (response.statusCode() == 200) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 productos = Arrays.asList(objectMapper.readValue(response.body(), Producto[].class));
-                Producto pr = new Producto();
-                System.out.println(pr.getStock()+" Este es mi stock");
-                
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, 
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al obtener los productos", null));
