@@ -32,7 +32,7 @@ public class ButtonController {
         HttpClient client = HttpClient.newHttpClient();
         String jsonBody = String.format("{\"correo\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/auth/login"))
+                .uri(URI.create("https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/auth/login"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
@@ -51,7 +51,7 @@ public class ButtonController {
             // Extraer datos del usuario
           //  String userId = jsonResponse.getString("id");
             JSONArray rolesArray = jsonResponse.getJSONArray("roles"); 
-String userRole = rolesArray.getString(0); // Obtener el primer rol
+            String userRole = rolesArray.getString(0); // Obtener el primer rol
 
             String token = jsonResponse.getString("token"); // Asegúrate de que el backend envíe el token
 
