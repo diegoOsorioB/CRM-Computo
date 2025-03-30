@@ -20,7 +20,7 @@
             }
             .table-container {
                 overflow-x: auto;
-            }            
+            }
             .navbar {
                 background: #007BFF;
                 padding: 10px 0;
@@ -28,7 +28,7 @@
             }
             .navbar-brand {
                 font-weight: bold;
-            }            
+            }
             .profile-dropdown .dropdown-toggle::after {
                 display: none;
             }
@@ -75,8 +75,8 @@
                     <p:dataTable value="#{pedidoBean.listaPedidos}" var="pedido" 
                                  paginator="true" rows="20" paginatorPosition="bottom"
                                  sortBy="#{pedido.fecha}" styleClass="table table-striped">
-                        <p:column headerText="ID Pedido">#{pedido.idPedido}</p:column>
-                        <p:column headerText="Cliente">#{pedido.usuario.nombre} #{pedido.usuario.apellidoPaterno}</p:column>
+                        <p:column headerText="ID Pedido">#{pedido.id}</p:column>
+                        <p:column headerText="Cliente">#{pedido.correoUsuario}</p:column>
                         <p:column headerText="Fecha" sortBy="#{pedido.fecha}">#{pedido.fecha}</p:column>
                         <p:column headerText="Total">$#{pedido.total}</p:column>
                         <p:column headerText="Estado">
@@ -89,7 +89,10 @@
                             </h:selectOneMenu>
                         </p:column>
                         <p:column headerText="Acción">
-                            <h:commandButton value="Actualizar" action="#{pedidoBean.actualizarEstado(pedido)}" class="btn btn-primary"/>
+                            <p:commandButton value="Actualizar" 
+                                             action="#{pedidoBean.seleccionarPedido(pedido)}" 
+                                             update="@form" 
+                                             class="btn btn-primary"/>
                         </p:column>
                     </p:dataTable>
                 </div>

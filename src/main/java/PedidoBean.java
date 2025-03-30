@@ -37,7 +37,7 @@ public class PedidoBean implements Serializable {
 
     private void cargarPedidosDesdeAPI() {
         listaPedidos = new ArrayList<>();
-        String apiUrl = "https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/pedidos";
+        String apiUrl = "http://localhost:8080/api/pedidos";
 
         try {
             URL url = new URL(apiUrl);
