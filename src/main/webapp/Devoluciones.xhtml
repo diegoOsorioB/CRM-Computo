@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Reportes de Pedidos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
+</h:head>
+<style>
+    body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #0073e6;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        section {
+            width: 80%;
+            margin: 20px auto;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #0073e6;
+            margin-bottom: 20px;
+        }
+
+        input, textarea, select, button {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #0073e6;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #005bb5;
+        }
+        
+        .navbar {
+            background: #007BFF;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+        }
+        
+        footer {
+            background-color: #0073e6;
+            color: white;
+            padding: 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        /* Estilos para la tabla de pedidos */
+        .pedidos-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        
+        .pedidos-table th {
+            background-color: #0073e6;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .pedidos-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .status-pendiente {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        
+        .status-procesando {
+            color: #f0ad4e;
+            font-weight: bold;
+        }
+        
+        .status-completado {
+            color: #5cb85c;
+            font-weight: bold;
+        }
+        
+        .status-entregado {
+            color: #5cb85c;
+            font-weight: bold;
+        }
+        
+        .status-cancelado {
+            color: #777;
+            font-weight: bold;
+        }
+        
+        .reporte-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .reporte-title {
+            color: #0073e6;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .btn-volver {
+            margin-bottom: 20px;
+            background-color: #6c757d;
+        }
+        
+        .btn-volver:hover {
+            background-color: #5a6268;
+        }
+        
+        .producto-vendido {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+</style>
+
+<h:body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">CRM PRODUCT</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="Product.xhtml">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="text-center bg-primary text-white p-3">
+        <h1>Reportes de Pedidos</h1>
+    </header>
+
+    <div class="container mt-4">
+        <h:button value="Volver a Productos" outcome="Product" styleClass="btn btn-volver" />
+        
+        <section class="mb-4">
+            <h2>Estadísticas de Ventas</h2>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Total de Ventas</h3>
+                        <h4 style="color: #28a745;">$#{devolucionPedidoBean.totalVentas}</h4>
+                        <p>Suma total de pedidos entregados</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Pedidos por Estado</h3>
+                        <ui:repeat value="#{devolucionPedidoBean.ventasPorEstado.entrySet().toArray()}" var="entry">
+                            <div class="producto-vendido">
+                                <span>#{entry.key}:</span>
+                                <span>#{entry.value}</span>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Productos Más Vendidos</h3>
+                        <ui:repeat value="#{devolucionPedidoBean.productosMasVendidos.entrySet().toArray()}" var="entry">
+                            <div class="producto-vendido">
+                                <span>#{entry.key}:</span>
+                                <span>#{entry.value} unidades</span>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-4">
+            <h2>Listado de Pedidos</h2>
+            
+            <h:form>
+                <div class="form-group">
+                    <h:outputLabel value="Filtrar por estado:" />
+                    <h:selectOneMenu value="#{devolucionPedidoBean.estadoFiltro}" styleClass="form-control">
+                        <f:selectItem itemValue="" itemLabel="Todos los pedidos" />
+                        <f:selectItem itemValue="Pendiente" itemLabel="Pendientes" />
+                        <f:selectItem itemValue="Procesando" itemLabel="En proceso" />
+                        <f:selectItem itemValue="Entregado" itemLabel="Entregados" />
+                        <f:selectItem itemValue="Cancelado" itemLabel="Cancelados" />
+                        <f:ajax event="change" listener="#{devolucionPedidoBean.filtrarPedidos}" 
+                               render="pedidosTable filtroMessages"/>
+                    </h:selectOneMenu>
+                </div>
+                
+                <h:messages id="filtroMessages" styleClass="alert" infoClass="alert-info"/>
+            </h:form>
+            
+            <h:form>
+                <h:dataTable id="pedidosTable" value="#{devolucionPedidoBean.pedidos}" var="pedido" 
+                           styleClass="table table-striped pedidos-table">
+                    <h:column>
+                        <f:facet name="header">ID Pedido</f:facet>
+                        #{pedido.id}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Fecha</f:facet>
+                        #{pedido.fecha}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Total</f:facet>
+                        $#{pedido.total}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Estado</f:facet>
+                        <h:outputText value="#{pedido.estado}" 
+                                   styleClass="status-#{pedido.estado.toLowerCase()}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Dirección</f:facet>
+                        #{pedido.direccion}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Cliente</f:facet>
+                        #{pedido.correoUsuario}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Acciones</f:facet>
+                        <h:commandButton value="Solicitar Devolución" styleClass="btn btn-warning btn-sm"
+                                       action="#{devolucionPedidoBean.redirigirADevoluciones(pedido.id)}"
+                                       rendered="#{pedido.estado == 'Entregado'}">
+                            <f:ajax execute="@this" render="@none"/>
+                        </h:commandButton>
+                    </h:column>
+                </h:dataTable>
+            </h:form>
+        </section>
+    </div>
+
+    <footer class="text-center bg-primary text-white p-3 mt-4">
+        <p>&copy; 2025 CRM Producto. Todos los derechos reservados.</p>
+    </footer>
+</h:body>
+</html>

@@ -10,8 +10,10 @@ public class Producto {
     private String status;
     private String category;
 
+    // Constructor vacío
     public Producto() {}
 
+    // Constructor con parámetros
     public Producto(String nombre, String descripcion, String imagen, double precio, String id, int stock, String category, String status) {
         this.id = id;
         this.nombre = nombre;
@@ -22,7 +24,14 @@ public class Producto {
         this.category = category;
         this.status = status;
     }
+    
+    public Producto(String id, String nombre, double precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
 
+    // Getters y Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -47,6 +56,7 @@ public class Producto {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
+    // Métodos equals y hashCode
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -59,4 +69,9 @@ public class Producto {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    String getCantidad() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
 }

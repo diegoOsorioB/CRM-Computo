@@ -1,31 +1,20 @@
 import java.io.Serializable;
 
-public class Devolucion implements Serializable {
+public class Reportes implements Serializable {
+
     private int idDevolucion;
     private Compra pedido;
     private String motivo;
     private String estatus;
     private String estatusInicial;
-    private String razonCambioEstatus;    
+    private String razonCambioEstatus;
 
-    // Constructor sin parámetros (solución al error)
-    public Devolucion() {
-        // Valores por defecto o inicialización si es necesario
-        this.idDevolucion = 0;
-        this.pedido = new Compra(); // Asegúrate de que Compra tenga un constructor sin parámetros
-        this.motivo = "";
-        this.estatus = "";
-        this.estatusInicial = "";
-        this.razonCambioEstatus = "";
-    }
-
-    // Constructor con parámetros
-    public Devolucion(int idDevolucion, Compra pedido, String motivo, String estatus, String razonCambioEstatus) {
+    public Reportes(int idDevolucion, Compra pedido, String motivo, String estatus, String estatusInicial, String razonCambioEstatus) {
         this.idDevolucion = idDevolucion;
         this.pedido = pedido;
         this.motivo = motivo;
         this.estatus = estatus;
-        this.estatusInicial = estatus;
+        this.estatusInicial = estatusInicial;
         this.razonCambioEstatus = razonCambioEstatus;
     }
 
@@ -75,17 +64,5 @@ public class Devolucion implements Serializable {
 
     public void setRazonCambioEstatus(String razonCambioEstatus) {
         this.razonCambioEstatus = razonCambioEstatus;
-    }
-
-    @Override
-    public String toString() {
-        return "Devolucion{" +
-                "idDevolucion=" + idDevolucion +
-                ", pedido=" + pedido +
-                ", motivo='" + motivo + '\'' +
-                ", estatus='" + estatus + '\'' +
-                ", estatusInicial='" + estatusInicial + '\'' +
-                ", razonCambioEstatus='" + razonCambioEstatus + '\'' +
-                '}';
     }
 }

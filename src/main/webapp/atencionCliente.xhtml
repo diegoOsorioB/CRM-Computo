@@ -1,201 +1,439 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 
     <h:head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Atención al Cliente</title>
+        <title>Atención al Cliente - Devoluciones</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
-    </h:head>
-    <style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+        <style>
+            :root {
+                --primary-color: #0071ce;
+                --secondary-color: #ffc220;
+                --dark-color: #2d2d2d;
+                --light-color: #f7f7f7;
+                --success-color: #5cb85c;
+                --warning-color: #f0ad4e;
+                --danger-color: #d9534f;
+                --info-color: #5bc0de;
+            }
+
             body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: #f4f4f4;
+                font-family: 'Helvetica Neue', Arial, sans-serif;
+                background-color: #f5f5f5;
+                color: #333;
             }
 
-            header {
-                background-color: #0073e6;
+            .walmart-header {
+                background-color: var(--primary-color);
                 color: white;
-                text-align: center;
                 padding: 15px 0;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             }
 
-            section {
-                width: 80%;
-                margin: 20px auto;
-                padding: 15px;
-                background: white;
+            .walmart-logo {
+                font-weight: 700;
+                font-size: 24px;
+                color: white;
+            }
+
+            .walmart-logo span {
+                color: var(--secondary-color);
+            }
+
+            .customer-service-title {
+                color: var(--primary-color);
+                font-weight: 700;
+                border-bottom: 3px solid var(--secondary-color);
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+            }
+
+            .card {
                 border-radius: 8px;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                border: none;
+                margin-bottom: 20px;
             }
 
-            h2 {
-                color: #0073e6;
+            .card-header {
+                background-color: white;
+                border-bottom: 1px solid #eee;
+                font-weight: 600;
+                padding: 15px 20px;
             }
 
-            #chatbox {
-                height: 200px;
-                overflow-y: auto;
-                border: 1px solid #ccc;
-                padding: 10px;
-                background: #fff;
-                margin-bottom: 10px;
+            .order-card {
+                transition: all 0.3s ease;
+                border-left: 4px solid var(--primary-color);
             }
 
-            input, textarea, select, button {
+            .order-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+
+            .order-status {
+                font-weight: 600;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-size: 0.85rem;
+            }
+
+            .status-delivered {
+                background-color: #e6f7e6;
+                color: var(--success-color);
+            }
+
+            .status-processing {
+                background-color: #fff8e6;
+                color: var(--warning-color);
+            }
+
+            .status-cancelled {
+                background-color: #f9f9f9;
+                color: #777;
+            }
+
+            .btn-walmart {
+                background-color: var(--primary-color);
+                color: white;
+                border-radius: 4px;
+                font-weight: 600;
+                padding: 8px 20px;
+                border: none;
+            }
+
+            .btn-walmart:hover {
+                background-color: #005fa3;
+                color: white;
+            }
+
+            .btn-walmart-secondary {
+                background-color: var(--secondary-color);
+                color: var(--dark-color);
+            }
+
+            .btn-walmart-secondary:hover {
+                background-color: #e6b000;
+                color: var(--dark-color);
+            }
+
+            .product-img {
+                width: 80px;
+                height: 80px;
+                object-fit: contain;
+                border: 1px solid #eee;
+                border-radius: 4px;
+                padding: 5px;
+                background: white;
+            }
+
+            .return-reason-select {
                 width: 100%;
                 padding: 10px;
-                margin: 10px 0;
-                border: 1px solid #ccc;
-                border-radius: 5px;
+                border-radius: 4px;
+                border: 1px solid #ddd;
             }
 
-            button {
-                background-color: #0073e6;
+            .footer {
+                background-color: var(--dark-color);
                 color: white;
-                cursor: pointer;
+                padding: 30px 0;
+                margin-top: 50px;
             }
 
-            button:hover {
-                background-color: #005bb5;
+            .help-section {
+                background-color: white;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 30px;
             }
-            .container2 {
-            background: #666666;
-            padding: 30px;
-            border-radius: 0;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            color: white;
-        }
-        .navbar {
-            background: #007BFF;
-            padding: 10px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .container2 .row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-        .container2 .col-md-4 {
-            flex: 1 1 300px;
-            margin-bottom: 20px;
-        }
-        .container2 ul {
-            list-style: none;
-            padding: 0;
-        }
-        .container2 ul li {
-            margin-bottom: 5px;
-        }
-            footer {
-            background-color: white;
-            padding: 20px;
-            margin-top: 40px;
-        }
-        footer h5 {
-            margin-bottom: 15px;
-        }
-        footer ul {
-            list-style: none;
-            padding: 0;
-        }
-        footer ul li {
-            margin-bottom: 5px;
-        }
+
+            .help-icon {
+                font-size: 24px;
+                color: var(--primary-color);
+                margin-right: 10px;
+            }
+
+            .stats-card {
+                text-align: center;
+                padding: 20px;
+                border-radius: 8px;
+            }
+
+            .stats-value {
+                font-size: 28px;
+                font-weight: 700;
+                color: var(--primary-color);
+            }
+
+            .stats-label {
+                color: #666;
+                font-size: 14px;
+            }
+
+            .filter-section {
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+
+            .no-orders {
+                text-align: center;
+                padding: 40px;
+                color: #666;
+            }
+
+            .no-orders i {
+                font-size: 50px;
+                color: #ddd;
+                margin-bottom: 20px;
+            }
         </style>
+    </h:head>
 
     <h:body>
-        <h:form>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="#">CRM PRODUCT</a>
-                    <div class="collapse navbar-collapse">
-                        <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link" href="Product.xhtml">Inicio</a></li>
-                            <li class="nav-item"><a class="nav-link" href="atencionCliente.xhtml">Atención a Cliente</a></li>
-                        </ul>
+        <!-- Encabezado estilo Walmart -->
+        <header class="walmart-header mb-4">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="#" class="walmart-logo text-decoration-none">
+                        <i class="fas fa-shopping-bag me-2"></i>Mi<span>Tienda</span>
+                    </a>
+                    <div>
+                        <h:button value="Volver a la tienda" outcome="Product" styleClass="btn btn-light btn-sm me-2" />
+                        <h:button value="Mi cuenta" outcome="Account" styleClass="btn btn-outline-light btn-sm" />
                     </div>
                 </div>
-            </nav>
+            </div>
+        </header>
 
-            <header class="text-center bg-primary text-white p-3">
-                <h1>Atención al Cliente</h1>
-            </header>
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-md-3">
+                    <!-- Menú lateral de ayuda -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-question-circle me-2"></i>Centro de ayuda
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-exchange-alt me-2"></i>Devoluciones
+                            </a>
+                            <a href="Devoluciones.xhtml" class="list-group-item list-group-item-action">
+                                <i class="fas fa-shipping-fast me-2"></i>Seguimiento de pedidos
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-credit-card me-2"></i>Métodos de pago
+                            </a>
+                            <a href="EditProfile.xhtml" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user-circle me-2"></i>Mi cuenta
+                            </a>
+                        </div>
+                    </div>
 
-            <div class="container mt-4">
-                <!-- Chat en Vivo -->
-                <section class="mb-4">
-                    <h2>Chat en Vivo</h2>
-                    <h:panelGroup id="chatMessages">
-                        <ui:repeat value="#{atencionClienteBean.chatMensajes}" var="msg">
-                            <p>#{msg}</p>
+                    <!-- Datos rápidos -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-2"></i>Tus estadísticas
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-card">
+                                <div class="stats-value">#{devolucionPedidoBean.pedidos.size()}</div>
+                                <div class="stats-label">Pedidos realizados</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <h2 class="customer-service-title">
+                        <i class="fas fa-exchange-alt me-2"></i>Devoluciones y reembolsos
+                    </h2>
+
+                    <!-- Sección de ayuda -->
+                    <div class="help-section">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-info-circle help-icon"></i>
+                            <h4 class="mb-0">¿Necesitas devolver un producto?</h4>
+                        </div>
+                        <p>
+    Selecciona el pedido que deseas devolver y sigue los pasos. Aceptamos devoluciones 
+    dentro de los 30 días posteriores a la entrega. Por favor revisa nuestra 
+    <a href="#" class="text-primary" onclick="PF('devolucionModal').show(); return false;">política de devoluciones</a> para más información.
+</p>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="filter-section">
+                        <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filtrar pedidos</h5>
+                        <h:form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <h:outputLabel value="Estado del pedido" styleClass="form-label"/>
+                                    <h:selectOneMenu value="#{devolucionPedidoBean.estadoFiltro}" styleClass="form-select">
+                                        <f:selectItem itemValue="" itemLabel="Todos los estados" />
+                                        <f:selectItem itemValue="Entregado" itemLabel="Entregados" />
+                                        <f:selectItem itemValue="Procesando" itemLabel="En proceso" />
+                                        <f:selectItem itemValue="Cancelado" itemLabel="Cancelados" />
+                                        <f:ajax event="change" listener="#{devolucionPedidoBean.filtrarPedidos}" 
+                                                render="pedidosList filtroMessages"/>
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h:outputLabel value="Buscar por número de pedido" styleClass="form-label"/>
+                                    <h:inputText styleClass="form-control" placeholder="Ingresa ID de pedido"/>
+                                </div>
+                            </div>
+                            <h:commandButton value="Aplicar filtros" styleClass="btn btn-walmart"/>
+                        </h:form>
+                    </div>
+
+                    <!-- Modal de motivos de devolución -->
+                    <p:dialog widgetVar="devolucionModal" header="Motivo de devolución" modal="true" resizable="false">
+                        <h:form id="devolucionForm">
+                            <div class="mb-3">
+                                <p>Mercado Libre te pedirá que elijas un motivo, como:</p>
+                                <ul>
+                                    <li>"No me gustó / No era lo que esperaba" (en algunos casos aplica solo dentro de los primeros 30 días).</li>
+                                    <li>"El producto llegó dañado o defectuoso".</li>
+                                    <li>"El producto no coincide con la descripción".</li>
+                                </ul>
+
+                                <h5>Instrucciones para la devolución:</h5>
+                                <ol>
+                                    <li>Selecciona el motivo de devolución en el siguiente paso.</li>
+                                    <li>Si la devolución es aprobada, tendrás opciones para el envío.</li>
+                                    <li>Empaqueta el producto y envíalo con la etiqueta proporcionada.</li>
+                                    <li>Espera la confirmación y el reembolso.</li>
+                                </ol>
+
+                                <p class="text-muted">
+                                    <strong>Importante:</strong> Si el producto llegó defectuoso o no es lo que pediste, los gastos de envío suelen estar cubiertos. 
+                                    Si la devolución es porque no te gustó, en algunos casos el costo del envío corre por tu cuenta.
+                                </p>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <p:commandButton value="Cancelar" onclick="PF('devolucionModal').hide()" styleClass="btn btn-secondary"/>
+                                <p:commandButton value="Continuar" action="#{devolucionPedidoBean.redirigirADevoluciones(pedido.id)}" 
+                                                 styleClass="btn btn-walmart" update="@form"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Listado de pedidos -->
+                    <h:panelGroup id="pedidosList">
+                        <h5 class="mb-3"><i class="fas fa-clipboard-list me-2"></i>Tus pedidos recientes</h5>
+
+                        <ui:fragment rendered="#{empty devolucionPedidoBean.pedidos}">
+                            <div class="no-orders">
+                                <i class="fas fa-box-open"></i>
+                                <h4>No se encontraron pedidos</h4>
+                                <p>Parece que no tienes pedidos que coincidan con los filtros seleccionados.</p>
+                                <h:button value="Ver todos los pedidos" outcome="Orders" styleClass="btn btn-walmart"/>
+                            </div>
+                        </ui:fragment>
+
+                        <ui:repeat value="#{devolucionPedidoBean.pedidos}" var="pedido">
+                            <div class="card order-card mb-3">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-bold">Pedido ##{pedido.id}</span>
+                                        <span class="ms-3">#{pedido.fecha}</span>
+                                    </div>
+                                    <div>
+                                        <span class="order-status status-#{pedido.estado.toLowerCase()}">
+                                            #{pedido.estado}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <h6 class="fw-bold">Productos</h6>
+                                            <ui:repeat value="#{pedido.items}" var="item" varStatus="status">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <img src="https://via.placeholder.com/80?text=Producto" 
+                                                             class="product-img" alt="#{item.producto.nombre}"/>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-bold">#{item.producto.nombre}</div>
+                                                        <div class="text-muted small">Cantidad: #{item.cantidad}</div>
+                                                        <div class="text-muted small">Precio: $#{item.producto.precio}</div>
+                                                    </div>
+                                                </div>
+                                            </ui:repeat>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="fw-bold">Detalles del pedido</h6>
+                                            <div class="mb-2"><strong>Total:</strong> $#{pedido.total}</div>
+                                            <div class="mb-2"><strong>Dirección:</strong> #{pedido.direccion}</div>
+                                            <div class="mb-3"><strong>Email:</strong> #{pedido.correoUsuario}</div>
+
+                                            <ui:fragment rendered="#{'Entregado' eq pedido.estado}">
+                                                <h:form>
+                                                    <h:commandButton value="Iniciar devolución" 
+                                                                     styleClass="btn btn-walmart-secondary"
+                                                                     onclick="PF('devolucionModal').show(); return false;"/>
+                                                </h:form>
+                                            </ui:fragment>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </ui:repeat>
                     </h:panelGroup>
-                    <h:inputText value="#{atencionClienteBean.userInput}" />
-                    <h:commandButton value="Enviar" action="#{atencionClienteBean.enviarMensajeChat}">
-                        <f:ajax execute="@form" render="chatMessages" />
-                    </h:commandButton>
-                </section>
-
-                <!-- Formulario de Contacto -->
-                <section class="mb-4">
-                    <h2>Formulario de Contacto</h2>
-                    <h:panelGroup layout="block">
-                        <h:outputLabel for="nombre" value="Nombre:" />
-                        <h:inputText id="nombre" value="#{atencionClienteBean.nombre}" required="true"/>
-
-                        <h:outputLabel for="email" value="Correo Electrónico:" />
-                        <h:inputText id="email" value="#{atencionClienteBean.email}" required="true"/>
-
-                        <h:outputLabel for="mensaje" value="Mensaje:" />
-                        <h:inputTextarea id="mensaje" value="#{atencionClienteBean.mensaje}" required="true"/>
-
-                        <h:commandButton value="Enviar" action="#{atencionClienteBean.enviarFormulario}"/>
-                        <h:messages/>
-                    </h:panelGroup>
-                </section>
-
-                <!-- Seguimiento de Ticket -->
-                <section class="mb-4">
-                    <h2>Seguimiento de Ticket</h2>
-                    <h:inputText value="#{atencionClienteBean.numeroTicket}" />
-                    <h:commandButton value="Consultar" action="#{atencionClienteBean.consultarTicket}">
-                        <f:ajax execute="@form" render="ticketStatus" />
-                    </h:commandButton>
-                    <h:outputText id="ticketStatus" value="Estado: #{atencionClienteBean.estadoTicket}" />
-                </section>
-
-                <!-- Evaluación del Servicio -->
-                <section class="mb-4">
-                    <h2>Evalúa Nuestro Servicio</h2>
-                    <h:selectOneMenu value="#{atencionClienteBean.calificacion}">
-                        <f:selectItem itemValue="5" itemLabel="Excelente"/>
-                        <f:selectItem itemValue="4" itemLabel="Muy Bueno"/>
-                        <f:selectItem itemValue="3" itemLabel="Bueno"/>
-                        <f:selectItem itemValue="2" itemLabel="Regular"/>
-                        <f:selectItem itemValue="1" itemLabel="Malo"/>
-                    </h:selectOneMenu>
-                    <h:commandButton value="Enviar" action="#{atencionClienteBean.enviarCalificacion}">
-                        <f:ajax execute="@form" render="averageRating" />
-                    </h:commandButton>
-                    <h:outputText id="averageRating" value="Calificación promedio: #{atencionClienteBean.promedioCalificaciones}" />
-                </section>
+                </div>
             </div>
-        </h:form>
+        </div>
 
-        <footer class="text-center bg-primary text-white p-3 mt-4">
-            <p>&copy; 2025 CRM Producto. Todos los derechos reservados.</p>
+        <!-- Pie de página -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <h5>Servicio al cliente</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white-50">Contáctanos</a></li>
+                            <li><a href="#" class="text-white-50">Preguntas frecuentes</a></li>
+                            <li><a href="#" class="text-white-50">Políticas de devolución</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <h5>Mi cuenta</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white-50">Mis pedidos</a></li>
+                            <li><a href="#" class="text-white-50">Mis devoluciones</a></li>
+                            <li><a href="#" class="text-white-50">Configuración</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Síguenos</h5>
+                        <div class="social-links">
+                            <a href="#" class="text-white-50 me-2"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="text-white-50 me-2"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-white-50 me-2"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-4 bg-light"/>
+                <div class="text-center text-white-50 small">
+                    &copy; 2025 MiTienda. Todos los derechos reservados.
+                </div>
+            </div>
         </footer>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </h:body>
 </html>

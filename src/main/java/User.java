@@ -13,7 +13,7 @@ public class User {
     private String codigoPostal = "";
     private String numCuenta = "";
     private String passwordConfirm = "";
-     private boolean aceptaTerminos;
+    private boolean aceptaTerminos;
 
     public User() {
     }

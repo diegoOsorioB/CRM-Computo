@@ -1,4 +1,3 @@
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
@@ -13,13 +12,13 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.json.JSONObject;
 
 @Named
 @RequestScoped
 public class ProductoController {
 
     private List<Producto> productos;
+    private String productoId; // Cambiado a String para consistencia
     private Producto productoSeleccionado;
     private List<Producto> listaDeseos = new ArrayList<>();
     private String selectedProductId;
@@ -38,8 +37,20 @@ public class ProductoController {
         return productoSeleccionado;
     }
 
+    public String getProductoId() { // Cambiado a String
+        return productoId;
+    }
+
+    public void setProductoId(String productoId) { // Cambiado a String
+        this.productoId = productoId;
+    }
+
     public void setProductoSeleccionado(Producto productoSeleccionado) {
         this.productoSeleccionado = productoSeleccionado;
+    }
+
+    public List<Producto> getListaDeseos() { // Añadido getter
+        return listaDeseos;
     }
 
     public void eliminarDeListaDeseos(Producto producto) {
@@ -57,7 +68,7 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/APICRM2/api/productos"))
+                    .uri(URI.create("http://localhost:8080/APICRM2/api/productos")) // Resuelto conflicto de merge
                     .header("Accept", "application/json")
                     .GET()
                     .build();
@@ -67,13 +78,13 @@ public class ProductoController {
             System.out.println(response.statusCode());
 
             if (response.statusCode() == 200) {
-    try {
-        ObjectMapper objectMapper = new ObjectMapper();
-        this.productos = Arrays.asList(objectMapper.readValue(response.body(), Producto[].class)); // Asignar a la variable de instancia
-    } catch (IOException e) {
-        System.err.println("Error al procesar la respuesta JSON: " + e.getMessage());
-    }
-}
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    this.productos = Arrays.asList(objectMapper.readValue(response.body(), Producto[].class));
+                } catch (IOException e) {
+                    System.err.println("Error al procesar la respuesta JSON: " + e.getMessage());
+                }
+            }
 
         } catch (IOException | InterruptedException e) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -87,9 +98,9 @@ public class ProductoController {
     }
     
     public void loadSelectedProduct() {
-        if (selectedProductId != null) {
+        if (selectedProductId != null && productos != null) {
             selectedProduct = productos.stream()
-                .filter(p -> p.getId().equals(selectedProductId))
+                .filter(p -> p.getId().toString().equals(selectedProductId)) // Convertir ID a String para comparar
                 .findFirst()
                 .orElse(null);
         }
