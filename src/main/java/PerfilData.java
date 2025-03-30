@@ -18,6 +18,9 @@ import java.util.logging.Logger;
 @Named
 @SessionScoped
 public class PerfilData implements Serializable {
+    
+    
+    APISController api = new APISController();
 
     private static final Logger LOGGER = Logger.getLogger(PerfilData.class.getName());
 
@@ -57,7 +60,7 @@ public class PerfilData implements Serializable {
     
     try {
         HttpClient client = HttpClient.newHttpClient();
-        String url = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios?correo=" + correo;
+        String url = api.getURLBD()+"/usuarios?correo=" + correo;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))

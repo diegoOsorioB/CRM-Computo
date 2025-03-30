@@ -18,32 +18,54 @@ import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
 import java.io.OutputStream;
 import java.time.LocalDate;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Named
 @SessionScoped
 public class PedidoBean implements Serializable {
 
     private List<Pedido> listaPedidos;
-    private Pedido pedidoSeleccionado;
-    
-    String apiUrl = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/pedidos";
+    private Pedido pedidoSeleccionado;            
 
+    @Inject
+    private HttpSession session;
+    
+    String token;
+    
     @PostConstruct
     public void init() {
+        token = getToken();
+        if (token == null) {
+        FacesContext.getCurrentInstance().addMessage(null, 
+            new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+            "Token no encontrado. Por favor, inicie sesión nuevamente.", ""));
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
         cargarPedidosDesdeAPI();
     }
 
     @Inject
     private EmailService emailService;
-
-    private String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
+    
+    @Inject
+    private APISController urlDB;       
+    
+    public String getToken() {
+        return (String) session.getAttribute("authToken");
+    }
+    
 
     private void cargarPedidosDesdeAPI() {
         listaPedidos = new ArrayList<>();
-        
-
+       
         try {
-            URL url = new URL(apiUrl);
+            System.out.println("Token"+token);
+            URL url = new URL(urlDB.getURLBD()+"/pedidos");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -120,12 +142,10 @@ public class PedidoBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_WARN, 
                     "No se realizó ningún cambio. El estado es el mismo.", ""));
             return; // No continuar si no hay cambios
-        }
-
-        apiUrl += "/" + pedido.getId();
-
+        }                
+        String urldb = urlDB.getURLBD()+"/pedidos/"+pedido.getId();
         try {
-            URL url = new URL(apiUrl);
+            URL url = new URL(urldb);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("PUT");
             connection.setRequestProperty("Content-Type", "application/json");

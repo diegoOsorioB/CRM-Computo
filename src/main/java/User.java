@@ -14,8 +14,26 @@ public class User {
     private String numCuenta = "";
     private String passwordConfirm = "";
     private boolean aceptaTerminos;
+    private String correo;
+    private String contrasena;
 
     public User() {
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contraseña) {
+        this.contrasena = contraseña;
     }
 
     public User(String id, String nombre, String apellidoPaterno, String email,String rol) {

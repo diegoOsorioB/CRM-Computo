@@ -29,6 +29,8 @@ public class PedidoB implements Serializable {
     private List<Pedido> pedidos = new ArrayList<>();
     private String correoUsuario;
     private String estadoFiltro;
+    
+    APISController api = new APISController();
 
 // Getter y Setter para correoUsuario
     public String getCorreoUsuario() {
@@ -71,7 +73,7 @@ public class PedidoB implements Serializable {
         pedido.setCorreoUsuario(correoUsuario);
         pedido.setFecha(LocalDate.now());  // Asegura que la fecha esté asignada
 
-        String endpoint = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/pedidos";
+        String endpoint = api.getURLBD()+"/pedidos";
 
         Client client = ClientBuilder.newClient();
         Jsonb jsonb = JsonbBuilder.create();
@@ -124,7 +126,7 @@ public class PedidoB implements Serializable {
         }
 
         // Construcción del endpoint con el filtro por correoUsuario
-        String endpoint = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
+        String endpoint = api.getURLBD()+"/pedidos?correoUsuario=" + correoUsuario;
 
         Client client = ClientBuilder.newClient();
 

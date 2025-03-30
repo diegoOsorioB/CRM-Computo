@@ -66,9 +66,16 @@
                             </h:panelGroup>
                         </h:form>
 
-                        <div class="col-12 d-flex justify-content-center flex-wrap mt-3">
-                            <a href="login.xhtml">¿Ya tienes cuenta?</a>
-                        </div>
+                        <!-- Mostrar Correo y Contraseña tras el registro exitoso -->
+                        <h:panelGroup layout="block" rendered="#{not empty buttonController.user.correo}">
+                            <div class="alert alert-success mt-3" role="alert">
+                                <h4 class="alert-heading">Cuenta creada con éxito</h4>
+                                <p><strong>Correo:</strong> <h:outputText value="#{buttonController.user.correo}" /></p>
+                                <p><strong>Contraseña:</strong> <h:outputText value="#{buttonController.user.contrasena}" /></p>
+                            </div>
+                        </h:panelGroup>
+
+                   
                     </div>
                 </div>
             </div>
