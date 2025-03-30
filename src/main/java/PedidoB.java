@@ -71,7 +71,7 @@ public class PedidoB implements Serializable {
         pedido.setCorreoUsuario(correoUsuario);
         pedido.setFecha(LocalDate.now());  // Asegura que la fecha esté asignada
 
-        String endpoint = "https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/pedidos";
+        String endpoint = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/pedidos";
 
         Client client = ClientBuilder.newClient();
         Jsonb jsonb = JsonbBuilder.create();
@@ -123,7 +123,7 @@ public class PedidoB implements Serializable {
         }
 
         // Construcción del endpoint con el filtro por correoUsuario
-        String endpoint = "https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
+        String endpoint = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/pedidos?correoUsuario=" + correoUsuario;
 
         Client client = ClientBuilder.newClient();
 
@@ -135,6 +135,7 @@ public class PedidoB implements Serializable {
 
             // Verificar el código de estado de la respuesta
             System.out.println("Código de estado de la respuesta: " + response.getStatus());
+            System.out.println(token);
 
             if (response.getStatus() == 200) {
                 String jsonResponse = response.readEntity(String.class);

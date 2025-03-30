@@ -16,7 +16,7 @@ import org.json.JSONObject;
 @RequestScoped
 public class ButtonController {
 
-    private String ip = "https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app";
+   // private String ip = "https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app";
 
     private User user = new User();
 
@@ -35,7 +35,7 @@ public class ButtonController {
             HttpClient client = HttpClient.newHttpClient();
             String jsonBody = String.format("{\"correo\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/auth/login"))
+                    .uri(URI.create("https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/auth/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -57,6 +57,12 @@ public class ButtonController {
                 //System.out.println("Usuario: " + user.getEmail() + " | Rol: " + user.getRol() + " | Token: " + token);
 
                 // Redireccionar a la página de productos
+                 JSONObject jsonResponse = new JSONObject(response.body());
+ 
+
+                String token = jsonResponse.getString("token");
+                
+                session.setAttribute("authToken", token);
                 facesContext.getExternalContext().redirect("Product.xhtml");
 
             } else {
@@ -75,7 +81,7 @@ public class ButtonController {
             HttpClient client = HttpClient.newHttpClient();
             String jsonBody = String.format("{\"correo\":\"maximiliano@max.com\",\"password\":\"12345678\" }");
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/auth/login"))
+                    .uri(URI.create("https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/auth/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -170,7 +176,7 @@ public class ButtonController {
 
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios"))
+                    .uri(URI.create("https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios"))
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + token)
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
@@ -244,7 +250,7 @@ public class ButtonController {
 
     try {
         HttpClient client = HttpClient.newHttpClient();
-        String url = "https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios?correo=" + correo;
+        String url = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios?correo=" + correo;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))

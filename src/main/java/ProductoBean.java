@@ -51,35 +51,5 @@ public class ProductoBean implements Serializable {
                 .collect(Collectors.toList());
         }
     }
-/*
-   public void cargarProducto() {
-    FacesContext fc = FacesContext.getCurrentInstance();
-    Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
-    String idStr = params.get("id");
 
-    // Verifica si el parámetro 'id' está siendo recibido
-    System.out.println("Parámetro 'id' recibido: " + idStr);
-
-    if (idStr != null) {
-        try {
-            int id = Integer.parseInt(idStr);
-            System.out.println("ID convertido: " + id);  // Verifica si se convierte correctamente
-
-            // Filtrar el producto con el ID recibido
-            producto = productos.stream()
-                                .filter(p -> p.getId() == id)
-                                .findFirst()
-                                .orElse(null);
-
-            if (producto == null) {
-                System.out.println("No se encontró un producto con ID: " + id);  // Verifica si el producto es null
-            }
-
-        } catch (NumberFormatException e) {
-            producto = null;
-            System.out.println("Error al convertir el id: " + idStr);
-        }
-    }
-}
-*/
 }

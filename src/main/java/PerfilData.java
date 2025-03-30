@@ -51,53 +51,67 @@ public class PerfilData implements Serializable {
         }
     }
 
-    private void cargarPerfilDesdeAPI(String email) {
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            String url = "http://localhost:8080/ApiCRM/api/usuarios/consultarPorCorreo/" + email;
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .header("Content-Type", "application/json")
-                    .build();
+    private void cargarPerfilDesdeAPI(String correo) {
+    FacesContext context = FacesContext.getCurrentInstance();
+    String token = (String) context.getExternalContext().getSessionMap().get("authTokenA");
+    
+    try {
+        HttpClient client = HttpClient.newHttpClient();
+        String url = "https://6a90-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios?correo=" + correo;
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
 
-            System.out.println("📥 Respuesta del servidor: " + response.body()); // Verifica el JSON recibido
+        System.out.println("El token Admin " + token);
 
-            if (response.statusCode() == 200) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode rootNode = mapper.readTree(response.body());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                this.id = rootNode.path("id").asText(); // ✅ Se obtiene el ID correctamente
-                this.nombre = rootNode.path("nombre").asText();
-                this.apellidoPaterno = rootNode.path("apellidoPaterno").asText();
-                this.apellidoMaterno = rootNode.path("apellidoMaterno").asText();
-                this.telefono = rootNode.path("telefono").asText();
-                this.email = rootNode.path("email").asText();
-                this.direccion = rootNode.path("direccion").asText();
-                this.ciudad = rootNode.path("ciudad").asText();
-                this.codigoPostal = rootNode.path("codigoPostal").asText();
-                this.numCuenta = rootNode.path("numCuenta").asText();
+        System.out.println("📥 Respuesta del servidor: " + response.body()); // Verifica el JSON recibido
 
-                System.out.println("✅ ID extraído correctamente: " + this.id);
+        if (response.statusCode() == 200) {
+            ObjectMapper mapper = new ObjectMapper();
+            // Deserializa el JSON como un array de objetos
+            JsonNode arrayNode = mapper.readTree(response.body());
 
-                // Guarda el ID en la sesión
-                FacesContext context = FacesContext.getCurrentInstance();
-                HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
-                session.setAttribute("userId", this.id);
+            // Acceder al primer objeto del array
+            JsonNode rootNode = arrayNode.get(0); // Obtener el primer elemento del array
 
-                if (this.imagenUrl == null || this.imagenUrl.isEmpty()) {
-                    this.imagenUrl = "/uploads/default.jpg";
-                }
+            // Extraer los datos y asignarlos a los atributos de la clase PerfilData
+            this.id = rootNode.path("_id").asText();
+            this.nombre = rootNode.path("nombre").asText();
+            this.apellidoPaterno = rootNode.path("apellidoPaterno").asText();
+            this.apellidoMaterno = rootNode.path("apellidoMaterno").asText();
+            this.telefono = rootNode.path("telefono").asText();
+            this.email = rootNode.path("correo").asText();
+            this.direccion = rootNode.path("direccion").asText();
+            this.ciudad = rootNode.path("ciudad").asText();
+            this.codigoPostal = rootNode.path("codigoPostal").asText();
+            this.numCuenta = rootNode.path("numCuenta").asText();
 
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil cargado correctamente", ""));
-            } else {
-                LOGGER.log(Level.SEVERE, "❌ Error al obtener el perfil: " + response.statusCode());
+            System.out.println("✅ ID extraído correctamente: " + this.id);
+
+            // Guardar el ID en la sesión
+            HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
+            session.setAttribute("userId", this.id);
+
+            // Establecer una imagen predeterminada si no existe
+            if (this.imagenUrl == null || this.imagenUrl.isEmpty()) {
+                this.imagenUrl = "/uploads/default.jpg";
             }
-        } catch (IOException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "❌ Error al procesar la solicitud de perfil", e);
+
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil cargado correctamente", ""));
+        } else {
+            LOGGER.log(Level.SEVERE, "❌ Error al obtener el perfil: " + response.statusCode());
         }
+    } catch (IOException | InterruptedException e) {
+        LOGGER.log(Level.SEVERE, "❌ Error al procesar la solicitud de perfil", e);
     }
+}
+
 
     public void updateProfile() {
         System.out.println("🔄 Entró al método updateProfile");
