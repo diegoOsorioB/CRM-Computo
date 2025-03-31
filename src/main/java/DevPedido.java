@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @ViewScoped
 public class DevPedido implements Serializable {
 
-    private String direccionIp = "http://localhost";
+    private String direccionIp = "https://4c6e-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/ ";
     private String coleccion = "devoluciones";
     private Devolucion devolucion = new Devolucion();
     private List<Devolucion> devoluciones = new ArrayList<>();
@@ -66,7 +66,7 @@ public class DevPedido implements Serializable {
             return;
         }
 
-        String endpoint = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/devoluciones";
+        String endpoint = "https://4c6e-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/ ";
 
         Client client = ClientBuilder.newClient();
         Jsonb jsonb = JsonbBuilder.create();
@@ -109,7 +109,7 @@ public class DevPedido implements Serializable {
             return;
         }
 
-        String endpoint = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app/DatabaseService/api/service/devoluciones?correoUsuario=" + correoUsuario;
+        String endpoint = "https://4c6e-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/ " + correoUsuario;
 
         Client client = ClientBuilder.newClient();
 
