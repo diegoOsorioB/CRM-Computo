@@ -27,12 +27,15 @@ public class PedidoBean implements Serializable {
 
     private List<Pedido> listaPedidos;
     private Pedido pedidoSeleccionado;            
+    String token;
 
     @Inject
     private HttpSession session;
-    
-    String token;
-    
+    @Inject
+    private EmailService emailService;    
+    @Inject
+    private APISController urlDB;  
+
     @PostConstruct
     public void init() {
         token = getToken();
@@ -48,12 +51,6 @@ public class PedidoBean implements Serializable {
     }
         cargarPedidosDesdeAPI();
     }
-
-    @Inject
-    private EmailService emailService;
-    
-    @Inject
-    private APISController urlDB;       
     
     public String getToken() {
         return (String) session.getAttribute("authToken");
