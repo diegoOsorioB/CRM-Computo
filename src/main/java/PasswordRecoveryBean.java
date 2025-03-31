@@ -10,6 +10,8 @@ import java.util.Properties;
 @Named
 @RequestScoped
 public class PasswordRecoveryBean {
+    APISController api = new APISController();
+    ButtonController btnc=new ButtonController();
     
     private String email;
 
@@ -51,6 +53,8 @@ public class PasswordRecoveryBean {
    
    private void sendEmail(String toEmail) {
     try {
+        btnc.consultarP();
+        
         String fromEmail = "andchaosorder@gmail.com";  // Reemplazar con tu correo
         String password = "rupn nowv vqbb lfrt";  // Reemplazar con tu contraseña de correo
 
@@ -70,7 +74,7 @@ public class PasswordRecoveryBean {
         });
 
         // Crear mensaje de correo con enlace personalizado
-        String resetLink = "https://0459-2806-2f0-9020-9bac-d4c-95c5-fa1-4e06.ngrok-free.app/CRM-Computo/ResetPassword.xhtml?email=" + toEmail;
+        String resetLink = api.getURLFPS()+"/CRM-TIENDA/ResetPassword.xhtml?email=" + toEmail;
 
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(fromEmail));

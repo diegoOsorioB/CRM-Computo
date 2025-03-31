@@ -176,8 +176,10 @@
                                     <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
                                     <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Administrador</a></li>
                                 </c:if>
-                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Reportes</a></li>
+                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Historial de Compras</a></li>
+                                <c:if test="${sessionScope.userRole ne 'ADMIN'}">
                                 <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                </c:if>
                                 <li><hr class="dropdown-divider"/></li>
                                 <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
                             </ul>

@@ -60,6 +60,7 @@ public class ButtonController {
                 JSONObject jsonResponse = new JSONObject(response.body());
 
                 String token = jsonResponse.getString("token");
+                
 
                 session.setAttribute("authToken", token);
                 facesContext.getExternalContext().redirect("Product.xhtml");
@@ -233,13 +234,13 @@ public void registrarAdministrador() {
             // Convertir el cuerpo de la respuesta en un JSON
             JSONObject jsonResponse = new JSONObject(response.body());
             String correo = jsonResponse.optString("correo", "No disponible");
-            String contrasena = jsonResponse.optString("contraseña", "No disponible");
+            String contrasena = jsonResponse.optString("password", "No disponible");
 
             // Guardar en una variable en buttonController
             user.setCorreo(correo);
             user.setContrasena(contrasena);
 
-            FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
+           // FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
         } else {
             if (response.statusCode() == 409) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo ya registrado", null));
