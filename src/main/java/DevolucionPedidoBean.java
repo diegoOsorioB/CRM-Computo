@@ -7,6 +7,7 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -39,6 +40,9 @@ public class DevolucionPedidoBean implements Serializable {
     private Map<String, Long> productosMasVendidos;
     private Map<String, Long> ventasPorEstado;
     private Map<String, Double> ventasPorMes;
+    
+    private List<Devolucion> devoluciones = new ArrayList<>();
+    private Devolucion devolucionActual = new Devolucion();
 
     @PostConstruct
     public void init() {
@@ -160,6 +164,86 @@ public class DevolucionPedidoBean implements Serializable {
     public String redirigirADevoluciones(String idPedido) {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("pedidoSeleccionado", idPedido);
         return "Devoluciones?faces-redirect=true";
+    }
+    
+    public void agregarDevolucion(Pedido pedido, String motivo, String estatus) {
+        Devolucion nuevaDevolucion = new Devolucion(
+            devoluciones.size() + 1, // ID autoincremental
+            new Compra(pedido), // Asumo que Compra puede crearse a partir de Pedido
+            motivo,
+            estatus,
+            "Devolución creada"
+        );
+        
+        devoluciones.add(nuevaDevolucion);
+        guardarDevolucionEnBaseDatos(nuevaDevolucion);
+    }
+
+    // Método para guardar en base de datos
+    private void guardarDevolucionEnBaseDatos(Devolucion devolucion) {
+        String endpoint = direccionIp + "/DatabaseService/api/service/devoluciones";
+        Client client = ClientBuilder.newClient();
+        
+        try {
+            Jsonb jsonb = JsonbBuilder.create();
+            String jsonDevolucion = jsonb.toJson(devolucion);
+            
+            WebTarget target = client.target(endpoint);
+            Response response = target.request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .post(Entity.json(jsonDevolucion));
+
+            if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
+                FacesContext.getCurrentInstance().addMessage(null, 
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                    "Error al guardar devolución: " + response.getStatus(), null));
+            }
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, 
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                "Error de conexión: " + e.getMessage(), null));
+        } finally {
+            client.close();
+        }
+    }
+
+    // Método para cargar devoluciones desde la base de datos
+    public void cargarDevoluciones() {
+        String endpoint = direccionIp + "/DatabaseService/api/service/devoluciones";
+        Client client = ClientBuilder.newClient();
+
+        try {
+            WebTarget target = client.target(endpoint);
+            Response response = target.request(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .get();
+
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                String jsonResponse = response.readEntity(String.class);
+                Jsonb jsonb = JsonbBuilder.create();
+                Devolucion[] devolucionesArray = jsonb.fromJson(jsonResponse, Devolucion[].class);
+                devoluciones = Arrays.asList(devolucionesArray);
+            }
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, 
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                "Error al cargar devoluciones: " + e.getMessage(), null));
+        } finally {
+            client.close();
+        }
+    }
+    
+    // Getters y Setters adicionales
+    public List<Devolucion> getDevoluciones() {
+        return devoluciones;
+    }
+
+    public Devolucion getDevolucionActual() {
+        return devolucionActual;
+    }
+
+    public void setDevolucionActual(Devolucion devolucionActual) {
+        this.devolucionActual = devolucionActual;
     }
 
     // Getters y Setters

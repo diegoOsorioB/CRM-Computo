@@ -17,6 +17,10 @@ public class Compra implements Serializable {
         this.estadoInicial = "";
         this.usuario = new User(); // Asegúrate de que User tenga un constructor vacío
     }
+    
+    public Compra(Pedido pedido) {
+        this.idPedido = idPedido;
+    }
 
     // Constructor sin usuario
     public Compra(int idPedido, String fecha, double total, String estado) {

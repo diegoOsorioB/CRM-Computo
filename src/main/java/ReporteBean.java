@@ -1,5 +1,6 @@
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
@@ -10,6 +11,8 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +21,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
+import java.awt.Color;
+import static java.awt.font.TextHitInfo.leading;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import static org.apache.xalan.lib.ExsltSets.leading;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 
 @Named
 @ViewScoped
@@ -39,6 +62,8 @@ public class ReporteBean implements Serializable {
     private int totalPedidos;
     private Map<String, Integer> ventasPorEstado = new HashMap<>();
     private Map<String, Double> ventasPorProducto = new HashMap<>();
+    // Agrega esta variable como constante al inicio de tu clase
+private static final float LEADING = 16;
 
     @PostConstruct
     public void init() {
@@ -234,4 +259,6 @@ public class ReporteBean implements Serializable {
     public List<Pedido> getTodosPedidos() {
         return todosPedidos;
     }
+    
+
 }

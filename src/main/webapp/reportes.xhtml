@@ -71,7 +71,7 @@
                 <h1>Reportes de Ventas</h1>
                 <h:button value="Volver a Productos" outcome="Product" styleClass="btn btn-volver" />
             </div>
-            
+
             <!-- Filtros -->
             <div class="filter-section">
                 <h:form>
@@ -94,13 +94,13 @@
                             </h:selectOneMenu>
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
-                            <h:commandButton value="Generar Reporte" action="#{reporteBean.filtrarReporte}" 
-                                           styleClass="btn btn-primary"/>
+                            <h:commandButton value="Generar PDF" action="#{reporteBean.generarReportePDF}" 
+                                             styleClass="btn btn-primary"/>
                         </div>
                     </div>
                 </h:form>
             </div>
-            
+
             <!-- Resumen Estadístico -->
             <div class="row">
                 <div class="col-md-4">
@@ -122,31 +122,31 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Reporte por Estado -->
             <div class="report-container">
                 <h3>Ventas por Estado</h3>
                 <h:dataTable value="#{reporteBean.ventasPorEstado.entrySet()}" var="entry" 
-                           styleClass="table table-striped">
+                             styleClass="table table-striped">
                     <h:column>
                         <f:facet name="header">Estado</f:facet>
-                        #{entry.key}
+                            #{entry.key}
                     </h:column>
                     <h:column>
                         <f:facet name="header">Cantidad</f:facet>
-                        #{entry.value}
+                            #{entry.value}
                     </h:column>
                 </h:dataTable>
             </div>
-            
+
             <!-- Reporte por Producto -->
             <div class="report-container">
                 <h3>Ventas por Producto</h3>
                 <h:dataTable value="#{reporteBean.ventasPorProducto.entrySet()}" var="entry" 
-                           styleClass="table table-striped">
+                             styleClass="table table-striped">
                     <h:column>
                         <f:facet name="header">Producto</f:facet>
-                        #{entry.key}
+                            #{entry.key}
                     </h:column>
                     <h:column>
                         <f:facet name="header">Total Ventas</f:facet>
@@ -154,19 +154,19 @@
                     </h:column>
                 </h:dataTable>
             </div>
-            
+
             <!-- Listado Detallado -->
             <div class="report-container">
                 <h3>Detalle de Pedidos</h3>
                 <h:dataTable value="#{reporteBean.todosPedidos}" var="pedido" 
-                           styleClass="table table-striped">
+                             styleClass="table table-striped">
                     <h:column>
                         <f:facet name="header">ID</f:facet>
-                        #{pedido.id}
+                            #{pedido.id}
                     </h:column>
                     <h:column>
                         <f:facet name="header">Fecha</f:facet>
-                        #{pedido.fecha}
+                            #{pedido.fecha}
                     </h:column>
                     <h:column>
                         <f:facet name="header">Total</f:facet>
@@ -174,48 +174,48 @@
                     </h:column>
                     <h:column>
                         <f:facet name="header">Estado</f:facet>
-                        #{pedido.estado}
+                            #{pedido.estado}
                     </h:column>
                     <h:column>
                         <f:facet name="header">Cliente</f:facet>
-                        #{pedido.correoUsuario}
+                            #{pedido.correoUsuario}
                     </h:column>
                 </h:dataTable>
             </div>
-            
+
             <!-- Agrega esta sección después del listado detallado de pedidos -->
-<div class="report-container">
-    <h3>Detalle de Productos Pedidos</h3>
-    <h:dataTable value="#{reporteBean.todosPedidos}" var="pedido" 
-               styleClass="table table-striped">
-        <h:column>
-            <f:facet name="header">Pedido ID</f:facet>
-            #{pedido.id}
-        </h:column>
-        
-        <h:column>
-            <f:facet name="header">Productos</f:facet>
-            <h:dataTable value="#{pedido.items}" var="item" styleClass="table table-sm">
-                <h:column>
-                    <f:facet name="header">Producto</f:facet>
-                    #{item.producto.nombre}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Cantidad</f:facet>
-                    #{item.cantidad}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Precio Unitario</f:facet>
-                    $#{item.producto.precio}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Subtotal</f:facet>
-                    $#{item.producto.precio * item.cantidad}
-                </h:column>
-            </h:dataTable>
-        </h:column>
-    </h:dataTable>
-</div>
+            <div class="report-container">
+                <h3>Detalle de Productos Pedidos</h3>
+                <h:dataTable value="#{reporteBean.todosPedidos}" var="pedido" 
+                             styleClass="table table-striped">
+                    <h:column>
+                        <f:facet name="header">Pedido ID</f:facet>
+                            #{pedido.id}
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Productos</f:facet>
+                        <h:dataTable value="#{pedido.items}" var="item" styleClass="table table-sm">
+                            <h:column>
+                                <f:facet name="header">Producto</f:facet>
+                                    #{item.producto.nombre}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Cantidad</f:facet>
+                                    #{item.cantidad}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Precio Unitario</f:facet>
+                                $#{item.producto.precio}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Subtotal</f:facet>
+                                $#{item.producto.precio * item.cantidad}
+                            </h:column>
+                        </h:dataTable>
+                    </h:column>
+                </h:dataTable>
+            </div>
         </div>
     </h:body>
 </html>
