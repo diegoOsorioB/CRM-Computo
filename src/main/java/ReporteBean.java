@@ -1,3 +1,4 @@
+
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
@@ -41,13 +42,12 @@ import static org.apache.xalan.lib.ExsltSets.leading;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-
 @Named
 @ViewScoped
 public class ReporteBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     // Configuración de conexión
     private final String direccionIp = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app";
     private final String coleccion = "pedidos";
@@ -63,7 +63,7 @@ public class ReporteBean implements Serializable {
     private Map<String, Integer> ventasPorEstado = new HashMap<>();
     private Map<String, Double> ventasPorProducto = new HashMap<>();
     // Agrega esta variable como constante al inicio de tu clase
-private static final float LEADING = 16;
+    private static final float LEADING = 16;
 
     @PostConstruct
     public void init() {
@@ -98,7 +98,7 @@ private static final float LEADING = 16;
                     errorMsg += " (No se pudo obtener mensaje de error)";
                 }
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMsg, null));
-                
+
                 // Cargar datos de prueba como fallback
                 cargarDatosDePrueba();
             }
@@ -259,6 +259,392 @@ private static final float LEADING = 16;
     public List<Pedido> getTodosPedidos() {
         return todosPedidos;
     }
-    
 
+    public void generarReportePDF() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+
+        if (todosPedidos == null || todosPedidos.isEmpty()) {
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "No hay datos para generar el reporte", ""));
+            return;
+        }
+
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            try {
+                float margin = 50;
+                float yStart = page.getMediaBox().getHeight() - margin;
+                float yPosition = yStart;
+
+                // Título del reporte
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("REPORTE DE PEDIDOS CON GRÁFICAS");
+                contentStream.endText();
+                yPosition -= LEADING * 2;
+
+                // Gráfica de Ventas por Estado
+                yPosition = agregarGraficaVentasPorEstado(document, contentStream, margin, yPosition);
+
+                if (yPosition < margin + 300) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    yPosition = yStart;
+                }
+
+                // Gráfica de Ventas por Producto
+                yPosition = agregarGraficaVentasPorProducto(document, contentStream, margin, yPosition);
+
+                if (yPosition < margin + 300) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    yPosition = yStart;
+                }
+
+                // Listado de pedidos
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("DETALLE DE PEDIDOS (" + todosPedidos.size() + "):");
+                contentStream.endText();
+                yPosition -= LEADING * 1.5f;
+
+                contentStream.setFont(PDType1Font.HELVETICA, 10);
+                for (Pedido pedido : todosPedidos) {
+                    if (yPosition < margin + (LEADING * 8)) {
+                        contentStream.close();
+                        page = new PDPage();
+                        document.addPage(page);
+                        contentStream = new PDPageContentStream(document, page);
+                        yPosition = yStart;
+                    }
+
+                    // Información del pedido
+                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin, yPosition);
+                    contentStream.showText("Pedido: " + pedido.getId());
+                    contentStream.endText();
+                    yPosition -= LEADING;
+
+                    contentStream.setFont(PDType1Font.HELVETICA, 10);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin + 15, yPosition);
+                    contentStream.showText("- Fecha: " + pedido.getFecha());
+                    contentStream.endText();
+                    yPosition -= LEADING;
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin + 15, yPosition);
+                    contentStream.showText("- Estado: " + pedido.getEstado());
+                    contentStream.endText();
+                    yPosition -= LEADING;
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin + 15, yPosition);
+                    contentStream.showText("- Total: $" + pedido.getTotal());
+                    contentStream.endText();
+                    yPosition -= LEADING;
+
+                    // Productos
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin + 15, yPosition);
+                    contentStream.showText("- Productos:");
+                    contentStream.endText();
+                    yPosition -= LEADING;
+
+                    for (ItemCarrito item : pedido.getItems()) {
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(margin + 30, yPosition);
+                        contentStream.showText("• " + item.getCantidad() + " x " + item.getProducto().getNombre()
+                                + " ($" + item.getProducto().getPrecio() + " c/u)");
+                        contentStream.endText();
+                        yPosition -= LEADING;
+                    }
+
+                    // Separador
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin, yPosition);
+                    contentStream.showText("--------------------------------------------------");
+                    contentStream.endText();
+                    yPosition -= LEADING * 1.5f;
+                }
+
+            } finally {
+                if (contentStream != null) {
+                    contentStream.close();
+                }
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            document.save(baos);
+
+            externalContext.responseReset();
+            externalContext.setResponseContentType("application/pdf");
+            externalContext.setResponseContentLength(baos.size());
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"reporte_pedidos.pdf\"");
+
+            try (OutputStream output = externalContext.getResponseOutputStream()) {
+                output.write(baos.toByteArray());
+                output.flush();
+            }
+
+            facesContext.responseComplete();
+
+        } catch (Exception e) {
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar PDF", e.getMessage()));
+            e.printStackTrace();
+        }
+    }
+
+    private float agregarGraficaVentasPorEstado(PDDocument document, PDPageContentStream contentStream,
+            float margin, float yPosition) throws Exception {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        ventasPorEstado.forEach((estado, cantidad)
+                -> dataset.setValue(estado, cantidad));
+
+        JFreeChart chart = ChartFactory.createPieChart(
+                "Distribución de Pedidos por Estado",
+                dataset,
+                true, true, false);
+
+        BufferedImage bufferedImage = chart.createBufferedImage(500, 300);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "PNG", baos);
+        PDImageXObject image = PDImageXObject.createFromByteArray(document, baos.toByteArray(), "chart");
+
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+        contentStream.beginText();
+        contentStream.newLineAtOffset(margin, yPosition);
+        contentStream.showText("Distribución por Estado:");
+        contentStream.endText();
+        yPosition -= LEADING;
+
+        contentStream.drawImage(image, margin, yPosition - 300, 500, 300);
+        return yPosition - 320;
+    }
+
+    private float agregarGraficaVentasPorProducto(PDDocument document, PDPageContentStream contentStream,
+            float margin, float yPosition) throws Exception {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        ventasPorProducto.forEach((producto, total)
+                -> dataset.addValue(total, "Ventas", producto));
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Ventas por Producto",
+                "Productos",
+                "Monto ($)",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+
+        CategoryPlot plot = chart.getCategoryPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setRangeGridlinePaint(Color.BLACK);
+
+        BufferedImage bufferedImage = chart.createBufferedImage(500, 300);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "PNG", baos);
+        PDImageXObject image = PDImageXObject.createFromByteArray(document, baos.toByteArray(), "chart");
+
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+        contentStream.beginText();
+        contentStream.newLineAtOffset(margin, yPosition);
+        contentStream.showText("Ventas por Producto:");
+        contentStream.endText();
+        yPosition -= LEADING;
+
+        contentStream.drawImage(image, margin, yPosition - 300, 500, 300);
+        return yPosition - 320;
+    }
+
+    public void generarReportesSeparados() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+
+        if (todosPedidos == null || todosPedidos.isEmpty()) {
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "No hay datos para generar los reportes", ""));
+            return;
+        }
+
+        try {
+            // 1. Generar PDF de gráficas
+            ByteArrayOutputStream graficasBaos = generarPDFGraficas();
+
+            // 2. Generar PDF de reporte detallado
+            ByteArrayOutputStream reporteBaos = generarPDFReporteDetallado();
+
+            // 3. Preparar respuesta para descargar ambos PDFs en un zip
+            ByteArrayOutputStream zipBaos = new ByteArrayOutputStream();
+            try (ZipOutputStream zos = new ZipOutputStream(zipBaos)) {
+                // Agregar PDF de gráficas
+                zos.putNextEntry(new ZipEntry("reporte_graficas.pdf"));
+                zos.write(graficasBaos.toByteArray());
+                zos.closeEntry();
+
+                // Agregar PDF de reporte
+                zos.putNextEntry(new ZipEntry("reporte_detallado.pdf"));
+                zos.write(reporteBaos.toByteArray());
+                zos.closeEntry();
+            }
+
+            // Configurar respuesta
+            externalContext.responseReset();
+            externalContext.setResponseContentType("application/zip");
+            externalContext.setResponseContentLength(zipBaos.size());
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"reportes_pedidos.zip\"");
+
+            try (OutputStream output = externalContext.getResponseOutputStream()) {
+                output.write(zipBaos.toByteArray());
+                output.flush();
+            }
+
+            facesContext.responseComplete();
+
+        } catch (Exception e) {
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar reportes", e.getMessage()));
+            e.printStackTrace();
+        }
+    }
+
+    private ByteArrayOutputStream generarPDFGraficas() throws Exception {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            try {
+                float margin = 50;
+                float yStart = page.getMediaBox().getHeight() - margin;
+                float yPosition = yStart;
+
+                // Título del reporte de gráficas
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("REPORTE GRÁFICO DE PEDIDOS");
+                contentStream.endText();
+                yPosition -= LEADING * 2;
+
+                // Gráfica de Ventas por Estado
+                yPosition = agregarGraficaVentasPorEstado(document, contentStream, margin, yPosition);
+
+                if (yPosition < margin + 300) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    yPosition = yStart;
+                }
+
+                // Gráfica de Ventas por Producto
+                yPosition = agregarGraficaVentasPorProducto(document, contentStream, margin, yPosition);
+
+            } finally {
+                if (contentStream != null) {
+                    contentStream.close();
+                }
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            document.save(baos);
+            return baos;
+        }
+    }
+
+    private ByteArrayOutputStream generarPDFReporteDetallado() throws Exception {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            try {
+                float margin = 50;
+                float yStart = page.getMediaBox().getHeight() - margin;
+                float yPosition = yStart;
+
+                // Título del reporte detallado
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("REPORTE DETALLADO DE PEDIDOS");
+                contentStream.endText();
+                yPosition -= LEADING * 2;
+
+                // Estadísticas resumidas
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("ESTADÍSTICAS:");
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.setFont(PDType1Font.HELVETICA, 10);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Total de pedidos: " + totalPedidos);
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Total de ventas: $" + totalVentas);
+                contentStream.endText();
+                yPosition -= LEADING * 1.5f;
+
+                // Listado de pedidos
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("DETALLE DE PEDIDOS (" + todosPedidos.size() + "):");
+                contentStream.endText();
+                yPosition -= LEADING * 1.5f;
+
+                contentStream.setFont(PDType1Font.HELVETICA, 10);
+                for (Pedido pedido : todosPedidos) {
+                    if (yPosition < margin + (LEADING * 8)) {
+                        contentStream.close();
+                        page = new PDPage();
+                        document.addPage(page);
+                        contentStream = new PDPageContentStream(document, page);
+                        yPosition = yStart;
+                    }
+
+                    // Información del pedido
+                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin, yPosition);
+                    contentStream.showText("Pedido: " + pedido.getId());
+                    contentStream.endText();
+                    yPosition -= LEADING;
+
+                    // ... (resto del código para mostrar detalles de pedidos)
+                }
+
+            } finally {
+                if (contentStream != null) {
+                    contentStream.close();
+                }
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            document.save(baos);
+            return baos;
+        }
+    }
 }
