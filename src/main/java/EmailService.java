@@ -41,10 +41,10 @@ public class EmailService {
 
     public void enviarCorreoActualizacion(String emailTo, String nombreCliente, String idPedido, String nuevoEstado) {
         String asunto = "Actualización de Estado de Pedido #" + idPedido;
-        String cuerpo = "Hola " + nombreCliente + ",\n\n"
+        String cuerpo = "Estimado " + nombreCliente + ",\n\n"
                 + "Tu pedido con ID " + idPedido + " ha sido actualizado al estado: " + nuevoEstado + ".\n\n"
                 + "Gracias por tu compra.\n\n"
-                + "Atentamente,\nTienda Online";
+                + "Atentamente,\nTienda Online CRM";
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -73,9 +73,9 @@ public class EmailService {
         }
     }
 
-    public void enviarCorreoDevolucion(String email, String nombre, int idDevolucion, String estatus, String razon) {
+    public void enviarCorreoDevolucion(String email, String nombre, String idDevolucion, String estatus, String razon) {
         String asunto = "Actualización de tu solicitud de devolución #" + idDevolucion;
-        String mensaje = "Hola " + nombre + ",\n\n"
+        String mensaje = "Estimado " + nombre + ",\n\n"
                 + "Tu solicitud de devolución con ID #" + idDevolucion + " ha cambiado de estado a: " + estatus + ".\n"
                 + "Razón del cambio: " + razon + "\n\n"
                 + "Si tienes dudas, contáctanos.\n\n"
