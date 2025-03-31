@@ -17,9 +17,14 @@ import java.util.List;
 @RequestScoped
 public class ProductoController {
 
-    private List<Producto> productos = new ArrayList<>();
-    private List<Producto> productosFiltrados = new ArrayList<>();
-    private String criterioBusqueda = "";
+    private List<Producto> productos;
+    private Producto productoSeleccionado;
+    private List<Producto> listaDeseos = new ArrayList<>();
+    private String selectedProductId;
+    private Producto selectedProduct;
+     private String message;
+     private String criterioBusqueda = "";
+     private List<Producto> productosFiltrados = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -28,6 +33,26 @@ public class ProductoController {
 
     public List<Producto> getProductos() {
         return productosFiltrados.isEmpty() ? productos : productosFiltrados;
+    }
+
+
+    public Producto getProductoSeleccionado() {
+        return productoSeleccionado;
+    }
+
+    public void setProductoSeleccionado(Producto productoSeleccionado) {
+        this.productoSeleccionado = productoSeleccionado;
+    }
+
+    public void eliminarDeListaDeseos(Producto producto) {
+        if (producto != null && listaDeseos.contains(producto)) {
+            listaDeseos.remove(producto);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Producto eliminado de la lista de deseos", null));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "El producto no está en la lista de deseos", null));
+        }
     }
 
     public void consultarProductos() {
@@ -51,6 +76,47 @@ public class ProductoController {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la conexión con la API", null));
         }
+    }
+
+    public String verDetalle(Producto producto) {
+        this.selectedProduct = producto;
+        return "detalleProducto?faces-redirect=true";
+    }
+    
+    public void loadSelectedProduct() {
+        if (selectedProductId != null) {
+            selectedProduct = productos.stream()
+                .filter(p -> p.getId().equals(selectedProductId))
+                .findFirst()
+                .orElse(null);
+        }
+        System.out.println(selectedProductId+"####3");
+    }
+
+    // Getters y Setters
+    public String getSelectedProductId() {
+        return selectedProductId;
+    }
+
+    public void setSelectedProductId(String selectedProductId) {
+        this.selectedProductId = selectedProductId;
+    }
+
+    public Producto getSelectedProduct() {
+        return selectedProduct;
+    }
+    
+    
+    public List<Producto> buscarProducto(String criterio) {
+        if (criterio == null || criterio.trim().isEmpty()) {
+            return productos; // Si no hay criterio, devuelve la lista completa.
+        }
+
+        String criterioLower = criterio.toLowerCase();
+
+        return productos.stream()
+                .filter(p -> p.getNombre().toLowerCase().contains(criterioLower))
+                .toList();
     }
 
     public void filtrarProductos() {
@@ -78,4 +144,5 @@ public class ProductoController {
         this.criterioBusqueda = criterioBusqueda;
         filtrarProductos();
     }
+
 }
