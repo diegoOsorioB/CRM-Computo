@@ -26,6 +26,7 @@ public class ProductoController {
      private String message;
      private String criterioBusqueda = "";
      private List<Producto> productosFiltrados = new ArrayList<>();
+     APISController api = new APISController();
 
     @PostConstruct
     public void init() {
@@ -60,7 +61,7 @@ public class ProductoController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://f718-2806-104e-21-9c0b-29cc-6273-130d-c65e.ngrok-free.app/destinity/erp/api/products"))
+                    .uri(URI.create(api.getURLERPpro()))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
@@ -125,21 +126,25 @@ public class ProductoController {
                 .toList();
     }
 
+    private boolean noResultados; // Nueva variable para controlar la visibilidad del mensaje
+
     public void filtrarProductos() {
         if (criterioBusqueda == null || criterioBusqueda.trim().isEmpty()) {
             productosFiltrados = new ArrayList<>(productos);
+            noResultados = false;
         } else {
             String criterioLower = criterioBusqueda.toLowerCase();
             productosFiltrados = productos.stream()
                     .filter(p -> p.getNombre().toLowerCase().contains(criterioLower))
                     .toList();
-        }
-
-        if (productosFiltrados.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Producto no encontrado", null));
+            noResultados = productosFiltrados.isEmpty(); // True si no hay productos
         }
     }
+
+    public boolean isNoResultados() {
+        return noResultados;
+    }
+
 
     // Getters y Setters
     public String getCriterioBusqueda() {

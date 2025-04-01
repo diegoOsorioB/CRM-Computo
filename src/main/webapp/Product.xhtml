@@ -116,14 +116,6 @@
             .container2 ul li {
                 margin-bottom: 5px;
             }
-            .navbar {
-                background: #007BFF;
-                padding: 10px 0;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-            .navbar-brand {
-                font-weight: bold;
-            }
             footer {
                 background-color: white;
                 padding: 20px;
@@ -160,7 +152,9 @@
                                 <span class="input-group-text"><i class="bi bi-search"></i></span>
                                 <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
                                              onkeyup="this.form.submit()"/>
-                                <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light"/>
+                                <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light">
+                                    <f:ajax execute="@form" render="@form productos-container"/>
+                                </h:commandButton>
                             </div>
                     </h:form>
 
@@ -191,6 +185,15 @@
 
         <div class="container">
             <h2 class="text-center mb-4">Lista de Productos</h2>
+
+            <h:outputText value="Lista de productos vacía" 
+                          rendered="#{empty productoController.productos}"
+                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: gray; margin-top: 20px;" />
+
+            <h:outputText value="Producto No Encontrado" 
+                          rendered="#{productoController.noResultados}"
+                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
+
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 <ui:repeat value="#{productoController.productos}" var="producto">
                     <div class="col">
@@ -200,11 +203,11 @@
                                 <h5 class="card-title">#{producto.nombre}</h5>
                                 <p class="card-text">#{producto.descripcion}</p>
                                 <p class="fw-bold">$#{producto.precio}</p>
-                                
+
                                 <button type="button" class="btn-detalle" data-bs-toggle="modal" data-bs-target="#detalleModal#{producto.id}">
                                     Ver Detalle
                                 </button>
-                                
+
                                 <h:form>
                                     <h:commandButton value="Agregar al carrito" action="#{carritoBean.agregarProducto(producto)}" 
                                                      styleClass="btn-carrito mt-2">
@@ -215,12 +218,11 @@
                                                     styleClass="btn-lista-deseos mt-2">
                                        <f:ajax execute="@form" render="@all"/>
                                    </h:commandButton>
-                                    
                                 </h:form>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Modal -->
                     <div class="modal fade" id="detalleModal#{producto.id}" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -246,7 +248,7 @@
                 </ui:repeat>
             </div>
         </div>
-        
+
         <footer class="bg-light p-4 mt-4">
         <div class="container2">
             <div class="row">
