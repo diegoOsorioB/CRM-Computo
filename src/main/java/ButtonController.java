@@ -51,6 +51,7 @@ public class ButtonController {
                 System.out.println("Conexión exitosa");
                 consultarP();
                 obtenerDatosColeccion(user.getEmail());
+                System.out.println(user.getEmail()+" EMAILP");
                 FacesContext facesContext = FacesContext.getCurrentInstance();
                 HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
 
@@ -60,9 +61,11 @@ public class ButtonController {
                 JSONObject jsonResponse = new JSONObject(response.body());
 
                 String token = jsonResponse.getString("token");
+                String email = jsonResponse.getString("correo");
                 
-
+                System.out.println("correo = "+email);
                 session.setAttribute("authToken", token);
+                session.setAttribute("email", email);
                 facesContext.getExternalContext().redirect("Product.xhtml");
 
             } else {
