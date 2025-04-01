@@ -1,3 +1,4 @@
+
 import jakarta.json.bind.annotation.JsonbProperty;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -5,22 +6,25 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Pedido implements Serializable {
+
     private static final AtomicInteger contador = new AtomicInteger(1);
- @JsonbProperty("_id")
+    @JsonbProperty("_id")
     private String id;
     private List<ItemCarrito> items;
     private double total;
     private String estado;
+    private String estadoInicial;
     private LocalDate fecha;
     private String direccion;
     private String correoUsuario; // Nuevo atributo
 
     // Constructor con la fecha actual
-    public Pedido(String id,List<ItemCarrito> items, double total, String estado, String direccion, String correoUsuario) {
-        this.id = id; 
+    public Pedido(String id, List<ItemCarrito> items, double total, String estado, String direccion, String correoUsuario) {
+        this.id = id;
         this.items = items;
         this.total = total;
         this.estado = estado;
+        this.estadoInicial = estado;
         this.direccion = direccion;
         this.correoUsuario = correoUsuario;
         this.fecha = LocalDate.now(); // Asigna la fecha actual al pedido
@@ -32,7 +36,6 @@ public class Pedido implements Serializable {
     }
 
     // Getters y setters para los atributos
-
     public LocalDate getFecha() {
         return fecha;
     }
@@ -88,4 +91,13 @@ public class Pedido implements Serializable {
     public void setCorreoUsuario(String correoUsuario) {
         this.correoUsuario = correoUsuario;
     }
+
+    public String getEstadoInicial() {
+        return estadoInicial;
+    }
+
+    public void setEstadoInicial(String estadoInicial) {
+        this.estadoInicial = estadoInicial;
+    }
+
 }

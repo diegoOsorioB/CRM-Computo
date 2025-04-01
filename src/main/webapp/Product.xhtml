@@ -4,19 +4,16 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>Productos</title>
-        
+
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>
-        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>             
         <style>
-            body {
-                background: #f8f9fa;
-            }
             .container {
                 max-width: 1200px;
                 background: white;
@@ -42,7 +39,120 @@
                 background-color: #0056b3;
                 transform: translateY(-3px);
             }
-        </style>
+            .btn-carrito {
+                background-color: #28a745; /* Verde */
+                color: white;
+                border: none;
+                padding: 10px;
+                width: 100%;
+                font-size: 1rem;
+                border-radius: 8px;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .btn-carrito:hover {
+                background-color: #218838;
+                transform: scale(1.05);
+            }
+            .btn-favoritos {
+                background-color: #dc3545; /* Rojo */
+                color: white;
+                border: none;
+                padding: 10px;
+                width: 100%;
+                font-size: 1rem;
+                border-radius: 8px;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .btn-favoritos:hover {
+                background-color: #c82333;
+                transform: scale(1.05);
+            }
+            .btn-lista-deseos {
+                background-color: #ffc107; /* Amarillo */
+                color: black;
+                border: none;
+                padding: 10px;
+                width: 100%;
+                font-size: 1rem;
+                border-radius: 8px;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .btn-lista-deseos:hover {
+                background-color: #e0a800;
+                transform: scale(1.05);
+            }
+
+            .container2 {
+                background: #666666;
+                padding: 30px;
+                border-radius: 0;
+                box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                color: white;
+            }
+            .container2 .row {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            .container2 .col-md-4 {
+                flex: 1 1 300px;
+                margin-bottom: 20px;
+            }
+            .container2 ul {
+                list-style: none;
+                padding: 0;
+            }
+            .container2 ul li {
+                margin-bottom: 5px;
+            }
+            .navbar {
+                background: #007BFF;
+                padding: 10px 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .navbar-brand {
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            .btn-carrito:hover {
+                background-color: #218838;
+                transform: scale(1.05);
+            }
+            .btn-favoritos {
+                background-color: #dc3545; /* Rojo */
+                color: white;
+                border: none;
+                padding: 10px;
+                width: 100%;
+                font-size: 1rem;
+                border-radius: 8px;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            footer {
+                background-color: white;
+                padding: 20px;
+                margin-top: 40px;
+            }
+            footer h5 {
+                margin-bottom: 15px;
+            }
+            footer ul {
+                list-style: none;
+                padding: 0;
+            }
+            footer ul li {
+                margin-bottom: 5px;
+            }
+        </style>                
     </h:head>
     <h:body>
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
@@ -56,13 +166,20 @@
                         <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
                         <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
                         <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Favoritos.xhtml" style="color: #FFFFFF;"><i class="bi bi-star-fill"></i> Favoritos</a></li>
                     </ul>
 
-                    <form class="d-flex" action="#" method="get">
-                        <input type="text" name="search" id="search" placeholder="Buscar Producto" class="form-control me-2"/>
-                        <input type="submit" value="Buscar" class="btn" style="background-color: #00CC00; color: #FFFFFF; border: none;"/>
-                    </form>
+                    <h:form class="d-flex">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
+                                         onkeyup="this.form.submit()"/>
+                            <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light">
+                                <f:ajax execute="@form" render="@form productos-container"/>
+                            </h:commandButton>
+                        </div>
+                    </h:form>
+
+
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown profile-dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
@@ -75,8 +192,10 @@
                                     <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
                                     <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Administrador</a></li>
                                 </c:if>
-                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Reportes</a></li>
-                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Historial de Compras</a></li>
+                                <c:if test="${sessionScope.userRole ne 'ADMIN'}">
+                                    <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                </c:if>
                                 <li><hr class="dropdown-divider"/></li>
                                 <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
                             </ul>
@@ -85,9 +204,19 @@
                 </div>
             </div>
         </nav>
-        
+
+
         <div class="container">
             <h2 class="text-center mb-4">Lista de Productos</h2>
+
+            <h:outputText value="Lista de productos vacía" 
+                          rendered="#{empty productoController.productos}"
+                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: gray; margin-top: 20px;" />
+
+            <h:outputText value="Producto No Encontrado" 
+                          rendered="#{productoController.noResultados}"
+                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
+
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 <ui:repeat value="#{productoController.productos}" var="producto">
                     <div class="col">
@@ -97,25 +226,29 @@
                                 <h5 class="card-title">#{producto.nombre}</h5>
                                 <p class="card-text">#{producto.descripcion}</p>
                                 <p class="fw-bold">$#{producto.precio}</p>
-                                
+
                                 <button type="button" class="btn-detalle" data-bs-toggle="modal" data-bs-target="#detalleModal#{producto.id}">
                                     Ver Detalle
                                 </button>
-                                
+
                                 <h:form>
-                                    <h:commandButton value="Agregar al carrito" action="#{carritoBean.agregarProducto(producto)}" 
-                                                     styleClass="btn btn-primary mt-2">
+                                    <!-- Aseguramos que el producto es el correcto -->
+                                    <h:commandButton value="Agregar al carrito" 
+                                                     action="#{carritoBean.agregarProducto(producto)}" 
+                                                     styleClass="btn-carrito mt-2">
                                         <f:ajax execute="@form" render="@all"/>
                                     </h:commandButton>
-                                    <h:commandButton value="Agregar a favoritos" action="#{favoritosBean.agregarFavorito(producto)}" 
-                                                     styleClass="btn-favoritos mt-2">
+
+                                    <h:commandButton value="Lista de deseos" 
+                                                     action="#{carritoBean.agregarAListaDeseos(producto)}"
+                                                     styleClass="btn-lista-deseos mt-2">
                                         <f:ajax execute="@form" render="@all"/>
                                     </h:commandButton>
                                 </h:form>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Modal -->
                     <div class="modal fade" id="detalleModal#{producto.id}" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -139,9 +272,10 @@
                         </div>
                     </div>
                 </ui:repeat>
+
             </div>
         </div>
-        
+
         <footer class="bg-light p-4 mt-4">
             <div class="container2">
                 <div class="row">
@@ -174,7 +308,7 @@
                 </div>
             </div>
         </footer>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </h:body>
 </html>

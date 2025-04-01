@@ -203,6 +203,17 @@
                                 <h:inputText value="#{perfilData.numCuenta}" class="form-control" required="true" requiredMessage="El número de cuenta es obligatorio" />
                                 <h:message for="numCuenta" styleClass="error-message" />
                             </div>
+                             <div class="mb-3">
+                                            <h:outputLabel for="password" value="Contraseña: " styleClass="form-label"/>
+                                            <h:inputSecret id="password" class="form-control" value="#{perfilData.password}"/>
+                                            <h:message for="password" styleClass="error-message" />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h:outputLabel for="password2" value="Repetir contraseña: " styleClass="form-label"/>
+                                            <h:inputSecret id="password2" class="form-control" value="#{perfilData.passwordConfirm}"/>
+                                            <h:message for="password2" styleClass="error-message" />
+                                        </div>
                         </div>
                     </div>
 

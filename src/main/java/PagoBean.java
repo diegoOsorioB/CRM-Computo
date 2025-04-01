@@ -39,6 +39,8 @@ public class PagoBean implements Serializable {
     private PerfilData perfilData;
     @Inject
     private PedidoB pedidoB;
+    @Inject
+    private EmailService emailService;
 
     public String procesarPago() {
         this.items = carritoBean.getItems();  // Asigna los productos del carrito
@@ -60,8 +62,15 @@ public class PagoBean implements Serializable {
 
         if (pagoExitoso) {
             System.out.println("✅ Pago exitoso. Agregando pedido...");
+            Pedido nuevoPedido = null;
             try {
-                agregarPedido();
+                nuevoPedido = agregarPedido();
+                if (nuevoPedido != null) {
+                    // Enviar correo de confirmación
+                    String asunto = "Confirmación de Pedido #" + (nuevoPedido.getId() != null ? nuevoPedido.getId() : "Nuevo");
+                    String contenido = construirContenidoCorreo(nuevoPedido);
+                    emailService.enviarCorreo(nuevoPedido.getCorreoUsuario(), asunto, contenido);
+                }
             } catch (Exception e) {
                 System.out.println("Ocurrio un error "+e);
             }
@@ -72,7 +81,7 @@ public class PagoBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago realizado con éxito", null));
 
-            return "Pedido.xhtml?faces-redirect=true";
+            return "Product.xhtml?faces-redirect=true";
         } else {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en el pago", null));
@@ -105,14 +114,14 @@ public class PagoBean implements Serializable {
       return true;
     }
 
-    private void agregarPedido() throws Exception {
+    private Pedido agregarPedido() throws Exception {
     FacesContext context = FacesContext.getCurrentInstance();
     String emailUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
         System.out.println(emailUsuario+"++++++++++++++-------------");
 
     if (emailUsuario == null || emailUsuario.isEmpty()) {
         System.out.println("❌ ERROR: No se encontró el email del usuario en la sesión.");
-        return;
+        throw new Exception("Usuario no autenticado");
     }
 
     String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
@@ -121,11 +130,41 @@ public class PagoBean implements Serializable {
     pedidoService.agregarPedido(items, total, direccionCliente);
 
     System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+    
 
     pedidoB.setPedido(nuevoPedido);
     pedidoB.insertarPedido();
+    return nuevoPedido;
 }
+    
+    private String construirContenidoCorreo(Pedido pedido) {
+        StringBuilder contenido = new StringBuilder();
+        contenido.append("Estimado Cliente").append(",\n\n");
+        contenido.append("Tu pedido ha sido registrado con éxito. Aquí están los detalles:\n\n");
+        contenido.append("Total: $").append(pedido.getTotal()).append("\n");
+        contenido.append("Estado: ").append(pedido.getEstado()).append("\n");
+        contenido.append("Dirección de envío: ").append(pedido.getDireccion()).append("\n");
+        contenido.append("Fecha: ").append(pedido.getFecha()).append("\n\n");
+        contenido.append("Detalles de los productos:\n");
 
+        if (pedido.getItems() != null && !pedido.getItems().isEmpty()) {
+            for (ItemCarrito item : pedido.getItems()) {
+                if (item.getProducto() != null) {
+                    contenido.append("- ").append(item.getProducto().getNombre())
+                            .append(" (Cantidad: ").append(item.getCantidad())
+                            .append(", Subtotal: $").append(item.getProducto().getPrecio() * item.getCantidad())
+                            .append(")\n");
+                } else {
+                    contenido.append("- Producto no disponible\n");
+                }
+            }
+        } else {
+            contenido.append("No hay ítems en el pedido.\n");
+        }
+
+        contenido.append("\nGracias por tu compra!\nEquipo de la Tienda Online CRM");
+        return contenido.toString();
+    }
 
   private void generarComprobantePDF() {
     try {

@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Reportes de Pedidos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"/>    
+</h:head>
+<style>
+        header {
+            background-color: #0073e6;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        section {
+            width: 80%;
+            margin: 20px auto;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #0073e6;
+            margin-bottom: 20px;
+        }
+
+        input, textarea, select, button {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #0073e6;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #005bb5;
+        }                
+        /* Estilos para la tabla de pedidos */
+        .pedidos-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        
+        .pedidos-table th {
+            background-color: #0073e6;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .pedidos-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .status-pendiente {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        
+        .status-procesando {
+            color: #f0ad4e;
+            font-weight: bold;
+        }
+        
+        .status-completado {
+            color: #5cb85c;
+            font-weight: bold;
+        }
+        
+        .status-entregado {
+            color: #5cb85c;
+            font-weight: bold;
+        }
+        
+        .status-cancelado {
+            color: #777;
+            font-weight: bold;
+        }
+        
+        .reporte-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .reporte-title {
+            color: #0073e6;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .btn-volver {
+            margin-bottom: 20px;
+            background-color: #6c757d;
+        }
+        
+        .btn-volver:hover {
+            background-color: #5a6268;
+        }
+        
+        .producto-vendido {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .container2 {
+                background: #666666;
+                padding: 30px;
+                border-radius: 0;
+                box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                color: white;
+            }
+            .container2 .row {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            .container2 .col-md-4 {
+                flex: 1 1 300px;
+                margin-bottom: 20px;
+            }
+            .container2 ul {
+                list-style: none;
+                padding: 0;
+            }
+            .container2 ul li {
+                margin-bottom: 5px;
+            }                        
+            .navbar {
+                background: #007BFF;
+                padding: 10px 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .navbar-brand {
+                font-weight: bold;
+            }
+            .profile-dropdown .dropdown-toggle::after {
+                display: none;
+            }
+            .profile-dropdown .dropdown-menu {
+                right: 0;
+                left: auto;
+            }
+            footer {
+                background-color: white;
+                padding: 20px;
+                margin-top: 40px;
+            }
+            footer h5 {
+                margin-bottom: 15px;
+            }
+            footer ul {
+                list-style: none;
+                padding: 0;
+            }
+            footer ul li {
+                margin-bottom: 5px;
+            }
+</style>
+
+<h:body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="Product.xhtml" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
+                        <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
+                    </ul>
+                   
+                    <h:form class="d-flex">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
+                                             onkeyup="this.form.submit()"/>
+                                <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light"/>
+                            </div>
+                    </h:form>
+
+                   
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown profile-dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+
+                                <!-- Mostrar solo si el usuario es administrador -->
+                                <c:if test="${sessionScope.userRole eq 'ADMIN'}">
+                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
+                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Administrador</a></li>
+                                </c:if>
+                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Historial de Compras</a></li>
+                                <c:if test="${sessionScope.userRole ne 'ADMIN'}">
+                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                </c:if>
+                                <li><hr class="dropdown-divider"/></li>
+                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    <header class="text-center bg-primary text-white p-3">
+        <h1>Reportes de Pedidos</h1>
+    </header>
+
+    <div class="container mt-4">
+        <h:button value="Volver a Productos" outcome="Product" styleClass="btn btn-volver" />
+        
+        <section class="mb-4">
+            <h2>Estadísticas de Ventas</h2>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Total de Ventas</h3>
+                        <h4 style="color: #28a745;">$#{devolucionPedidoBean.totalVentas}</h4>
+                        <p>Suma total de pedidos entregados</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Pedidos por Estado</h3>
+                        <ui:repeat value="#{devolucionPedidoBean.ventasPorEstado.entrySet().toArray()}" var="entry">
+                            <div class="producto-vendido">
+                                <span>#{entry.key}:</span>
+                                <span>#{entry.value}</span>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="reporte-card">
+                        <h3 class="reporte-title">Productos Más Vendidos</h3>
+                        <ui:repeat value="#{devolucionPedidoBean.productosMasVendidos.entrySet().toArray()}" var="entry">
+                            <div class="producto-vendido">
+                                <span>#{entry.key}:</span>
+                                <span>#{entry.value} unidades</span>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-4">
+            <h2>Listado de Pedidos</h2>
+            
+            <h:form>
+                <div class="form-group">
+                    <h:outputLabel value="Filtrar por estado:" />
+                    <h:selectOneMenu value="#{devolucionPedidoBean.estadoFiltro}" styleClass="form-control">
+                        <f:selectItem itemValue="" itemLabel="Todos los pedidos" />
+                        <f:selectItem itemValue="Pendiente" itemLabel="Pendientes" />
+                        <f:selectItem itemValue="Procesando" itemLabel="En proceso" />
+                        <f:selectItem itemValue="Entregado" itemLabel="Entregados" />
+                        <f:selectItem itemValue="Cancelado" itemLabel="Cancelados" />
+                        <f:ajax event="change" listener="#{devolucionPedidoBean.filtrarPedidos}" 
+                               render="pedidosTable filtroMessages"/>
+                    </h:selectOneMenu>
+                </div>
+                
+                <h:messages id="filtroMessages" styleClass="alert" infoClass="alert-info"/>
+            </h:form>
+            
+            <h:form>
+                <h:dataTable id="pedidosTable" value="#{devolucionPedidoBean.pedidos}" var="pedido" 
+                           styleClass="table table-striped pedidos-table">
+                    <h:column>
+                        <f:facet name="header">ID Pedido</f:facet>
+                        #{pedido.id}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Fecha</f:facet>
+                        #{pedido.fecha}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Total</f:facet>
+                        $#{pedido.total}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Estado</f:facet>
+                        <h:outputText value="#{pedido.estado}" 
+                                   styleClass="status-#{pedido.estado.toLowerCase()}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Dirección</f:facet>
+                        #{pedido.direccion}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Cliente</f:facet>
+                        #{pedido.correoUsuario}
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">Acciones</f:facet>
+                        <h:commandButton value="Solicitar Devolución" styleClass="btn btn-warning btn-sm"
+                                       action="#{devolucionPedidoBean.redirigirADevoluciones(pedido.id)}"
+                                       rendered="#{pedido.estado == 'Entregado'}">
+                            <f:ajax execute="@this" render="@none"/>
+                        </h:commandButton>
+                    </h:column>
+                </h:dataTable>
+            </h:form>
+        </section>
+    </div>
+
+    <footer class="bg-light p-4 mt-4">
+            <div class="container2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Sobre Nosotros</h5>
+                        <p>
+                            Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.<br/>
+                            Ofrecemos una amplia selección de productos blancos de alta calidad, desde ropa de cama y toallas hasta electrodomésticos y decoración.<br/>
+                            Renueva tu espacio con estilo y confort.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Contáctanos</h5>
+                        <ul>
+                            <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
+                            <li>Teléfono: +1 800 123 4567</li>
+                            <li>Email: contacto@tienda.com</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Enlaces Rápidos</h5>
+                        <ul>
+                            <li><a href="Product.xhtml" style="color: #007BFF;">Inicio</a></li>
+                            <li><a href="Product.xhtml" style="color: #007BFF;">Productos</a></li>
+                            <li><a href="Carrito.xhtml" style="color: #007BFF;">Carrito</a></li>
+                            <li><a href="atencionCliente.xhtml" style="color: #007BFF;">Atención a Cliente</a></li>
+                            <li><a href="#" style="color: #007BFF;">Política de Privacidad</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</h:body>
+</html>

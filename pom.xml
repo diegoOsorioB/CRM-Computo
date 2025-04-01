@@ -13,100 +13,119 @@
     </properties>
     
     <dependencies>
+        <!-- Jakarta EE API -->
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <version>9.1.0</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.24</version>
+        </dependency>
+
+        <!-- Para exportar a imagen -->
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.14</version>
+        </dependency>
+        
+        <!-- Jackson for JSON processing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.16.1</version>
         </dependency>
+        
+        <!-- Email support -->
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>javax.mail-api</artifactId>
             <version>1.6.2</version>
         </dependency>
         <dependency>
-
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
-        <dependency>
-            <groupId>jakarta.inject</groupId>
-            <artifactId>jakarta.inject-api</artifactId>
-            <version>1.0.3</version>
-            <type>jar</type>
-        </dependency>
+
+        <!-- CDI API -->
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
             <version>2.0-EDR1</version>
             <type>jar</type>
         </dependency>
+
+        <!-- JSF API -->
         <dependency>
             <groupId>javax.faces</groupId>
             <artifactId>javax.faces-api</artifactId>
             <version>2.3-pfd</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>3.0-alpha-1</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.guicedee.services</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>1.0.9.14-jre14</version>
-            <type>jar</type>
-        </dependency>
+
+        <!-- PrimeFaces for UI components -->
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>13.0.4</version>
             <classifier>jakarta</classifier>
         </dependency>
+
+        <!-- iText 7 libraries (only one dependency for the core is needed) -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext7-core</artifactId>
-            <version>7.1.15</version>
+            <version>7.2.5</version> <!-- Use the latest version -->
             <type>pom</type>
         </dependency>
+
+        <!-- MongoDB BSON driver -->
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>bson</artifactId>
             <version>5.4.0-alpha0</version>
             <type>jar</type>
         </dependency>
-         <dependency>
+
+        <!-- Spark Excel support -->
+        <dependency>
             <groupId>com.crealytics</groupId>
             <artifactId>spark-excel_2.11</artifactId>
             <version>0.11.1</version>
             <type>jar</type>
         </dependency>
+
+        <!-- Gson for JSON parsing -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
             <type>jar</type>
         </dependency>
+
+        <!-- MongoDB driver -->
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
             <version>5.4.0</version>
             <type>jar</type>
         </dependency>
+
+        <!-- JSON library -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20230227</version>
             <type>jar</type>
         </dependency>
+
+        <!-- iText kernel and layout libraries -->
     </dependencies>
     
     <build>

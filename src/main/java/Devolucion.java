@@ -1,40 +1,42 @@
 import java.io.Serializable;
 
 public class Devolucion implements Serializable {
-    private int idDevolucion;
-    private Compra pedido;
+    private String idDevolucion;
+    private Pedido pedido;
     private String motivo;
     private String estatus;
     private String estatusInicial;
     private String razonCambioEstatus;    
 
-    public Devolucion(int idDevolucion, Compra pedido, String motivo, String estatus, String razonCambioEstatus) {
+    public Devolucion(String idDevolucion, Pedido pedido, String motivo, String estatus, String razonCambioEstatus) {
         this.idDevolucion = idDevolucion;
         this.pedido = pedido;
         this.motivo = motivo;
         this.estatus = estatus;
-        this.estatusInicial=estatus;
+        this.estatusInicial = estatus;
         this.razonCambioEstatus = razonCambioEstatus;
     }
+    
+    public Devolucion(){
+        
+    }
 
-    public int getIdDevolucion() {
+    public String getIdDevolucion() {
         return idDevolucion;
     }
 
-    public void setIdDevolucion(int idDevolucion) {
+    public void setIdDevolucion(String idDevolucion) {
         this.idDevolucion = idDevolucion;
     }
-    
-    
 
-    public Compra getPedido() {
+    public Pedido getPedido() {
         return pedido;
     }
 
-    public void setPedido(Compra pedido) {
+    public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
-    
+
     public String getMotivo() {
         return motivo;
     }
@@ -57,7 +59,7 @@ public class Devolucion implements Serializable {
 
     public void setEstatusInicial(String estatusInicial) {
         this.estatusInicial = estatusInicial;
-    }        
+    }
 
     public String getRazonCambioEstatus() {
         return razonCambioEstatus;
@@ -66,5 +68,16 @@ public class Devolucion implements Serializable {
     public void setRazonCambioEstatus(String razonCambioEstatus) {
         this.razonCambioEstatus = razonCambioEstatus;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Devolucion{" +
+                "idDevolucion=" + idDevolucion +
+                ", pedido=" + pedido +
+                ", motivo='" + motivo + '\'' +
+                ", estatus='" + estatus + '\'' +
+                ", estatusInicial='" + estatusInicial + '\'' +
+                ", razonCambioEstatus='" + razonCambioEstatus + '\'' +
+                '}';
+    }
 }

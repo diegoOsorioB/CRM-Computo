@@ -1,13 +1,20 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Producto {
+    @JsonProperty("_id")
     private String id;
+
     private String nombre;
     private String descripcion;
     private String imagen;
     private double precio;
     private int stock;
     private String status;
+
+    @JsonProperty("categoria") // Para mapear correctamente el JSON
     private String category;
 
     public Producto() {}
@@ -21,6 +28,12 @@ public class Producto {
         this.stock = stock;
         this.category = category;
         this.status = status;
+    }
+
+    public Producto(String id, String nombre, double precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
     }
 
     public String getId() { return id; }
@@ -58,5 +71,9 @@ public class Producto {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    String getCantidad() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
