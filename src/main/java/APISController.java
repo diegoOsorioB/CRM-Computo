@@ -10,7 +10,7 @@ public class APISController {
     private final String URLLOGIN = "https://228e-189-251-16-3.ngrok-free.app/DatabaseService/api/auth/login";
     private final String URLFPS = "http://192.168.100.52:8080";
     private final String API_URL_1 = "https://c4fe-2806-104e-d-3bcb-e57f-593d-a988-71d7.ngrok-free.app/proveedores/api/products";
-    private final String API_URL_2 = "https://255e-2806-2f0-9020-9bac-a12e-9477-8939-d76c.ngrok-free.app/APICRM2/api/productos";
+    private final String API_URL_2 = "https://ad07-2806-265-48d-1ca-f03d-6aa3-2e71-988a.ngrok-free.app/proveedores-connetions/api/products";
 
     public String getAPI_URL_1() {
         return API_URL_1;
