@@ -139,7 +139,7 @@ public class PagoBean implements Serializable {
     
     private String construirContenidoCorreo(Pedido pedido) {
         StringBuilder contenido = new StringBuilder();
-        contenido.append("Estimado ").append(perfilData.getNombre()).append(",\n\n");
+        contenido.append("Estimado Cliente").append(",\n\n");
         contenido.append("Tu pedido ha sido registrado con éxito. Aquí están los detalles:\n\n");
         contenido.append("Total: $").append(pedido.getTotal()).append("\n");
         contenido.append("Estado: ").append(pedido.getEstado()).append("\n");
