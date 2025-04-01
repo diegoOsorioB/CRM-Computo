@@ -421,11 +421,11 @@
                             </a>
                             <a href="#" class="list-group-item list-group-item-action"
                                onclick="PF('growlWidget').renderMessage({
-               'summary': 'Opción deshabilitada',
-               'detail': 'Nuestros ingenieros están solucionando el problema.',
-               'severity': 'warn'
-           });
-           return false;">
+                                           'summary': 'Opción deshabilitada',
+                                           'detail': 'Nuestros ingenieros están solucionando el problema.',
+                                           'severity': 'warn'
+                                       });
+                                       return false;">
                                 <i class="fas fa-credit-card me-2"></i>Métodos de pago
                             </a>
 
@@ -479,7 +479,8 @@
                         <p>
                             Selecciona el pedido que deseas devolver y sigue los pasos. Aceptamos devoluciones 
                             dentro de los 30 días posteriores a la entrega. Por favor revisa nuestra 
-                            <a href="#" class="text-primary" onclick="PF('devolucionModal').show(); return false;">política de devoluciones</a> para más información.
+                            <a href="#" class="text-primary" onclick="PF('devolucionModal').show();
+                                    return false;">política de devoluciones</a> para más información.
                         </p>
                     </div>
 
@@ -595,9 +596,16 @@
                                                 <h:form>
                                                     <h:commandButton value="Iniciar devolución" 
                                                                      styleClass="btn btn-walmart-secondary"
-                                                                     action="#{devPedido.insertarDevolucion}"/>
+                                                                     onclick="PF('growlWidget').renderMessage({
+                                     'summary': 'Opción deshabilitada',
+                                     'detail': 'Nuestros ingenieros están trabajando en solucionar este problema. Por favor intente más tarde.',
+                                     'severity': 'warn'
+                                 });
+                                 return false;"/>
                                                 </h:form>
                                             </ui:fragment>
+
+                                            <p:growl widgetVar="growlWidget" life="5000"/>
                                         </div>
                                     </div>
                                 </div>
