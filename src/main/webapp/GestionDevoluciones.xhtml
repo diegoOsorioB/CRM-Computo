@@ -131,9 +131,9 @@
                                  paginator="true" rows="20" paginatorPosition="bottom" 
                                  sortBy="#{devolucion.pedido.fecha}" styleClass="table table-striped">
                         <p:column headerText="ID Devolución">#{devolucion.idDevolucion}</p:column>
-                        <p:column headerText="Pedido">#{devolucion.pedido.id}</p:column>
+                        <p:column headerText="Pedido">#{devolucion.pedido}</p:column>
                         <p:column headerText="Fecha" sortBy="#{devolucion.pedido.fecha}">#{devolucion.pedido.fecha}</p:column>
-                        <p:column headerText="Cliente">#{devolucion.pedido.correoUsuario}</p:column>
+                        <p:column headerText="Cliente">#{devolucion.pedido.usuario.correo}</p:column>
                         <p:column headerText="Motivo">#{devolucion.motivo}</p:column>
                         <p:column headerText="Estado">
                             <h:selectOneMenu value="#{devolucion.estatus}">

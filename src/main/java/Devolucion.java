@@ -2,23 +2,31 @@ import java.io.Serializable;
 
 public class Devolucion implements Serializable {
     private String idDevolucion;
-    private Pedido pedido;
+    private Compra pedido;
     private String motivo;
     private String estatus;
     private String estatusInicial;
     private String razonCambioEstatus;    
 
-    public Devolucion(String idDevolucion, Pedido pedido, String motivo, String estatus, String razonCambioEstatus) {
+    // Constructor sin parámetros (solución al error)
+    public Devolucion() {
+        // Valores por defecto o inicialización si es necesario
+        this.idDevolucion = "";
+        this.pedido = new Compra(); // Asegúrate de que Compra tenga un constructor sin parámetros
+        this.motivo = "";
+        this.estatus = "";
+        this.estatusInicial = "";
+        this.razonCambioEstatus = "";
+    }
+
+    // Constructor con parámetros
+    public Devolucion(String idDevolucion, Compra pedido, String motivo, String estatus, String razonCambioEstatus) {
         this.idDevolucion = idDevolucion;
         this.pedido = pedido;
         this.motivo = motivo;
         this.estatus = estatus;
         this.estatusInicial = estatus;
         this.razonCambioEstatus = razonCambioEstatus;
-    }
-    
-    public Devolucion(){
-        
     }
 
     public String getIdDevolucion() {
@@ -29,11 +37,11 @@ public class Devolucion implements Serializable {
         this.idDevolucion = idDevolucion;
     }
 
-    public Pedido getPedido() {
+    public Compra getPedido() {
         return pedido;
     }
 
-    public void setPedido(Pedido pedido) {
+    public void setPedido(Compra pedido) {
         this.pedido = pedido;
     }
 
