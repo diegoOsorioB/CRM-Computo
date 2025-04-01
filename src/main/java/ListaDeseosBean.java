@@ -9,11 +9,11 @@ import java.util.List;
 public class ListaDeseosBean implements Serializable {
 
     private List<Producto> listaDeseos;
-/*
+
     public ListaDeseosBean() {
         listaDeseos = new ArrayList<>();
     }
-*/
+
     public List<Producto> getListaDeseos() {
         return new ArrayList<>(listaDeseos); // Devuelve una copia para evitar modificaciones externas
     }

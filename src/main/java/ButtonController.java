@@ -120,13 +120,14 @@ public class ButtonController {
     }
 
     // Método para cerrar sesión
-    public void cerrarSesion() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
+   public void cerrarSesion() {
+    FacesContext facesContext = FacesContext.getCurrentInstance();
+    HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+    if (session != null) {
+        session.invalidate();  // Esto elimina todos los atributos de la sesión.
     }
+}
+
 
     // Método para registrar un nuevo usuario
     public void registrarUsuario() {
