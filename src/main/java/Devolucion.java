@@ -13,7 +13,7 @@ public class Devolucion implements Serializable {
         this.pedido = pedido;
         this.motivo = motivo;
         this.estatus = estatus;
-        this.estatusInicial=estatus;
+        this.estatusInicial = estatus;
         this.razonCambioEstatus = razonCambioEstatus;
     }
     
@@ -28,8 +28,6 @@ public class Devolucion implements Serializable {
     public void setIdDevolucion(String idDevolucion) {
         this.idDevolucion = idDevolucion;
     }
-    
-    
 
     public Pedido getPedido() {
         return pedido;
@@ -38,7 +36,7 @@ public class Devolucion implements Serializable {
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
-    
+
     public String getMotivo() {
         return motivo;
     }
@@ -61,7 +59,7 @@ public class Devolucion implements Serializable {
 
     public void setEstatusInicial(String estatusInicial) {
         this.estatusInicial = estatusInicial;
-    }        
+    }
 
     public String getRazonCambioEstatus() {
         return razonCambioEstatus;
@@ -70,5 +68,16 @@ public class Devolucion implements Serializable {
     public void setRazonCambioEstatus(String razonCambioEstatus) {
         this.razonCambioEstatus = razonCambioEstatus;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Devolucion{" +
+                "idDevolucion=" + idDevolucion +
+                ", pedido=" + pedido +
+                ", motivo='" + motivo + '\'' +
+                ", estatus='" + estatus + '\'' +
+                ", estatusInicial='" + estatusInicial + '\'' +
+                ", razonCambioEstatus='" + razonCambioEstatus + '\'' +
+                '}';
+    }
 }

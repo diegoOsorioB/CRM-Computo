@@ -8,21 +8,33 @@ public class Compra implements Serializable {
     private String estadoInicial;
     private User usuario;
 
+    // Constructor sin parámetros (para evitar errores)
+    public Compra() {
+        this.idPedido = 0;
+        this.fecha = "";
+        this.total = 0.0;
+        this.estado = "";
+        this.estadoInicial = "";
+        this.usuario = new User(); // Asegúrate de que User tenga un constructor vacío
+    }
+
+    // Constructor sin usuario
     public Compra(int idPedido, String fecha, double total, String estado) {
         this.idPedido = idPedido;
         this.fecha = fecha;
         this.total = total;
         this.estado = estado;
-        this.estadoInicial=estado;
+        this.estadoInicial = estado;
     }
-    
+
+    // Constructor con usuario
     public Compra(int idPedido, String fecha, double total, String estado, User usuario) {
         this.idPedido = idPedido;
         this.fecha = fecha;
         this.total = total;
         this.estado = estado;
-        this.estadoInicial=estado;
-        this.usuario=usuario;
+        this.estadoInicial = estado;
+        this.usuario = usuario;
     }
 
     public User getUsuario() {
@@ -72,6 +84,20 @@ public class Compra implements Serializable {
     public void setEstadoInicial(String estadoInicial) {
         this.estadoInicial = estadoInicial;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Compra{" +
+                "idPedido=" + idPedido +
+                ", fecha='" + fecha + '\'' +
+                ", total=" + total +
+                ", estado='" + estado + '\'' +
+                ", estadoInicial='" + estadoInicial + '\'' +
+                ", usuario=" + (usuario != null ? usuario.toString() : "null") +
+                '}';
+    }
+
+    Object getCarrito() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -1,5 +1,7 @@
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -18,6 +20,8 @@ import java.util.logging.Logger;
 @Named
 @SessionScoped
 public class PerfilData implements Serializable {
+
+    APISController api = new APISController();
 
     private static final Logger LOGGER = Logger.getLogger(PerfilData.class.getName());
 
@@ -38,27 +42,29 @@ public class PerfilData implements Serializable {
     @PostConstruct
     public void init() {
         FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        this.email = context.getExternalContext().getRequestParameterMap().get("email");
 
-        if (session != null) {
-            this.email = (String) session.getAttribute("userEmail");
-
-            if (this.email != null) {
-                cargarPerfilDesdeAPI(this.email);
-            } else {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo no encontrado en la sesión", ""));
-            }
+        if (this.email != null) {
+            cargarPerfilDesdeAPI(this.email);
         }
     }
 
-    private void cargarPerfilDesdeAPI(String email) {
+    private void cargarPerfilDesdeAPI(String correo) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String token = (String) context.getExternalContext().getSessionMap().get("authTokenA");
+
         try {
             HttpClient client = HttpClient.newHttpClient();
-            String url = "http://localhost:8080/ApiCRM/api/usuarios/consultarPorCorreo/" + email;
+            String url = api.getURLBD() + "/usuarios?correo=" + correo;
+
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + token)
                     .header("Content-Type", "application/json")
+                    .GET()
                     .build();
+
+            System.out.println("El token Admin " + token);
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -66,14 +72,19 @@ public class PerfilData implements Serializable {
 
             if (response.statusCode() == 200) {
                 ObjectMapper mapper = new ObjectMapper();
-                JsonNode rootNode = mapper.readTree(response.body());
+                // Deserializa el JSON como un array de objetos
+                JsonNode arrayNode = mapper.readTree(response.body());
 
-                this.id = rootNode.path("id").asText(); // ✅ Se obtiene el ID correctamente
+                // Acceder al primer objeto del array
+                JsonNode rootNode = arrayNode.get(0); // Obtener el primer elemento del array
+
+                // Extraer los datos y asignarlos a los atributos de la clase PerfilData
+                this.id = rootNode.path("_id").asText();
                 this.nombre = rootNode.path("nombre").asText();
                 this.apellidoPaterno = rootNode.path("apellidoPaterno").asText();
                 this.apellidoMaterno = rootNode.path("apellidoMaterno").asText();
                 this.telefono = rootNode.path("telefono").asText();
-                this.email = rootNode.path("email").asText();
+                this.email = rootNode.path("correo").asText();
                 this.direccion = rootNode.path("direccion").asText();
                 this.ciudad = rootNode.path("ciudad").asText();
                 this.codigoPostal = rootNode.path("codigoPostal").asText();
@@ -81,11 +92,11 @@ public class PerfilData implements Serializable {
 
                 System.out.println("✅ ID extraído correctamente: " + this.id);
 
-                // Guarda el ID en la sesión
-                FacesContext context = FacesContext.getCurrentInstance();
+                // Guardar el ID en la sesión
                 HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
                 session.setAttribute("userId", this.id);
 
+                // Establecer una imagen predeterminada si no existe
                 if (this.imagenUrl == null || this.imagenUrl.isEmpty()) {
                     this.imagenUrl = "/uploads/default.jpg";
                 }
@@ -102,22 +113,36 @@ public class PerfilData implements Serializable {
     public void updateProfile() {
         System.out.println("🔄 Entró al método updateProfile");
 
+        FacesContext context = FacesContext.getCurrentInstance();
+        String token = (String) context.getExternalContext().getSessionMap().get("authTokenA");
+
         if (this.id == null || this.id.isEmpty()) {
             System.out.println("⚠️ ID no disponible. No se puede actualizar el perfil.");
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
             return;
         }
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(this);
+
+            // Crear un nodo JSON manualmente para poder eliminar el campo de contraseña si es vacío
+            JsonNode jsonNode = mapper.valueToTree(this);
+            ((com.fasterxml.jackson.databind.node.ObjectNode) jsonNode).remove("passwordConfirm"); // Remover passwordConfirm
+
+            // Si la contraseña está vacía, eliminarla del JSON para que no se envíe
+            if (this.password == null || this.password.trim().isEmpty()) {
+                ((com.fasterxml.jackson.databind.node.ObjectNode) jsonNode).remove("password");
+            }
+
+            String json = mapper.writeValueAsString(jsonNode);
             System.out.println("📤 JSON generado para actualizar: " + json);
 
             HttpClient client = HttpClient.newHttpClient();
-            String url = "http://localhost:8080/ApiCRM/api/usuarios/modificar/" + this.email;
+            String url = api.getURLBD() + "/usuarios/" + this.id;
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + token)
                     .header("Content-Type", "application/json")
                     .PUT(HttpRequest.BodyPublishers.ofString(json))
                     .build();
@@ -127,17 +152,78 @@ public class PerfilData implements Serializable {
             System.out.println("📥 Respuesta del servidor al actualizar: " + response.body());
 
             if (response.statusCode() == 200) {
-                FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil actualizado correctamente", ""));
                 context.getExternalContext().redirect("Product.xhtml");
             } else {
-                FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar el perfil", ""));
             }
         } catch (IOException | InterruptedException e) {
             LOGGER.log(Level.SEVERE, "❌ Error al actualizar el perfil", e);
         }
     }
+
+    public void updatePassword() {
+    System.out.println("🔒 Entró al método updatePassword");
+    
+    FacesContext context = FacesContext.getCurrentInstance();
+    String token = (String) context.getExternalContext().getSessionMap().get("authTokenA");
+
+    if (this.email == null || this.email.isEmpty()) {
+        System.out.println("⚠️ Email no disponible. No se puede actualizar la contraseña.");
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El correo no está disponible", ""));
+        return;
+    }
+
+    cargarPerfilDesdeAPI(this.email); // Obtener el usuario correcto
+
+    if (this.id == null || this.id.isEmpty()) {
+        System.out.println("⚠️ ID no disponible. No se puede actualizar la contraseña.");
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
+        return;
+    }
+
+    if (this.password == null || this.password.trim().isEmpty() || this.passwordConfirm == null || this.passwordConfirm.trim().isEmpty()) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "La contraseña no puede estar vacía", ""));
+        return;
+    }
+
+    if (!this.password.equals(this.passwordConfirm)) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Las contraseñas no coinciden", ""));
+        return;
+    }
+
+    try {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode jsonNode = mapper.createObjectNode();
+        jsonNode.put("password", this.password);
+
+        String json = mapper.writeValueAsString(jsonNode);
+        System.out.println("📤 JSON generado para actualizar contraseña: " + json);
+
+        HttpClient client = HttpClient.newHttpClient();
+        String url = api.getURLBD() + "/usuarios/" + this.id; // Asegurar que se usa el ID correcto
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        System.out.println("📥 Respuesta del servidor al actualizar contraseña: " + response.body());
+
+        if (response.statusCode() == 200) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Contraseña actualizada correctamente", ""));
+        } else {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar la contraseña", ""));
+        }
+    } catch (IOException | InterruptedException e) {
+        LOGGER.log(Level.SEVERE, "❌ Error al actualizar la contraseña", e);
+    }
+}
+
 
     // Getters y Setters
     public String getId() {

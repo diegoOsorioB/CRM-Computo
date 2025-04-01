@@ -1,4 +1,3 @@
-
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 import jakarta.inject.Inject;
@@ -14,31 +13,62 @@ public class CarritoBean implements Serializable {
 
     @Inject
     private ProductoBean productoBean;
+    
+    @Inject
+    private favoritosBean favoritosBean;
+
+    @Inject
+    private ListaDeseosBean listaDeseosBean;  // Nueva inyección
 
     public String agregarProductoActual() {
         if (productoBean.getProducto() != null) {
             agregarProducto(productoBean.getProducto());
             return "Carrito.xhtml";
-            
         } else {
             System.out.println("Producto no encontrado.");
         }
         return "Producto no encontrado.";
     }
 
-    public void agregarProducto(Producto producto) {
-        System.out.println(producto.getId()+"/*id ");
-        // Verificar si el producto ya está en el carrito
+   public void agregarProducto(Producto producto) {
+    if (producto != null) {
         for (ItemCarrito item : items) {
-            if (item.getProducto().getId() == producto.getId()) {
-                // Si ya está en el carrito, solo incrementa la cantidad
-                item.setCantidad(item.getCantidad() + 1);
+            if (item.getProducto().getId().equals(producto.getId())) {
+                if (item.getStockTemporal() > 0) {
+                    item.setCantidad(item.getCantidad() + 1);
+                    item.setStockTemporal(item.getStockTemporal() - 1); // Reducir stock temporal
+                } else {
+                    System.out.println("⚠️ Stock insuficiente para " + producto.getNombre());
+                }
                 return;
             }
         }
-        // Si no está en el carrito, agregarlo con cantidad 1
-        items.add(new ItemCarrito(producto, 1));
-        System.out.println("Producto agregado: " + producto.getNombre());
+
+        // Nuevo producto en el carrito
+        if (producto.getStock() > 0) {
+            ItemCarrito nuevoItem = new ItemCarrito(producto, 1);
+            nuevoItem.setStockTemporal(producto.getStock() - 1);
+            items.add(nuevoItem);
+            System.out.println("🛒 Producto agregado: " + producto.getNombre());
+        } else {
+            System.out.println("⚠️ Stock insuficiente para " + producto.getNombre());
+        }
+    }
+}
+
+
+    public void agregarAFavoritos(Producto producto) {
+        if (producto != null) {
+            favoritosBean.agregarAFavoritos(producto);
+            System.out.println("Producto agregado a favoritos: " + producto.getNombre());
+        }
+    }
+
+    public void agregarAListaDeseos(Producto producto) {
+        if (producto != null) {
+            listaDeseosBean.agregarAListaDeseos(producto);
+            System.out.println("Producto agregado a la lista de deseos: " + producto.getNombre());
+        }
     }
 
     public List<ItemCarrito> getItems() {
@@ -63,18 +93,27 @@ public class CarritoBean implements Serializable {
         }
     }
 
-    public void eliminarProducto(Producto producto) {
-        items.removeIf(item -> item.getProducto().getId() == producto.getId());
-    }
+   public void eliminarProducto(Producto producto) {
+    items.removeIf(item -> {
+        if (item.getProducto().getId().equals(producto.getId())) {
+            producto.setStock(producto.getStock() + item.getCantidad()); // Restaurar stock
+            return true;
+        }
+        return false;
+    });
+}
 
-    public void vaciarCarrito() {
-        items.clear();
+public void vaciarCarrito() {
+    for (ItemCarrito item : items) {
+        item.getProducto().setStock(item.getProducto().getStock() + item.getCantidad()); // Restaurar stock
     }
+    items.clear();
+}
+
 
     public double getTotal() {
         return items.stream()
                 .mapToDouble(item -> item.getProducto().getPrecio() * item.getCantidad())
                 .sum();
     }
-
 }

@@ -81,7 +81,7 @@ public class PagoBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago realizado con éxito", null));
 
-            return "Pedido.xhtml?faces-redirect=true";
+            return "Product.xhtml?faces-redirect=true";
         } else {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en el pago", null));
@@ -130,6 +130,7 @@ public class PagoBean implements Serializable {
     pedidoService.agregarPedido(items, total, direccionCliente);
 
     System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+    
 
     pedidoB.setPedido(nuevoPedido);
     pedidoB.insertarPedido();

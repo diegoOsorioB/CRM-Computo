@@ -1,0 +1,30 @@
+.navbar {
+    background: #007BFF;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.navbar-brand {
+    font-weight: bold;
+}
+.profile-dropdown .dropdown-toggle::after {
+    display: none;
+}
+.profile-dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+footer {
+    background-color: white;
+    padding: 20px;
+    margin-top: 40px;
+}
+footer h5 {
+    margin-bottom: 15px;
+}
+footer ul {
+    list-style: none;
+    padding: 0;
+}
+footer ul li {
+    margin-bottom: 5px;
+}
