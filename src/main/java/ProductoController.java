@@ -1,8 +1,7 @@
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import java.io.IOException;
 import java.net.URI;
@@ -12,114 +11,84 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 
 @Named
 @RequestScoped
 public class ProductoController {
-
     private List<Producto> productos;
-    private Producto productoSeleccionado;
-    private List<Producto> listaDeseos = new ArrayList<>();
-    private String selectedProductId;
+    private List<Producto> productosFiltrados;
+        private String selectedProductId;
     private Producto selectedProduct;
      private String message;
      private String criterioBusqueda = "";
-     private List<Producto> productosFiltrados = new ArrayList<>();
+     
+     @PostConstruct
+public void init() {
+    consultarProductos();
+}
+    
+    APISController api = new APISController();
 
-    @PostConstruct
-    public void init() {
-        consultarProductos();
-    }
-
-    public List<Producto> getProductos() {
-        return productosFiltrados.isEmpty() ? productos : productosFiltrados;
-    }
-
-
-    public Producto getProductoSeleccionado() {
-        return productoSeleccionado;
-    }
-
-    public void setProductoSeleccionado(Producto productoSeleccionado) {
-        this.productoSeleccionado = productoSeleccionado;
-    }
-
-    public void eliminarDeListaDeseos(Producto producto) {
-        if (producto != null && listaDeseos.contains(producto)) {
-            listaDeseos.remove(producto);
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Producto eliminado de la lista de deseos", null));
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "El producto no está en la lista de deseos", null));
-        }
+    public ProductoController() {
+        this.productos = new ArrayList<>();
+        this.productosFiltrados = new ArrayList<>();
     }
 
     public void consultarProductos() {
         try {
+            List<Producto> productosAPI1 = obtenerProductosDesdeAPI(api.getAPI_URL_1());
+            List<Producto> productosAPI2 = obtenerProductosDesdeAPI(api.getAPI_URL_2());
+
+            // Fusionar ambas listas en una sola
+            this.productos = new ArrayList<>();
+            this.productos.addAll(productosAPI1);
+            this.productos.addAll(productosAPI2);
+
+            // Clonar la lista para productosFiltrados
+            this.productosFiltrados = new ArrayList<>(productos);
+
+            System.out.println("Se han guardado " + this.productos.size() + " productos en total.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la conexión con las APIs", null));
+        }
+    }
+
+    private List<Producto> obtenerProductosDesdeAPI(String apiUrl) {
+        List<Producto> productos = new ArrayList<>();
+        try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://f718-2806-104e-21-9c0b-29cc-6273-130d-c65e.ngrok-free.app/destinity/erp/api/products"))
+                    .uri(URI.create(apiUrl))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            System.out.println("Respuesta JSON de " + apiUrl + ": " + response.body());
+
             if (response.statusCode() == 200) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                this.productos = Arrays.asList(objectMapper.readValue(response.body(), Producto[].class));
-                this.productosFiltrados = new ArrayList<>(productos);
+                Producto[] productosArray = objectMapper.readValue(response.body(), Producto[].class);
+                productos = Arrays.asList(productosArray);
+                
+                System.out.println("Se han recibido " + productos.size() + " productos desde " + apiUrl);
+            } else {
+                System.out.println("Error: Código de respuesta HTTP " + response.statusCode() + " en " + apiUrl);
             }
 
         } catch (IOException | InterruptedException e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la conexión con la API", null));
+            e.printStackTrace();
         }
-    }
-
-    public String verDetalle(Producto producto) {
-        this.selectedProduct = producto;
-        return "detalleProducto?faces-redirect=true";
+        return productos;
     }
     
-    public void loadSelectedProduct() {
-        if (selectedProductId != null) {
-            selectedProduct = productos.stream()
-                .filter(p -> p.getId().equals(selectedProductId))
-                .findFirst()
-                .orElse(null);
-        }
-        System.out.println(selectedProductId+"####3");
-    }
-
-    // Getters y Setters
-    public String getSelectedProductId() {
-        return selectedProductId;
-    }
-
-    public void setSelectedProductId(String selectedProductId) {
-        this.selectedProductId = selectedProductId;
-    }
-
-    public Producto getSelectedProduct() {
-        return selectedProduct;
-    }
-    
-    
-    public List<Producto> buscarProducto(String criterio) {
-        if (criterio == null || criterio.trim().isEmpty()) {
-            return productos; // Si no hay criterio, devuelve la lista completa.
-        }
-
-        String criterioLower = criterio.toLowerCase();
-
-        return productos.stream()
-                .filter(p -> p.getNombre().toLowerCase().contains(criterioLower))
-                .toList();
-    }
-
-    public void filtrarProductos() {
+     public void filtrarProductos() {
         if (criterioBusqueda == null || criterioBusqueda.trim().isEmpty()) {
             productosFiltrados = new ArrayList<>(productos);
         } else {
@@ -135,6 +104,14 @@ public class ProductoController {
         }
     }
 
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public List<Producto> getProductosFiltrados() {
+        return productosFiltrados;
+    }
+    
     // Getters y Setters
     public String getCriterioBusqueda() {
         return criterioBusqueda;
@@ -144,5 +121,4 @@ public class ProductoController {
         this.criterioBusqueda = criterioBusqueda;
         filtrarProductos();
     }
-
 }

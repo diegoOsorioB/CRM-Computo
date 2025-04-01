@@ -1,19 +1,24 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Producto {
+    @JsonProperty("_id")
     private String id;
+
     private String nombre;
     private String descripcion;
     private String imagen;
     private double precio;
     private int stock;
     private String status;
+
+    @JsonProperty("categoria") // Para mapear correctamente el JSON
     private String category;
 
-    // Constructor vacío
     public Producto() {}
 
-    // Constructor con parámetros
     public Producto(String nombre, String descripcion, String imagen, double precio, String id, int stock, String category, String status) {
         this.id = id;
         this.nombre = nombre;
@@ -24,14 +29,13 @@ public class Producto {
         this.category = category;
         this.status = status;
     }
-    
+
     public Producto(String id, String nombre, double precio) {
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
     }
 
-    // Getters y Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -56,7 +60,6 @@ public class Producto {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    // Métodos equals y hashCode
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -71,7 +74,6 @@ public class Producto {
     }
 
     String getCantidad() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
 }
