@@ -1,4 +1,3 @@
-
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
@@ -26,27 +25,32 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import java.awt.Color;
-import static java.awt.font.TextHitInfo.leading;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import static org.apache.xalan.lib.ExsltSets.leading;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.pie.PieChartDataSet;
+import org.primefaces.model.charts.pie.PieChartModel;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.optionconfig.title.Title;
+import org.primefaces.model.charts.pie.PieChartOptions;
 
 @Named
 @ViewScoped
 public class ReporteBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final float LEADING = 16;
 
     // Configuración de conexión
     private final String direccionIp = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app";
@@ -62,14 +66,17 @@ public class ReporteBean implements Serializable {
     private int totalPedidos;
     private Map<String, Integer> ventasPorEstado = new HashMap<>();
     private Map<String, Double> ventasPorProducto = new HashMap<>();
-    // Agrega esta variable como constante al inicio de tu clase
-    private static final float LEADING = 16;
+    
+    // Modelos para gráficas PrimeFaces
+    private PieChartModel pieModel;
+    private BarChartModel barModel;
 
     @PostConstruct
     public void init() {
         fechaInicio = LocalDate.now().withDayOfMonth(1);
         fechaFin = LocalDate.now();
         consultarTodosPedidos();
+        crearGraficas();
     }
 
     public void consultarTodosPedidos() {
@@ -98,14 +105,11 @@ public class ReporteBean implements Serializable {
                     errorMsg += " (No se pudo obtener mensaje de error)";
                 }
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMsg, null));
-
-                // Cargar datos de prueba como fallback
                 cargarDatosDePrueba();
             }
         } catch (Exception e) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error de conexión: " + e.getMessage(), null));
-            // Cargar datos de prueba como fallback
             cargarDatosDePrueba();
         } finally {
             if (client != null) {
@@ -122,43 +126,36 @@ public class ReporteBean implements Serializable {
         Producto producto4 = new Producto("4", "Monitor Samsung 24\"", 4500.0);
         Producto producto5 = new Producto("5", "Disco SSD 1TB", 1800.0);
 
-        // Crear items de carrito
-        List<ItemCarrito> itemsPedido1 = Arrays.asList(
+        // Crear pedidos de prueba
+        todosPedidos = Arrays.asList(
+            new Pedido("PED-001", Arrays.asList(
                 new ItemCarrito(producto1, 1),
                 new ItemCarrito(producto2, 1),
                 new ItemCarrito(producto5, 2)
-        );
-
-        List<ItemCarrito> itemsPedido2 = Arrays.asList(
+            ), 22300.0, "Completado", "Av. Reforma 150", "cliente1@empresa.com"),
+            
+            new Pedido("PED-002", Arrays.asList(
                 new ItemCarrito(producto2, 3),
                 new ItemCarrito(producto3, 1),
                 new ItemCarrito(producto4, 2)
-        );
-
-        List<ItemCarrito> itemsPedido3 = Arrays.asList(
+            ), 14750.0, "Pendiente", "Calle Juárez 45", "cliente2@mail.com"),
+            
+            new Pedido("PED-003", Arrays.asList(
                 new ItemCarrito(producto1, 2),
                 new ItemCarrito(producto4, 1)
-        );
-
-        List<ItemCarrito> itemsPedido4 = Arrays.asList(
+            ), 41500.0, "Completado", "Blvd. López Mateos 1200", "cliente3@correo.com"),
+            
+            new Pedido("PED-004", Arrays.asList(
                 new ItemCarrito(producto3, 1),
                 new ItemCarrito(producto5, 3)
-        );
-
-        List<ItemCarrito> itemsPedido5 = Arrays.asList(
+            ), 7800.0, "Cancelado", "Paseo de la Rosas 67", "cliente4@example.com"),
+            
+            new Pedido("PED-005", Arrays.asList(
                 new ItemCarrito(producto2, 5),
                 new ItemCarrito(producto3, 2),
                 new ItemCarrito(producto4, 1),
                 new ItemCarrito(producto5, 1)
-        );
-
-        // Crear pedidos de prueba
-        todosPedidos = Arrays.asList(
-                new Pedido("PED-001", itemsPedido1, 22300.0, "Entregado", "Av. Reforma 150", "cliente1@empresa.com"),
-                new Pedido("PED-002", itemsPedido2, 14750.0, "Procesando", "Calle Juárez 45", "cliente2@mail.com"),
-                new Pedido("PED-003", itemsPedido3, 41500.0, "Entregado", "Blvd. López Mateos 1200", "cliente3@correo.com"),
-                new Pedido("PED-004", itemsPedido4, 7800.0, "Cancelado", "Paseo de la Rosas 67", "cliente4@example.com"),
-                new Pedido("PED-005", itemsPedido5, 19250.0, "Enviado", "Calle Central 89", "cliente5@negocio.com")
+            ), 19250.0, "Pendiente", "Calle Central 89", "cliente5@negocio.com")
         );
 
         // Asignar fechas
@@ -207,57 +204,106 @@ public class ReporteBean implements Serializable {
                 ventasPorProducto.merge(nombreProducto, totalProducto, Double::sum);
             });
         });
+        
+        // Actualizar gráficas
+        crearGraficas();
     }
+
+    private void crearGraficas() {
+        crearGraficaCircular();
+        crearGraficaBarras();
+    }
+
+    private void crearGraficaCircular() {
+    pieModel = new PieChartModel();
+    ChartData data = new ChartData();
+
+    PieChartDataSet dataSet = new PieChartDataSet();
+    List<Number> values = new ArrayList<>();
+    List<String> labels = new ArrayList<>();
+    List<String> bgColors = new ArrayList<>();
+
+    // Colores para la gráfica
+    String[] colores = {
+        "rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)",
+        "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(255, 159, 64)"
+    };
+
+    // Agregar datos de ventas por estado
+    int colorIndex = 0;
+    for (Map.Entry<String, Integer> entry : ventasPorEstado.entrySet()) {
+        values.add(entry.getValue());
+        labels.add(entry.getKey());
+        bgColors.add(colores[colorIndex % colores.length]);
+        colorIndex++;
+    }
+
+    dataSet.setData(values);
+    dataSet.setBackgroundColor(bgColors);
+    data.addChartDataSet(dataSet);
+    data.setLabels(labels);
+
+    // Configuración de la gráfica
+    pieModel.setData(data);
+
+    // Crear opciones y agregar título
+    PieChartOptions options = new PieChartOptions();
+    Title title = new Title();
+    title.setText("Distribución de Pedidos por Estado");
+    title.setDisplay(true);
+    
+    options.setTitle(title);
+    pieModel.setOptions(options); // Aquí se asigna correctamente
+}
+
+    private void crearGraficaBarras() {
+    barModel = new BarChartModel();
+    ChartData data = new ChartData();
+
+    BarChartDataSet dataSet = new BarChartDataSet();
+    dataSet.setLabel("Ventas por Producto");
+    List<Number> values = new ArrayList<>();
+    List<String> bgColors = new ArrayList<>();
+    List<String> labels = new ArrayList<>();
+
+    // Colores para la gráfica
+    String[] colores = {
+        "rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 205, 86)",
+        "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(255, 159, 64)"
+    };
+
+    // Agregar datos de ventas por producto
+    int colorIndex = 0;
+    for (Map.Entry<String, Double> entry : ventasPorProducto.entrySet()) {
+        values.add(entry.getValue());
+        labels.add(entry.getKey());
+        bgColors.add(colores[colorIndex % colores.length]);
+        colorIndex++;
+    }
+
+    dataSet.setData(values);
+    dataSet.setBackgroundColor(bgColors);
+    data.addChartDataSet(dataSet);
+    data.setLabels(labels);
+
+    // Configuración de la gráfica
+    barModel.setData(data);
+
+    // Crear opciones y agregar título
+    BarChartOptions options = new BarChartOptions();
+    Title title = new Title();
+    title.setText("Ventas por Producto (en $)");
+    title.setDisplay(true);
+    
+    options.setTitle(title);
+    barModel.setOptions(options); // Aquí se asigna correctamente
+}
+
 
     public void filtrarReporte() {
         generarEstadisticas();
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Reporte actualizado", null));
-    }
-
-    // Getters y Setters
-    public LocalDate getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(LocalDate fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public LocalDate getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(LocalDate fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public String getEstadoFiltro() {
-        return estadoFiltro;
-    }
-
-    public void setEstadoFiltro(String estadoFiltro) {
-        this.estadoFiltro = estadoFiltro;
-    }
-
-    public double getTotalVentas() {
-        return totalVentas;
-    }
-
-    public int getTotalPedidos() {
-        return totalPedidos;
-    }
-
-    public Map<String, Integer> getVentasPorEstado() {
-        return ventasPorEstado;
-    }
-
-    public Map<String, Double> getVentasPorProducto() {
-        return ventasPorProducto;
-    }
-
-    public List<Pedido> getTodosPedidos() {
-        return todosPedidos;
     }
 
     public void generarReportePDF() {
@@ -285,12 +331,12 @@ public class ReporteBean implements Serializable {
                 contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("REPORTE DE PEDIDOS CON GRÁFICAS");
+                contentStream.showText("REPORTE DE PEDIDOS");
                 contentStream.endText();
                 yPosition -= LEADING * 2;
 
-                // Gráfica de Ventas por Estado
-                yPosition = agregarGraficaVentasPorEstado(document, contentStream, margin, yPosition);
+                // Gráfica circular de estados
+                yPosition = agregarGraficaCircularPDF(document, contentStream, margin, yPosition);
 
                 if (yPosition < margin + 300) {
                     contentStream.close();
@@ -300,8 +346,8 @@ public class ReporteBean implements Serializable {
                     yPosition = yStart;
                 }
 
-                // Gráfica de Ventas por Producto
-                yPosition = agregarGraficaVentasPorProducto(document, contentStream, margin, yPosition);
+                // Gráfica de barras de productos
+                yPosition = agregarGraficaBarrasPDF(document, contentStream, margin, yPosition);
 
                 if (yPosition < margin + 300) {
                     contentStream.close();
@@ -310,6 +356,27 @@ public class ReporteBean implements Serializable {
                     contentStream = new PDPageContentStream(document, page);
                     yPosition = yStart;
                 }
+
+                // Estadísticas resumidas
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("ESTADÍSTICAS:");
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.setFont(PDType1Font.HELVETICA, 10);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Total de pedidos: " + totalPedidos);
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Total de ventas: $" + totalVentas);
+                contentStream.endText();
+                yPosition -= LEADING * 1.5f;
 
                 // Listado de pedidos
                 contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
@@ -372,12 +439,7 @@ public class ReporteBean implements Serializable {
                         yPosition -= LEADING;
                     }
 
-                    // Separador
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin, yPosition);
-                    contentStream.showText("--------------------------------------------------");
-                    contentStream.endText();
-                    yPosition -= LEADING * 1.5f;
+                    yPosition -= LEADING;
                 }
 
             } finally {
@@ -408,11 +470,10 @@ public class ReporteBean implements Serializable {
         }
     }
 
-    private float agregarGraficaVentasPorEstado(PDDocument document, PDPageContentStream contentStream,
+    private float agregarGraficaCircularPDF(PDDocument document, PDPageContentStream contentStream,
             float margin, float yPosition) throws Exception {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        ventasPorEstado.forEach((estado, cantidad)
-                -> dataset.setValue(estado, cantidad));
+        ventasPorEstado.forEach((estado, cantidad) -> dataset.setValue(estado, cantidad));
 
         JFreeChart chart = ChartFactory.createPieChart(
                 "Distribución de Pedidos por Estado",
@@ -435,11 +496,10 @@ public class ReporteBean implements Serializable {
         return yPosition - 320;
     }
 
-    private float agregarGraficaVentasPorProducto(PDDocument document, PDPageContentStream contentStream,
+    private float agregarGraficaBarrasPDF(PDDocument document, PDPageContentStream contentStream,
             float margin, float yPosition) throws Exception {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        ventasPorProducto.forEach((producto, total)
-                -> dataset.addValue(total, "Ventas", producto));
+        ventasPorProducto.forEach((producto, total) -> dataset.addValue(total, "Ventas", producto));
 
         JFreeChart chart = ChartFactory.createBarChart(
                 "Ventas por Producto",
@@ -469,182 +529,56 @@ public class ReporteBean implements Serializable {
         return yPosition - 320;
     }
 
-    public void generarReportesSeparados() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
-
-        if (todosPedidos == null || todosPedidos.isEmpty()) {
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "No hay datos para generar los reportes", ""));
-            return;
-        }
-
-        try {
-            // 1. Generar PDF de gráficas
-            ByteArrayOutputStream graficasBaos = generarPDFGraficas();
-
-            // 2. Generar PDF de reporte detallado
-            ByteArrayOutputStream reporteBaos = generarPDFReporteDetallado();
-
-            // 3. Preparar respuesta para descargar ambos PDFs en un zip
-            ByteArrayOutputStream zipBaos = new ByteArrayOutputStream();
-            try (ZipOutputStream zos = new ZipOutputStream(zipBaos)) {
-                // Agregar PDF de gráficas
-                zos.putNextEntry(new ZipEntry("reporte_graficas.pdf"));
-                zos.write(graficasBaos.toByteArray());
-                zos.closeEntry();
-
-                // Agregar PDF de reporte
-                zos.putNextEntry(new ZipEntry("reporte_detallado.pdf"));
-                zos.write(reporteBaos.toByteArray());
-                zos.closeEntry();
-            }
-
-            // Configurar respuesta
-            externalContext.responseReset();
-            externalContext.setResponseContentType("application/zip");
-            externalContext.setResponseContentLength(zipBaos.size());
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"reportes_pedidos.zip\"");
-
-            try (OutputStream output = externalContext.getResponseOutputStream()) {
-                output.write(zipBaos.toByteArray());
-                output.flush();
-            }
-
-            facesContext.responseComplete();
-
-        } catch (Exception e) {
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar reportes", e.getMessage()));
-            e.printStackTrace();
-        }
+    // Getters y Setters
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
     }
 
-    private ByteArrayOutputStream generarPDFGraficas() throws Exception {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
-
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
-            try {
-                float margin = 50;
-                float yStart = page.getMediaBox().getHeight() - margin;
-                float yPosition = yStart;
-
-                // Título del reporte de gráficas
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("REPORTE GRÁFICO DE PEDIDOS");
-                contentStream.endText();
-                yPosition -= LEADING * 2;
-
-                // Gráfica de Ventas por Estado
-                yPosition = agregarGraficaVentasPorEstado(document, contentStream, margin, yPosition);
-
-                if (yPosition < margin + 300) {
-                    contentStream.close();
-                    page = new PDPage();
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    yPosition = yStart;
-                }
-
-                // Gráfica de Ventas por Producto
-                yPosition = agregarGraficaVentasPorProducto(document, contentStream, margin, yPosition);
-
-            } finally {
-                if (contentStream != null) {
-                    contentStream.close();
-                }
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            document.save(baos);
-            return baos;
-        }
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
-    private ByteArrayOutputStream generarPDFReporteDetallado() throws Exception {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 
-            try {
-                float margin = 50;
-                float yStart = page.getMediaBox().getHeight() - margin;
-                float yPosition = yStart;
+    public String getEstadoFiltro() {
+        return estadoFiltro;
+    }
 
-                // Título del reporte detallado
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("REPORTE DETALLADO DE PEDIDOS");
-                contentStream.endText();
-                yPosition -= LEADING * 2;
+    public void setEstadoFiltro(String estadoFiltro) {
+        this.estadoFiltro = estadoFiltro;
+    }
 
-                // Estadísticas resumidas
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("ESTADÍSTICAS:");
-                contentStream.endText();
-                yPosition -= LEADING;
+    public double getTotalVentas() {
+        return totalVentas;
+    }
 
-                contentStream.setFont(PDType1Font.HELVETICA, 10);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin + 15, yPosition);
-                contentStream.showText("- Total de pedidos: " + totalPedidos);
-                contentStream.endText();
-                yPosition -= LEADING;
+    public int getTotalPedidos() {
+        return totalPedidos;
+    }
 
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin + 15, yPosition);
-                contentStream.showText("- Total de ventas: $" + totalVentas);
-                contentStream.endText();
-                yPosition -= LEADING * 1.5f;
+    public Map<String, Integer> getVentasPorEstado() {
+        return ventasPorEstado;
+    }
 
-                // Listado de pedidos
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("DETALLE DE PEDIDOS (" + todosPedidos.size() + "):");
-                contentStream.endText();
-                yPosition -= LEADING * 1.5f;
+    public Map<String, Double> getVentasPorProducto() {
+        return ventasPorProducto;
+    }
 
-                contentStream.setFont(PDType1Font.HELVETICA, 10);
-                for (Pedido pedido : todosPedidos) {
-                    if (yPosition < margin + (LEADING * 8)) {
-                        contentStream.close();
-                        page = new PDPage();
-                        document.addPage(page);
-                        contentStream = new PDPageContentStream(document, page);
-                        yPosition = yStart;
-                    }
+    public List<Pedido> getTodosPedidos() {
+        return todosPedidos;
+    }
 
-                    // Información del pedido
-                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin, yPosition);
-                    contentStream.showText("Pedido: " + pedido.getId());
-                    contentStream.endText();
-                    yPosition -= LEADING;
+    public PieChartModel getPieModel() {
+        return pieModel;
+    }
 
-                    // ... (resto del código para mostrar detalles de pedidos)
-                }
-
-            } finally {
-                if (contentStream != null) {
-                    contentStream.close();
-                }
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            document.save(baos);
-            return baos;
-        }
+    public BarChartModel getBarModel() {
+        return barModel;
     }
 }
