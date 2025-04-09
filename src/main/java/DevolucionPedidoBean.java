@@ -22,19 +22,26 @@ import java.util.stream.Collectors;
 @ViewScoped
 public class DevolucionPedidoBean implements Serializable {
 
+    // ======================================
+    // CONSTANTES
+    // ======================================
     private static final long serialVersionUID = 1L;
     
-    // Configuración de conexión
+    // ======================================
+    // CONFIGURACIÓN
+    // ======================================
     private String direccionIp = "https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app";
     private String coleccionPedidos = "pedidos";
     private final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
-    
-    // Datos y estado
+    private boolean usarDatosPrueba = false; // Por defecto intenta conectar a la API
+
+    // ======================================
+    // ESTADO Y DATOS
+    // ======================================
     private List<Pedido> pedidos = new ArrayList<>();
     private String correoUsuario;
     private String estadoFiltro;
-    private boolean usarDatosPrueba = false; // Por defecto intenta conectar a la API
-
+    
     // Datos para reportes
     private double totalVentas;
     private Map<String, Long> productosMasVendidos;
@@ -44,6 +51,9 @@ public class DevolucionPedidoBean implements Serializable {
     private List<Devolucion> devoluciones = new ArrayList<>();
     private Devolucion devolucionActual = new Devolucion();
 
+    // ======================================
+    // MÉTODOS DE INICIALIZACIÓN
+    // ======================================
     @PostConstruct
     public void init() {
         if (usarDatosPrueba) {
@@ -54,6 +64,9 @@ public class DevolucionPedidoBean implements Serializable {
         generarReportes();
     }
 
+    // ======================================
+    // MÉTODOS DE CONSULTA DE DATOS
+    // ======================================
     public void consultarPedidos() {
         FacesContext context = FacesContext.getCurrentInstance();
         String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccionPedidos;
@@ -72,27 +85,28 @@ public class DevolucionPedidoBean implements Serializable {
                 Pedido[] pedidosArray = jsonb.fromJson(jsonResponse, Pedido[].class);
                 pedidos = Arrays.asList(pedidosArray);
             } else {
-                String errorMsg = "Error en el servicio: " + response.getStatus();
-                try {
-                    errorMsg += " - " + response.readEntity(String.class);
-                } catch (Exception e) {
-                    errorMsg += " (No se pudo obtener mensaje de error)";
-                }
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMsg, null));
-                
-                // Fallback a datos de prueba
-                cargarDatosDePrueba();
+                manejarErrorRespuesta(response, context);
+                cargarDatosDePrueba(); // Fallback a datos de prueba
             }
         } catch (Exception e) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error de conexión: " + e.getMessage(), null));
-            // Fallback a datos de prueba
-            cargarDatosDePrueba();
+            cargarDatosDePrueba(); // Fallback a datos de prueba
         } finally {
             if (client != null) {
                 client.close();
             }
         }
+    }
+
+    private void manejarErrorRespuesta(Response response, FacesContext context) {
+        String errorMsg = "Error en el servicio: " + response.getStatus();
+        try {
+            errorMsg += " - " + response.readEntity(String.class);
+        } catch (Exception e) {
+            errorMsg += " (No se pudo obtener mensaje de error)";
+        }
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMsg, null));
     }
 
     private void cargarDatosDePrueba() {
@@ -125,6 +139,9 @@ public class DevolucionPedidoBean implements Serializable {
         );
     }
 
+    // ======================================
+    // MÉTODOS DE REPORTES
+    // ======================================
     public void generarReportes() {
         this.totalVentas = pedidos.stream()
                 .filter(p -> "Entregado".equals(p.getEstado()))
@@ -146,6 +163,9 @@ public class DevolucionPedidoBean implements Serializable {
                 ));
     }
 
+    // ======================================
+    // MÉTODOS DE FILTRADO
+    // ======================================
     public void filtrarPedidos() {
         if (estadoFiltro == null || estadoFiltro.isEmpty()) {
             if (usarDatosPrueba) {
@@ -161,6 +181,9 @@ public class DevolucionPedidoBean implements Serializable {
         generarReportes();
     }
 
+    // ======================================
+    // MÉTODOS DE DEVOLUCIONES
+    // ======================================
     public String redirigirADevoluciones(String idPedido) {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("pedidoSeleccionado", idPedido);
         return "Devoluciones?faces-redirect=true";
@@ -179,7 +202,6 @@ public class DevolucionPedidoBean implements Serializable {
         guardarDevolucionEnBaseDatos(nuevaDevolucion);
     }
 
-    // Método para guardar en base de datos
     private void guardarDevolucionEnBaseDatos(Devolucion devolucion) {
         String endpoint = direccionIp + "/DatabaseService/api/service/devoluciones";
         Client client = ClientBuilder.newClient();
@@ -207,7 +229,6 @@ public class DevolucionPedidoBean implements Serializable {
         }
     }
 
-    // Método para cargar devoluciones desde la base de datos
     public void cargarDevoluciones() {
         String endpoint = direccionIp + "/DatabaseService/api/service/devoluciones";
         Client client = ClientBuilder.newClient();
@@ -232,35 +253,35 @@ public class DevolucionPedidoBean implements Serializable {
             client.close();
         }
     }
-    
-    // Getters y Setters adicionales
-    public List<Devolucion> getDevoluciones() {
-        return devoluciones;
-    }
 
-    public Devolucion getDevolucionActual() {
-        return devolucionActual;
-    }
-
-    public void setDevolucionActual(Devolucion devolucionActual) {
-        this.devolucionActual = devolucionActual;
-    }
-
-    // Getters y Setters
+    // ======================================
+    // GETTERS Y SETTERS
+    // ======================================
     public List<Pedido> getPedidos() { return pedidos; }
     public void setPedidos(List<Pedido> pedidos) { this.pedidos = pedidos; }
+    
     public String getCorreoUsuario() { return correoUsuario; }
     public void setCorreoUsuario(String correoUsuario) { this.correoUsuario = correoUsuario; }
+    
     public String getEstadoFiltro() { return estadoFiltro; }
     public void setEstadoFiltro(String estadoFiltro) { this.estadoFiltro = estadoFiltro; }
+    
     public double getTotalVentas() { return totalVentas; }
     public Map<String, Long> getProductosMasVendidos() { return productosMasVendidos; }
     public Map<String, Long> getVentasPorEstado() { return ventasPorEstado; }
     public Map<String, Double> getVentasPorMes() { return ventasPorMes; }
+    
     public String getDireccionIp() { return direccionIp; }
     public void setDireccionIp(String direccionIp) { this.direccionIp = direccionIp; }
+    
     public String getColeccionPedidos() { return coleccionPedidos; }
     public void setColeccionPedidos(String coleccionPedidos) { this.coleccionPedidos = coleccionPedidos; }
+    
     public boolean isUsarDatosPrueba() { return usarDatosPrueba; }
     public void setUsarDatosPrueba(boolean usarDatosPrueba) { this.usarDatosPrueba = usarDatosPrueba; }
+    
+    public List<Devolucion> getDevoluciones() { return devoluciones; }
+    
+    public Devolucion getDevolucionActual() { return devolucionActual; }
+    public void setDevolucionActual(Devolucion devolucionActual) { this.devolucionActual = devolucionActual; }
 }
