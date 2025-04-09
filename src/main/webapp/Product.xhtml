@@ -157,6 +157,8 @@
     <h:body>
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
             <div class="container-fluid">
+                <!-- Mostrar mensajes tipo growl (emergentes) -->
+                <p:growl id="growl" showDetail="true" life="5000" />
                 <a class="navbar-brand" href="Product.xhtml" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -174,7 +176,7 @@
                             <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
                                          onkeyup="this.form.submit()"/>
                             <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light">
-                                <f:ajax execute="@form" render="@form productos-container"/>
+                                <f:ajax execute="@form" render="@all"/>
                             </h:commandButton>
                         </div>
                     </h:form>
@@ -209,9 +211,9 @@
         <div class="container">
             <h2 class="text-center mb-4">Lista de Productos</h2>
 
-            <h:outputText value="Lista de productos vacía" 
+            <h:outputText value="503 Service Unavailable" 
                           rendered="#{empty productoController.productos}"
-                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: gray; margin-top: 20px;" />
+                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
 
             <h:outputText value="Producto No Encontrado" 
                           rendered="#{productoController.noResultados}"
