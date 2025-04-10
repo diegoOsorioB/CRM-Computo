@@ -62,7 +62,7 @@ public class ProductoController {
         }
     }
      
-     private List<Producto> obtenerProductosDesdeAPI(String apiUrl) {
+    private List<Producto> obtenerProductosDesdeAPI(String apiUrl) {
         List<Producto> productos = new ArrayList<>();
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -74,36 +74,36 @@ public class ProductoController {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("Respuesta JSON de " + apiUrl + ": " + response.body());
-
             if (response.statusCode() == 200) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Producto[] productosArray = objectMapper.readValue(response.body(), Producto[].class);
                 productos = Arrays.asList(productosArray);
-                
-                System.out.println("Se han recibido " + productos.size() + " productos desde " + apiUrl);
             } else {
-                System.out.println("Error: Código de respuesta HTTP " + response.statusCode() + " en " + apiUrl);
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                    "No se pudo obtener la lista de productos. Intente más tarde.", null));
             }
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                "Error al conectar con el servidor. Por favor, inténtelo más tarde.", null));
         }
         return productos;
     }
 
-    public List<Producto> getProductos() {
-        return productosFiltrados.isEmpty() ? productos : productosFiltrados;
-    }
+        public List<Producto> getProductos() {
+            return productosFiltrados.isEmpty() ? productos : productosFiltrados;
+        }
 
 
-    public Producto getProductoSeleccionado() {
-        return productoSeleccionado;
-    }
+        public Producto getProductoSeleccionado() {
+            return productoSeleccionado;
+        }
 
-    public void setProductoSeleccionado(Producto productoSeleccionado) {
-        this.productoSeleccionado = productoSeleccionado;
-    }
+        public void setProductoSeleccionado(Producto productoSeleccionado) {
+            this.productoSeleccionado = productoSeleccionado;
+        }
 
     public void eliminarDeListaDeseos(Producto producto) {
         if (producto != null && listaDeseos.contains(producto)) {
