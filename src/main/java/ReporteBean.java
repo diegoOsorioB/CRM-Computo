@@ -34,6 +34,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.primefaces.model.charts.ChartData;
@@ -48,9 +51,9 @@ import org.primefaces.model.charts.pie.PieChartOptions;
 @Named
 @ViewScoped
 public class ReporteBean implements Serializable {
-
     private static final long serialVersionUID = 1L;
     private static final float LEADING = 16;
+    private static final Logger logger = Logger.getLogger(ReporteBean.class.getName());
 
     // Configuración de conexión
     private final String direccionIp = "https://c0c6-2806-104e-16-1f1-12e1-6efa-4429-523f.ngrok-free.app";
@@ -66,26 +69,55 @@ public class ReporteBean implements Serializable {
     private int totalPedidos;
     private Map<String, Integer> ventasPorEstado = new HashMap<>();
     private Map<String, Double> ventasPorProducto = new HashMap<>();
+    private boolean usandoDatosPrueba = false;
+    private boolean conexionExitosa = false;
     
-    // Modelos para gráficas PrimeFaces
+    // Modelos para gráficas
     private PieChartModel pieModel;
     private BarChartModel barModel;
 
     @PostConstruct
     public void init() {
-        fechaInicio = LocalDate.now().withDayOfMonth(1);
-        fechaFin = LocalDate.now();
-        consultarTodosPedidos();
-        crearGraficas();
+        try {
+            fechaInicio = LocalDate.now().withDayOfMonth(1);
+            fechaFin = LocalDate.now();
+            cargarDatos();
+            crearGraficas();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error en inicialización de ReporteBean", e);
+            FacesContext.getCurrentInstance().addMessage(null, 
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                "Error al inicializar el reporte", null));
+        }
     }
 
-    public void consultarTodosPedidos() {
+    public void cargarDatos() {
+        // Primero intentar conectar a la base de datos
+        if (conectarBaseDatos()) {
+            conexionExitosa = true;
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, 
+                "Datos cargados correctamente desde la base de datos", null));
+        } else {
+            // Si falla, cargar datos de prueba
+            cargarDatosDePrueba();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_WARN, 
+                "No se pudo conectar a la base de datos. Mostrando datos de prueba", null));
+        }
+    }
+
+    private boolean conectarBaseDatos() {
         FacesContext context = FacesContext.getCurrentInstance();
         String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccion;
-
-        Client client = ClientBuilder.newClient();
+        Client client = null;
 
         try {
+            client = ClientBuilder.newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
             WebTarget target = client.target(endpoint);
             Response response = target.request(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + token)
@@ -93,24 +125,40 @@ public class ReporteBean implements Serializable {
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 String jsonResponse = response.readEntity(String.class);
-                Jsonb jsonb = JsonbBuilder.create();
-                Pedido[] pedidosArray = jsonb.fromJson(jsonResponse, Pedido[].class);
-                todosPedidos = Arrays.asList(pedidosArray);
-                generarEstadisticas();
+                
+                if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
+                    throw new RuntimeException("La respuesta del servidor está vacía");
+                }
+                
+                try (Jsonb jsonb = JsonbBuilder.create()) {
+                    Pedido[] pedidosArray = jsonb.fromJson(jsonResponse, Pedido[].class);
+                    
+                    if (pedidosArray == null || pedidosArray.length == 0) {
+                        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, 
+                            "No se encontraron pedidos en la base de datos", null));
+                        return false;
+                    }
+                    
+                    todosPedidos = Arrays.asList(pedidosArray);
+                    usandoDatosPrueba = false;
+                    generarEstadisticas();
+                    return true;
+                }
             } else {
                 String errorMsg = "Error en el servicio: " + response.getStatus();
                 try {
-                    errorMsg += " - " + response.readEntity(String.class);
+                    String responseBody = response.readEntity(String.class);
+                    if (responseBody != null && !responseBody.isEmpty()) {
+                        errorMsg += " - " + responseBody;
+                    }
                 } catch (Exception e) {
-                    errorMsg += " (No se pudo obtener mensaje de error)";
+                    logger.log(Level.WARNING, "No se pudo obtener mensaje de error del servicio", e);
                 }
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMsg, null));
-                cargarDatosDePrueba();
+                throw new RuntimeException(errorMsg);
             }
         } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error de conexión: " + e.getMessage(), null));
-            cargarDatosDePrueba();
+            logger.log(Level.SEVERE, "Error al conectar con la base de datos", e);
+            return false;
         } finally {
             if (client != null) {
                 client.close();
@@ -119,14 +167,20 @@ public class ReporteBean implements Serializable {
     }
 
     private void cargarDatosDePrueba() {
+    try {
+        logger.info("Cargando datos de prueba...");
+        
         // Crear productos de prueba
         Producto producto1 = new Producto("1", "Laptop HP EliteBook", 18500.0);
         Producto producto2 = new Producto("2", "Mouse Logitech MX Master", 1250.0);
         Producto producto3 = new Producto("3", "Teclado mecánico Redragon", 2200.0);
         Producto producto4 = new Producto("4", "Monitor Samsung 24\"", 4500.0);
         Producto producto5 = new Producto("5", "Disco SSD 1TB", 1800.0);
+        Producto producto6 = new Producto("6", "Impresora Laser HP", 3200.0);
+        Producto producto7 = new Producto("7", "Webcam Logitech 1080p", 1500.0);
+        Producto producto8 = new Producto("8", "Audífonos Sony", 2800.0);
 
-        // Crear pedidos de prueba
+        // Crear pedidos de prueba con datos variados
         todosPedidos = Arrays.asList(
             new Pedido("PED-001", Arrays.asList(
                 new ItemCarrito(producto1, 1),
@@ -142,31 +196,68 @@ public class ReporteBean implements Serializable {
             
             new Pedido("PED-003", Arrays.asList(
                 new ItemCarrito(producto1, 2),
-                new ItemCarrito(producto4, 1)
-            ), 41500.0, "Completado", "Blvd. López Mateos 1200", "cliente3@correo.com"),
+                new ItemCarrito(producto4, 1),
+                new ItemCarrito(producto8, 1)
+            ), 47800.0, "Completado", "Blvd. López Mateos 1200", "cliente3@correo.com"),
             
             new Pedido("PED-004", Arrays.asList(
                 new ItemCarrito(producto3, 1),
-                new ItemCarrito(producto5, 3)
-            ), 7800.0, "Cancelado", "Paseo de la Rosas 67", "cliente4@example.com"),
+                new ItemCarrito(producto5, 3),
+                new ItemCarrito(producto7, 2)
+            ), 10400.0, "Cancelado", "Paseo de la Rosas 67", "cliente4@example.com"),
             
             new Pedido("PED-005", Arrays.asList(
                 new ItemCarrito(producto2, 5),
                 new ItemCarrito(producto3, 2),
                 new ItemCarrito(producto4, 1),
                 new ItemCarrito(producto5, 1)
-            ), 19250.0, "Pendiente", "Calle Central 89", "cliente5@negocio.com")
+            ), 19250.0, "Pendiente", "Calle Central 89", "cliente5@negocio.com"),
+            
+            new Pedido("PED-006", Arrays.asList(
+                new ItemCarrito(producto6, 1),
+                new ItemCarrito(producto7, 2)
+            ), 6200.0, "Completado", "Av. Universidad 550", "cliente6@institucion.edu"),
+            
+            new Pedido("PED-007", Arrays.asList(
+                new ItemCarrito(producto1, 1),
+                new ItemCarrito(producto3, 1),
+                new ItemCarrito(producto8, 2)
+            ), 27700.0, "Completado", "Calle Morelos 12", "cliente7@servicio.com"),
+            
+            new Pedido("PED-008", Arrays.asList(
+                new ItemCarrito(producto4, 3),
+                new ItemCarrito(producto6, 1)
+            ), 16700.0, "Pendiente", "Av. Revolución 345", "cliente8@empresa.net")
         );
 
-        // Asignar fechas
+        // Asignar fechas variadas para pruebas de filtrado
         todosPedidos.get(0).setFecha(LocalDate.now().minusDays(5));
         todosPedidos.get(1).setFecha(LocalDate.now().minusDays(3));
         todosPedidos.get(2).setFecha(LocalDate.now().minusDays(10));
         todosPedidos.get(3).setFecha(LocalDate.now().minusDays(15));
         todosPedidos.get(4).setFecha(LocalDate.now().minusDays(1));
+        todosPedidos.get(5).setFecha(LocalDate.now().minusDays(7));
+        todosPedidos.get(6).setFecha(LocalDate.now().minusDays(20));
+        todosPedidos.get(7).setFecha(LocalDate.now().minusDays(2));
 
+        // Generar estadísticas con los datos de prueba
         generarEstadisticas();
+        
+        logger.info("Datos de prueba cargados exitosamente. Total de pedidos: " + todosPedidos.size());
+        
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Error al cargar datos de prueba", e);
+        FacesContext.getCurrentInstance().addMessage(null, 
+            new FacesMessage(FacesMessage.SEVERITY_FATAL, 
+            "Error crítico: No se pudieron cargar los datos de prueba", 
+            "Por favor contacte al administrador del sistema."));
+        
+        // Asegurarse de que haya al menos una lista vacía para evitar NPEs
+        todosPedidos = new ArrayList<>();
+        ventasPorEstado = new HashMap<>();
+        ventasPorProducto = new HashMap<>();
     }
+}
 
     private void generarEstadisticas() {
         // Filtrar por rango de fechas

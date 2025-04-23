@@ -385,6 +385,62 @@
                 transform: translateY(-5px);
                 box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             }
+            <!-- Estilos para mensajes -->
+            /* Estilos base para mensajes */
+            .ui-messages {
+                margin: 10px 0;
+                padding: 15px;
+                border-radius: 4px;
+            }
+
+            .ui-messages-error, .ui-message-error {
+                background-color: #fff6f6;
+                border-color: #f5c6cb;
+                color: #721c24;
+            }
+
+            .ui-messages-warn, .ui-message-warn {
+                background-color: #fff8e6;
+                border-color: #ffeeba;
+                color: #856404;
+            }
+
+            .ui-messages-info, .ui-message-info {
+                background-color: #e7f4ff;
+                border-color: #b8daff;
+                color: #004085;
+            }
+
+            .alert {
+                border-radius: 4px;
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid transparent;
+                font-size: 14px;
+            }
+
+            .alert-warning {
+                background-color: #fff3cd;
+                border-color: #ffeeba;
+                color: #856404;
+            }
+
+            .alert-danger {
+                background-color: #f8d7da;
+                border-color: #f5c6cb;
+                color: #721c24;
+            }
+
+            .alert-success {
+                background-color: #d4edda;
+                border-color: #c3e6cb;
+                color: #155724;
+            }
+
+            .message-icon {
+                margin-right: 10px;
+                font-size: 18px;
+            }
         </style>
     </h:head>
 
@@ -421,22 +477,18 @@
                             </a>
                             <a href="#" class="list-group-item list-group-item-action"
                                onclick="PF('growlWidget').renderMessage({
-                                           'summary': 'Opción deshabilitada',
-                                           'detail': 'Nuestros ingenieros están solucionando el problema.',
-                                           'severity': 'warn'
-                                       });
-                                       return false;">
+                                       'summary': 'Opción deshabilitada',
+                                       'detail': 'Nuestros ingenieros están solucionando el problema.',
+                                       'severity': 'warn'
+                                   });
+                                   return false;">
                                 <i class="fas fa-credit-card me-2"></i>Métodos de pago
                             </a>
-
-                            <p:growl widgetVar="growlWidget" life="5000"/>
                             <a href="EditProfile.xhtml" class="list-group-item list-group-item-action">
                                 <i class="fas fa-user-circle me-2"></i>Mi cuenta
                             </a>
                         </div>
                     </div>
-
-
 
                     <!-- Mensajes de filtro -->
                     <h:panelGroup id="filtroMessages">
@@ -450,7 +502,6 @@
                         </ui:fragment>
                     </h:panelGroup>
 
-
                     <!-- Datos rápidos -->
                     <div class="card">
                         <div class="card-header">
@@ -461,6 +512,74 @@
                                 <div class="stats-value">#{devolucionPedidoBean.pedidos.size()}</div>
                                 <div class="stats-label">Pedidos realizados</div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acciones distribuidas -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="fas fa-cog me-2"></i>Acciones rápidas
+                        </div>
+                        <div class="card-body">
+                            <!-- Cuando no hay conexión a la base de datos -->
+                            <h:commandButton value="Cargar pedidos" 
+                                             styleClass="btn btn-walmart mb-2 w-100"
+                                             onclick="PF('growlWidget').renderMessage({
+                                                 'summary': 'Error de conexión',
+                                                 'detail': 'No se pudo conectar con la base de datos. Por favor intente más tarde.',
+                                                 'severity': 'error'
+                                             });
+                                             return false;"/>
+
+                            <!-- Cuando se cargan datos de prueba -->
+                            <h:commandButton value="Ver detalles" 
+                                             styleClass="btn btn-walmart-secondary mb-2 w-100"
+                                             onclick="PF('growlWidget').renderMessage({
+                                                 'summary': 'Datos de prueba',
+                                                 'detail': 'Actualmente se están mostrando datos de prueba. La funcionalidad completa estará disponible pronto.',
+                                                 'severity': 'info'
+                                             });
+                                             return false;"/>
+
+                            <!-- Cuando hay un error inesperado -->
+                            <h:commandButton value="Procesar devolución" 
+                                             styleClass="btn btn-danger mb-2 w-100"
+                                             onclick="PF('growlWidget').renderMessage({
+                                                 'summary': 'Error inesperado',
+                                                 'detail': 'Ocurrió un error al procesar su solicitud. Nuestro equipo ha sido notificado.',
+                                                 'severity': 'error'
+                                             });
+                                             return false;"/>
+
+                            <!-- Cuando la funcionalidad está en mantenimiento -->
+                            <h:commandButton value="Solicitar reembolso" 
+                                             styleClass="btn btn-walmart-secondary mb-2 w-100"
+                                             onclick="PF('growlWidget').renderMessage({
+                                                 'summary': 'En mantenimiento',
+                                                 'detail': 'Esta funcionalidad está temporalmente fuera de servicio por mantenimiento programado.',
+                                                 'severity': 'warn'
+                                             });
+                                             return false;"/>
+
+                            <!-- Cuando se supera el tiempo de espera -->
+                            <h:commandButton value="Actualizar lista" 
+                                             styleClass="btn btn-walmart mb-2 w-100"
+                                             onclick="PF('growlWidget').renderMessage({
+                                                 'summary': 'Tiempo de espera agotado',
+                                                 'detail': 'La operación tardó demasiado en completarse. Por favor intente nuevamente.',
+                                                 'severity': 'error'
+                                             });
+                                             return false;"/>
+
+                            <!-- Cuando hay problemas de autenticación -->
+                            <h:commandButton value="Ver historial" 
+                                             styleClass="btn btn-walmart-secondary w-100"
+                                             onclick="PF('growlWidget').renderMessage({
+                                                 'summary': 'Problema de autenticación',
+                                                 'detail': 'No se pudo verificar su sesión. Por favor inicie sesión nuevamente.',
+                                                 'severity': 'error'
+                                             });
+                                             return false;"/>
                         </div>
                     </div>
                 </div>
@@ -480,7 +599,7 @@
                             Selecciona el pedido que deseas devolver y sigue los pasos. Aceptamos devoluciones 
                             dentro de los 30 días posteriores a la entrega. Por favor revisa nuestra 
                             <a href="#" class="text-primary" onclick="PF('devolucionModal').show();
-                                    return false;">política de devoluciones</a> para más información.
+                                return false;">política de devoluciones</a> para más información.
                         </p>
                     </div>
 
@@ -501,8 +620,10 @@
                                     </h:selectOneMenu>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <h:outputLabel value="Buscar por número de pedido" styleClass="form-label"/>
-                                    <h:inputText styleClass="form-control" placeholder="Ingresa ID de pedido"/>
+                                    <h:inputText styleClass="form-control">
+                                        <f:passThroughAttribute name="placeholder" value="Ingresa ID de pedido" />
+                                    </h:inputText>
+
                                 </div>
                             </div>
                             <h:commandButton value="Aplicar filtros" styleClass="btn btn-walmart"/>
@@ -597,15 +718,13 @@
                                                     <h:commandButton value="Iniciar devolución" 
                                                                      styleClass="btn btn-walmart-secondary"
                                                                      onclick="PF('growlWidget').renderMessage({
-                                     'summary': 'Opción deshabilitada',
-                                     'detail': 'Nuestros ingenieros están trabajando en solucionar este problema. Por favor intente más tarde.',
-                                     'severity': 'warn'
-                                 });
-                                 return false;"/>
+                                                                             'summary': 'Opción deshabilitada',
+                                                                             'detail': 'Nuestros ingenieros están trabajando en solucionar este problema. Por favor intente más tarde.',
+                                                                             'severity': 'warn'
+                                                                         });
+                                                                         return false;"/>
                                                 </h:form>
                                             </ui:fragment>
-
-                                            <p:growl widgetVar="growlWidget" life="5000"/>
                                         </div>
                                     </div>
                                 </div>
@@ -654,5 +773,7 @@
 
         <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <p:growl widgetVar="growlWidget" life="5000"/>
     </h:body>
 </html>
