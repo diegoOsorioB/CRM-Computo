@@ -115,12 +115,18 @@ public class PedidoBean implements Serializable {
             } else {
                 System.out.println("❌ Error: " + connection.getResponseMessage());
                 System.out.println("Código de respuesta: " + responseCode);
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error al obtener los pedidos. Código de respuesta: " + responseCode, ""));
+                connection.disconnect();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al conectar con la API", ""));
+            
+
         }
     }
 
