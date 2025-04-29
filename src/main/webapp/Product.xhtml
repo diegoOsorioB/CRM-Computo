@@ -212,11 +212,11 @@
             <h2 class="text-center mb-4">Lista de Productos</h2>
 
             <h:outputText value="503 Service Unavailable" 
-                          rendered="#{empty productoController.productos}"
-                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
-
+                          rendered="#{empty productoController.productos and productoController.apiConectada}"
+                style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
+            
             <h:outputText value="Producto no encontrado" 
-                          rendered="#{productoController.noResultados}"
+                          rendered="#{productoController.noResultados and  not productoController.apiConectada}"
                           style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
