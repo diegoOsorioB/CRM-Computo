@@ -381,6 +381,7 @@ public class DevolucionPedidoBean implements Serializable {
     public Map<String, Long> getVentasPorEstado() { return ventasPorEstado; }
     public Map<String, Double> getVentasPorMes() { return ventasPorMes; }
     public String getDireccionIp() { return direccionIp; }
+    
     public void setDireccionIp(String direccionIp) { this.direccionIp = direccionIp; }
     public String getColeccionPedidos() { return coleccionPedidos; }
     public void setColeccionPedidos(String coleccionPedidos) { this.coleccionPedidos = coleccionPedidos; }
