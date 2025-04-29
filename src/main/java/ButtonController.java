@@ -12,7 +12,6 @@ import java.net.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 @Named
 @RequestScoped
 public class ButtonController {
@@ -51,7 +50,7 @@ public class ButtonController {
                 System.out.println("Conexión exitosa");
                 consultarP();
                 obtenerDatosColeccion(user.getEmail());
-                System.out.println(user.getEmail()+" EMAILP");
+                System.out.println(user.getEmail() + " EMAILP");
                 FacesContext facesContext = FacesContext.getCurrentInstance();
                 HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
 
@@ -62,8 +61,8 @@ public class ButtonController {
 
                 String token = jsonResponse.getString("token");
                 String email = jsonResponse.getString("correo");
-                
-                System.out.println("correo = "+email);
+
+                System.out.println("correo = " + email);
                 session.setAttribute("authToken", token);
                 session.setAttribute("email", email);
                 facesContext.getExternalContext().redirect("Product.xhtml");
@@ -74,8 +73,13 @@ public class ButtonController {
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Credenciales inválidas", null));
             }
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        System.out.println("Error de conexión con la API: " + e.getMessage());
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
+                             null));
+    }
+
     }
 
     public void consultarP() {
@@ -115,19 +119,23 @@ public class ButtonController {
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Credenciales inválidas", null));
             }
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error de conexión con la API: " + e.getMessage());
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
+                             null));
         }
+
     }
 
     // Método para cerrar sesión
-   public void cerrarSesion() {
-    FacesContext facesContext = FacesContext.getCurrentInstance();
-    HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
-    if (session != null) {
-        session.invalidate();  // Esto elimina todos los atributos de la sesión.
+    public void cerrarSesion() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+        if (session != null) {
+            session.invalidate();  // Esto elimina todos los atributos de la sesión.
+        }
     }
-}
-
 
     // Método para registrar un nuevo usuario
     public void registrarUsuario() {
@@ -198,67 +206,73 @@ public class ButtonController {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hubo un error al registrar al usuario", null));
             }
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error de conexión con la API: " + e.getMessage());
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
+                             null));
         }
+
     }
 
-  
 // O si usas Jackson
 // import com.fasterxml.jackson.databind.ObjectMapper;
 // import com.fasterxml.jackson.core.JsonProcessingException;
+    public void registrarAdministrador() {
+        user.setRol("ADMIN");
+        String modulo = "CRM";
 
-public void registrarAdministrador() {
-    user.setRol("ADMIN");
-    String modulo = "CRM";
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            String jsonBody = String.format(
+                    "{"
+                    + "\"nombre\": \"%s\","
+                    + "\"apellido\": \"%s\","
+                    + "\"rol\": \"%s\","
+                    + "\"modulo\": \"%s\""
+                    + "}",
+                    user.getNombre(), user.getApellidoPaterno(), user.getRol(), modulo
+            );
 
-    try {
-        HttpClient client = HttpClient.newHttpClient();
-        String jsonBody = String.format(
-                "{"
-                + "\"nombre\": \"%s\","
-                + "\"apellido\": \"%s\","
-                + "\"rol\": \"%s\","
-                + "\"modulo\": \"%s\""
-                + "}",
-                user.getNombre(), user.getApellidoPaterno(), user.getRol(), modulo
-        );
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(api.getURLRYU()))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(api.getURLRYU()))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200 || response.statusCode() == 201) {
+                System.out.println("Usuario registrado con éxito");
+                System.out.println("Respuesta: " + response.body());
 
-        if (response.statusCode() == 200 || response.statusCode() == 201) {
-            System.out.println("Usuario registrado con éxito");
-            System.out.println("Respuesta: " + response.body());
+                // Convertir el cuerpo de la respuesta en un JSON
+                JSONObject jsonResponse = new JSONObject(response.body());
+                String correo = jsonResponse.optString("correo", "No disponible");
+                String contrasena = jsonResponse.optString("password", "No disponible");
 
-            // Convertir el cuerpo de la respuesta en un JSON
-            JSONObject jsonResponse = new JSONObject(response.body());
-            String correo = jsonResponse.optString("correo", "No disponible");
-            String contrasena = jsonResponse.optString("password", "No disponible");
+                // Guardar en una variable en buttonController
+                user.setCorreo(correo);
+                user.setContrasena(contrasena);
 
-            // Guardar en una variable en buttonController
-            user.setCorreo(correo);
-            user.setContrasena(contrasena);
-
-           // FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
-        } else {
-            if (response.statusCode() == 409) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo ya registrado", null));
+                // FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");
+            } else {
+                if (response.statusCode() == 409) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Correo ya registrado", null));
+                }
+                System.out.println("Error al registrar el usuario: " + response.statusCode());
+                System.out.println("Detalle: " + response.body());
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hubo un error al registrar al usuario", null));
             }
-            System.out.println("Error al registrar el usuario: " + response.statusCode());
-            System.out.println("Detalle: " + response.body());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hubo un error al registrar al usuario", null));
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error de conexión con la API: " + e.getMessage());
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
+                             null));
         }
-    } catch (IOException | InterruptedException e) {
-        System.out.println("Error: " + e.getMessage());
-    }
-}
 
-    
+    }
 
     public void obtenerDatosColeccion(String correo) {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -312,8 +326,13 @@ public void registrarAdministrador() {
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la consulta", null));
             }
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error de conexión con la API: " + e.getMessage());
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
+                             null));
         }
+
     }
 
 }

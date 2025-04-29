@@ -1,3 +1,4 @@
+
 public class User {
 
     private String id; // Se inicializa como null por defecto
@@ -16,6 +17,15 @@ public class User {
     private boolean aceptaTerminos;
     private String correo;
     private String contrasena;
+    private boolean admin;
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
 
     public User() {
     }
@@ -36,12 +46,12 @@ public class User {
         this.contrasena = contraseña;
     }
 
-    public User(String id, String nombre, String apellidoPaterno, String email,String rol) {
+    public User(String id, String nombre, String apellidoPaterno, String email, String rol) {
         this.id = id;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.email = email;
-        this.rol=rol;
+        this.rol = rol;
     }
 
     // Getters y setters para todos los atributos
@@ -140,15 +150,14 @@ public class User {
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
     }
-   
 
-public boolean isAceptaTerminos() {
-    return aceptaTerminos;
-}
+    public boolean isAceptaTerminos() {
+        return aceptaTerminos;
+    }
 
-public void setAceptaTerminos(boolean aceptaTerminos) {
-    this.aceptaTerminos = aceptaTerminos;
-}
+    public void setAceptaTerminos(boolean aceptaTerminos) {
+        this.aceptaTerminos = aceptaTerminos;
+    }
 
     /**
      * @return the rol

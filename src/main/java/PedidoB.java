@@ -29,7 +29,7 @@ public class PedidoB implements Serializable {
     private List<Pedido> pedidos = new ArrayList<>();
     private String correoUsuario;
     private String estadoFiltro;
-    
+
     APISController api = new APISController();
 
 // Getter y Setter para correoUsuario
@@ -73,7 +73,7 @@ public class PedidoB implements Serializable {
         pedido.setCorreoUsuario(correoUsuario);
         pedido.setFecha(LocalDate.now());  // Asegura que la fecha esté asignada
 
-        String endpoint = api.getURLBD()+"/pedidos";
+        String endpoint = api.getURLBD() + "/pedidos";
 
         Client client = ClientBuilder.newClient();
         Jsonb jsonb = JsonbBuilder.create();
@@ -91,7 +91,6 @@ public class PedidoB implements Serializable {
 
             // Ver el código de estado de la respuesta
             System.out.println("Código de estado--: " + response.getStatus());
-            
 
             if (response.getStatus() == 200 || response.getStatus() == 201) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pedido insertado con éxito", null));
@@ -102,7 +101,11 @@ public class PedidoB implements Serializable {
             }
             response.close();
         } catch (Exception e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error de conexión: " + e.getMessage(), null));
+            System.out.println("Error de conexión con la API: " + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
+                            null));
         } finally {
             client.close();
             jsonb.close();
@@ -126,7 +129,7 @@ public class PedidoB implements Serializable {
         }
 
         // Construcción del endpoint con el filtro por correoUsuario
-        String endpoint = api.getURLBD()+"/pedidos?correoUsuario=" + correoUsuario;
+        String endpoint = api.getURLBD() + "/pedidos?correoUsuario=" + correoUsuario;
 
         Client client = ClientBuilder.newClient();
 
@@ -155,8 +158,11 @@ public class PedidoB implements Serializable {
             }
             response.close();
         } catch (Exception e) {
-            System.out.println("Error de conexión: " + e.getMessage());  // Ver detalles del error de conexión
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error de conexión: " + e.getMessage(), null));
+            System.out.println("Error de conexión con la API: " + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
+                            null));
         } finally {
             client.close();
         }

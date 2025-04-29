@@ -1,3 +1,4 @@
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,22 +26,22 @@ public class ProductoController {
     private List<Producto> listaDeseos = new ArrayList<>();
     private String selectedProductId;
     private Producto selectedProduct;
-     private String message;
-     private String criterioBusqueda = "";
-     private List<Producto> productosFiltrados = new ArrayList<>();
-     APISController api = new APISController();
+    private String message;
+    private String criterioBusqueda = "";
+    private List<Producto> productosFiltrados = new ArrayList<>();
+    APISController api = new APISController();
 
     @PostConstruct
     public void init() {
         consultarProductos();
     }
-    
-     public ProductoController() {
+
+    public ProductoController() {
         this.productos = new ArrayList<>();
         this.productosFiltrados = new ArrayList<>();
     }
-     
-     public void consultarProductos() {
+
+    public void consultarProductos() {
         try {
             List<Producto> productosAPI1 = obtenerProductosDesdeAPI(api.getAPI_URL_1());
             List<Producto> productosAPI2 = obtenerProductosDesdeAPI(api.getAPI_URL_2());
@@ -49,7 +50,6 @@ public class ProductoController {
             this.productos = new ArrayList<>();
             this.productos.addAll(productosAPI1);
             this.productos.addAll(productosAPI2);
-
             // Clonar la lista para productosFiltrados
             this.productosFiltrados = new ArrayList<>(productos);
 
@@ -61,7 +61,7 @@ public class ProductoController {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la conexión con las APIs", null));
         }
     }
-     
+
     private List<Producto> obtenerProductosDesdeAPI(String apiUrl) {
         List<Producto> productos = new ArrayList<>();
         try {
@@ -80,30 +80,29 @@ public class ProductoController {
                 productos = Arrays.asList(productosArray);
             } else {
                 FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                    "No se pudo obtener la lista de productos. Intente más tarde.", null));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "No se pudo obtener la lista de productos. Intente más tarde.", null));
             }
 
         } catch (IOException | InterruptedException e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Error al conectar con el servidor. Por favor, inténtelo más tarde.", null));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al conectar con el servidor. Por favor, inténtelo más tarde.", null));
         }
         return productos;
     }
 
-        public List<Producto> getProductos() {
-            return productosFiltrados.isEmpty() ? productos : productosFiltrados;
-        }
+    public List<Producto> getProductos() {
+        return productosFiltrados.isEmpty() ? productos : productosFiltrados;
+    }
 
+    public Producto getProductoSeleccionado() {
+        return productoSeleccionado;
+    }
 
-        public Producto getProductoSeleccionado() {
-            return productoSeleccionado;
-        }
-
-        public void setProductoSeleccionado(Producto productoSeleccionado) {
-            this.productoSeleccionado = productoSeleccionado;
-        }
+    public void setProductoSeleccionado(Producto productoSeleccionado) {
+        this.productoSeleccionado = productoSeleccionado;
+    }
 
     public void eliminarDeListaDeseos(Producto producto) {
         if (producto != null && listaDeseos.contains(producto)) {
@@ -115,7 +114,8 @@ public class ProductoController {
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "El producto no está en la lista de deseos", null));
         }
     }
-/*
+
+    /*
      public void consultarProductos() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -162,21 +162,21 @@ public class ProductoController {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error en la conexión con la API", null));
         }
     }
-*/
-    
+     */
+
     public String verDetalle(Producto producto) {
         this.selectedProduct = producto;
         return "detalleProducto?faces-redirect=true";
     }
-    
+
     public void loadSelectedProduct() {
         if (selectedProductId != null) {
             selectedProduct = productos.stream()
-                .filter(p -> p.getId().equals(selectedProductId))
-                .findFirst()
-                .orElse(null);
+                    .filter(p -> p.getId().equals(selectedProductId))
+                    .findFirst()
+                    .orElse(null);
         }
-        System.out.println(selectedProductId+"####3");
+        System.out.println(selectedProductId + "####3");
     }
 
     // Getters y Setters
@@ -191,8 +191,7 @@ public class ProductoController {
     public Producto getSelectedProduct() {
         return selectedProduct;
     }
-    
-    
+
     public List<Producto> buscarProducto(String criterio) {
         if (criterio == null || criterio.trim().isEmpty()) {
             return productos; // Si no hay criterio, devuelve la lista completa.
@@ -223,7 +222,6 @@ public class ProductoController {
     public boolean isNoResultados() {
         return noResultados;
     }
-
 
     // Getters y Setters
     public String getCriterioBusqueda() {
