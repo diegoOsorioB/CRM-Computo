@@ -29,12 +29,28 @@ public class ButtonController {
         this.user = user;
     }
 
+    private boolean admin;
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
     // Método para consultar el login del usuario
     public void consultar() {
         try {
             System.out.println(user.getId() + " NO ID");
             HttpClient client = HttpClient.newHttpClient();
-            String jsonBody = String.format("{\"correo\":\"%s\",\"password\":\"%s\"}", user.getEmail(), user.getPassword());
+            String jsonBody = String.format(
+                    "{\"correo\":\"%s\",\"password\":\"%s\",\"admin\":%b}",
+                    user.getEmail(),
+                    user.getPassword(),
+                    admin
+            );
+
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(api.getURLLOGIN()))
                     .header("Content-Type", "application/json")
@@ -45,6 +61,8 @@ public class ButtonController {
 
             System.out.println("Cuerpo de la respuesta: " + response.body());
             System.out.println("Código de estado: " + response.statusCode());
+            
+            System.out.println(admin);
 
             if (response.statusCode() == 200) {
                 System.out.println("Conexión exitosa");
@@ -70,15 +88,15 @@ public class ButtonController {
             } else {
                 System.out.println("Error en el login: " + response.body());
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Credenciales inválidas", null));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error: " + response.body(), null));
             }
         } catch (IOException | InterruptedException e) {
-        System.out.println("Error de conexión con la API: " + e.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            System.out.println("Error de conexión con la API: " + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
-                             null));
-    }
+                            null));
+        }
 
     }
 
@@ -120,10 +138,10 @@ public class ButtonController {
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error de conexión con la API: " + e.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
-                             null));
+                            null));
         }
 
     }
@@ -207,10 +225,10 @@ public class ButtonController {
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error de conexión con la API: " + e.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
-                             null));
+                            null));
         }
 
     }
@@ -266,10 +284,10 @@ public class ButtonController {
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error de conexión con la API: " + e.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
-                             null));
+                            null));
         }
 
     }
@@ -327,10 +345,10 @@ public class ButtonController {
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error de conexión con la API: " + e.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Servicio no disponible. Detalles: " + e.getClass().getSimpleName(),
-                             null));
+                            null));
         }
 
     }

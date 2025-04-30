@@ -50,12 +50,12 @@ public class ProductoController {
     public void consultarProductos() {
         try {
             List<Producto> productosAPI1 = obtenerProductosDesdeAPI(api.getAPI_URL_1());
-            List<Producto> productosAPI2 = obtenerProductosDesdeAPI(api.getAPI_URL_2());
+           // List<Producto> productosAPI2 = obtenerProductosDesdeAPI(api.getAPI_URL_2());
 
             // Fusionar ambas listas en una sola
             this.productos = new ArrayList<>();
             this.productos.addAll(productosAPI1);
-            this.productos.addAll(productosAPI2);
+           // this.productos.addAll(productosAPI2);
             this.productosFiltrados = new ArrayList<>(productos);
 
             System.out.println("Se han guardado " + this.productos.size() + " productos en total.");
