@@ -234,6 +234,11 @@
                                 </button>
 
                                 <h:form>
+                                    
+                                    <h:outputText value="#{productoController.mensajeError}"
+              rendered="#{not empty productoController.mensajeError}"
+              style="color:red; font-weight: bold;" />
+
                                     <!-- Aseguramos que el producto es el correcto -->
                                     <h:commandButton value="Agregar al carrito" 
                                                      action="#{carritoBean.agregarProducto(producto)}" 
