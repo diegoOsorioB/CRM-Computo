@@ -73,6 +73,7 @@
         <h:form id="loginForm">
             <div class="login-card">
                 <h6>INICIO DE SESIÓN</h6>
+
                 <h:messages globalOnly="true" styleClass="error-message" />
                 <div class="mb-3">
                     <h:outputLabel for="email" value="Correo electrónico" styleClass="form-label"/>
@@ -84,11 +85,19 @@
                     <h:inputSecret id="password" value="#{buttonController.user.password}" required="true" requiredMessage="La contraseña es obligatoria" styleClass="form-control" />
                     <h:message for="password" styleClass="error-message"/>
                 </div>
+
+                <!-- Checkbox de administrador -->
+                <div class="mb-3">
+                    <h:selectBooleanCheckbox id="admin" value="#{buttonController.admin}" style="margin-right: 5px;" />
+                    <h:outputLabel for="admin" value="¿Eres administrador?" style="color:white;" />
+                </div>
+
                 <h:commandButton value="Ingresar" action="#{buttonController.consultar()}" styleClass="btn btn-primary"/>
                 <div class="forgot-password mt-3">
                     <h:link value="¿Olvidaste tu contraseña?" outcome="ForgotPass.xhtml"/>
                 </div>
-                <div class="register-button" onclick="window.location.href='RegisterForm.xhtml'">Registrarse</div>
+                <div class="register-button" onclick="window.location.href = 'RegisterForm.xhtml'">Registrarse</div>
+
             </div>
         </h:form>
     </h:body>

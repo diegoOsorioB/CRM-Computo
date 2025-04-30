@@ -76,6 +76,12 @@
             <version>13.0.4</version>
             <classifier>jakarta</classifier>
         </dependency>
+        
+        <dependency>
+    <groupId>org.xhtmlrenderer</groupId>
+    <artifactId>flying-saucer-pdf</artifactId>
+    <version>9.1.22</version>
+</dependency>
 
         <!-- iText 7 libraries (only one dependency for the core is needed) -->
         <dependency>
@@ -126,6 +132,11 @@
         </dependency>
 
         <!-- iText kernel and layout libraries -->
+        <dependency>
+    <groupId>org.jfree</groupId>
+    <artifactId>jfreechart</artifactId>
+    <version>1.5.3</version>
+</dependency>
     </dependencies>
     
     <build>
