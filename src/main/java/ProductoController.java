@@ -5,6 +5,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -32,9 +33,10 @@ public class ProductoController {
     private boolean noResultados = false;
 
     @PostConstruct
-    public void init() {
-        consultarProductos();
-    }
+public void init() {
+    consultarProductos(); // Llamar a consultarProductos en lugar de solo obtener los productos
+}
+
 
     // Método para normalizar las cadenas y eliminar acentos
     private String normalizeString(String input) {
@@ -48,31 +50,29 @@ public class ProductoController {
     }
 
     public void consultarProductos() {
-        try {
-            List<Producto> productosAPI1 = obtenerProductosDesdeAPI(api.getAPI_URL_1());
-           // List<Producto> productosAPI2 = obtenerProductosDesdeAPI(api.getAPI_URL_2());
+    try {
+        List<Producto> productosAPI1 = obtenerProductosDesdeAPI();
+        this.productos = new ArrayList<>(productosAPI1);
+        this.productosFiltrados = new ArrayList<>(productosAPI1);
 
-            // Fusionar ambas listas en una sola
-            this.productos = new ArrayList<>();
-            this.productos.addAll(productosAPI1);
-           // this.productos.addAll(productosAPI2);
-            this.productosFiltrados = new ArrayList<>(productos);
+        noResultados = this.productos.isEmpty(); // Si la lista de productos está vacía
+        System.out.println("Se han guardado " + this.productos.size() + " productos en total.");
 
-            System.out.println("Se han guardado " + this.productos.size() + " productos en total.");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error con el servidor intente mas tarde", null));
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error con el servidor, intente más tarde", null));
+        noResultados = true; // Asegura que no se muestren productos si hay error
     }
+}
 
-    private List<Producto> obtenerProductosDesdeAPI(String apiUrl) {
+
+    private List<Producto> obtenerProductosDesdeAPI() {
         List<Producto> productos = new ArrayList<>();
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl))
+                    .uri(URI.create(api.getAPI_URL_1()))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
@@ -87,10 +87,12 @@ public class ProductoController {
                 // Marca un estado de error, sin mostrar detalles del JSON
                 this.apiConectada = false;
             }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            this.apiConectada = false;
-        }
+        } catch (IOException | InterruptedException  e) {
+        e.printStackTrace();
+        this.apiConectada = false;
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo conectar al servidor. Intenta más tarde.", null));
+    }
         return productos;
     }
 
