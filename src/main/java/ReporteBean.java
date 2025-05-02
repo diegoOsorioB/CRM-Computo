@@ -1,3 +1,4 @@
+
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
@@ -51,6 +52,7 @@ import org.primefaces.model.charts.pie.PieChartOptions;
 @Named
 @ViewScoped
 public class ReporteBean implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private static final float LEADING = 16;
     private static final Logger logger = Logger.getLogger(ReporteBean.class.getName());
@@ -71,7 +73,7 @@ public class ReporteBean implements Serializable {
     private Map<String, Double> ventasPorProducto = new HashMap<>();
     private boolean usandoDatosPrueba = false;
     private boolean conexionExitosa = false;
-    
+
     // Modelos para gráficas
     private PieChartModel pieModel;
     private BarChartModel barModel;
@@ -85,9 +87,9 @@ public class ReporteBean implements Serializable {
             crearGraficas();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error en inicialización de ReporteBean", e);
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Error al inicializar el reporte", null));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al inicializar el reporte", null));
         }
     }
 
@@ -96,14 +98,14 @@ public class ReporteBean implements Serializable {
         if (conectarBaseDatos()) {
             conexionExitosa = true;
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, 
-                "Datos cargados correctamente desde la base de datos", null));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Datos cargados correctamente desde la base de datos", null));
         } else {
             // Si falla, cargar datos de prueba
             cargarDatosDePrueba();
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, 
-                "No se pudo conectar a la base de datos. Mostrando datos de prueba", null));
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "No se pudo conectar a la base de datos. Mostrando datos de prueba", null));
         }
     }
 
@@ -114,9 +116,9 @@ public class ReporteBean implements Serializable {
 
         try {
             client = ClientBuilder.newBuilder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .build();
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();
 
             WebTarget target = client.target(endpoint);
             Response response = target.request(MediaType.APPLICATION_JSON)
@@ -125,20 +127,20 @@ public class ReporteBean implements Serializable {
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 String jsonResponse = response.readEntity(String.class);
-                
+
                 if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
                     throw new RuntimeException("La respuesta del servidor está vacía");
                 }
-                
+
                 try (Jsonb jsonb = JsonbBuilder.create()) {
                     Pedido[] pedidosArray = jsonb.fromJson(jsonResponse, Pedido[].class);
-                    
+
                     if (pedidosArray == null || pedidosArray.length == 0) {
-                        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, 
-                            "No se encontraron pedidos en la base de datos", null));
+                        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                "No se encontraron pedidos en la base de datos", null));
                         return false;
                     }
-                    
+
                     todosPedidos = Arrays.asList(pedidosArray);
                     usandoDatosPrueba = false;
                     generarEstadisticas();
@@ -167,97 +169,90 @@ public class ReporteBean implements Serializable {
     }
 
     private void cargarDatosDePrueba() {
-    try {
-        logger.info("Cargando datos de prueba...");
-        
-        // Crear productos de prueba
-        Producto producto1 = new Producto("1", "Laptop HP EliteBook", 18500.0);
-        Producto producto2 = new Producto("2", "Mouse Logitech MX Master", 1250.0);
-        Producto producto3 = new Producto("3", "Teclado mecánico Redragon", 2200.0);
-        Producto producto4 = new Producto("4", "Monitor Samsung 24\"", 4500.0);
-        Producto producto5 = new Producto("5", "Disco SSD 1TB", 1800.0);
-        Producto producto6 = new Producto("6", "Impresora Laser HP", 3200.0);
-        Producto producto7 = new Producto("7", "Webcam Logitech 1080p", 1500.0);
-        Producto producto8 = new Producto("8", "Audífonos Sony", 2800.0);
+        try {
+            logger.info("Cargando datos de prueba...");
 
-        // Crear pedidos de prueba con datos variados
-        todosPedidos = Arrays.asList(
-            new Pedido("PED-001", Arrays.asList(
-                new ItemCarrito(producto1, 1),
-                new ItemCarrito(producto2, 1),
-                new ItemCarrito(producto5, 2)
-            ), 22300.0, "Completado", "Av. Reforma 150", "cliente1@empresa.com"),
-            
-            new Pedido("PED-002", Arrays.asList(
-                new ItemCarrito(producto2, 3),
-                new ItemCarrito(producto3, 1),
-                new ItemCarrito(producto4, 2)
-            ), 14750.0, "Pendiente", "Calle Juárez 45", "cliente2@mail.com"),
-            
-            new Pedido("PED-003", Arrays.asList(
-                new ItemCarrito(producto1, 2),
-                new ItemCarrito(producto4, 1),
-                new ItemCarrito(producto8, 1)
-            ), 47800.0, "Completado", "Blvd. López Mateos 1200", "cliente3@correo.com"),
-            
-            new Pedido("PED-004", Arrays.asList(
-                new ItemCarrito(producto3, 1),
-                new ItemCarrito(producto5, 3),
-                new ItemCarrito(producto7, 2)
-            ), 10400.0, "Cancelado", "Paseo de la Rosas 67", "cliente4@example.com"),
-            
-            new Pedido("PED-005", Arrays.asList(
-                new ItemCarrito(producto2, 5),
-                new ItemCarrito(producto3, 2),
-                new ItemCarrito(producto4, 1),
-                new ItemCarrito(producto5, 1)
-            ), 19250.0, "Pendiente", "Calle Central 89", "cliente5@negocio.com"),
-            
-            new Pedido("PED-006", Arrays.asList(
-                new ItemCarrito(producto6, 1),
-                new ItemCarrito(producto7, 2)
-            ), 6200.0, "Completado", "Av. Universidad 550", "cliente6@institucion.edu"),
-            
-            new Pedido("PED-007", Arrays.asList(
-                new ItemCarrito(producto1, 1),
-                new ItemCarrito(producto3, 1),
-                new ItemCarrito(producto8, 2)
-            ), 27700.0, "Completado", "Calle Morelos 12", "cliente7@servicio.com"),
-            
-            new Pedido("PED-008", Arrays.asList(
-                new ItemCarrito(producto4, 3),
-                new ItemCarrito(producto6, 1)
-            ), 16700.0, "Pendiente", "Av. Revolución 345", "cliente8@empresa.net")
-        );
+            // Crear productos de prueba
+            Producto producto1 = new Producto("1", "Laptop HP EliteBook", 18500.0);
+            Producto producto2 = new Producto("2", "Mouse Logitech MX Master", 1250.0);
+            Producto producto3 = new Producto("3", "Teclado mecánico Redragon", 2200.0);
+            Producto producto4 = new Producto("4", "Monitor Samsung 24\"", 4500.0);
+            Producto producto5 = new Producto("5", "Disco SSD 1TB", 1800.0);
+            Producto producto6 = new Producto("6", "Impresora Laser HP", 3200.0);
+            Producto producto7 = new Producto("7", "Webcam Logitech 1080p", 1500.0);
+            Producto producto8 = new Producto("8", "Audífonos Sony", 2800.0);
 
-        // Asignar fechas variadas para pruebas de filtrado
-        todosPedidos.get(0).setFecha(LocalDate.now().minusDays(5));
-        todosPedidos.get(1).setFecha(LocalDate.now().minusDays(3));
-        todosPedidos.get(2).setFecha(LocalDate.now().minusDays(10));
-        todosPedidos.get(3).setFecha(LocalDate.now().minusDays(15));
-        todosPedidos.get(4).setFecha(LocalDate.now().minusDays(1));
-        todosPedidos.get(5).setFecha(LocalDate.now().minusDays(7));
-        todosPedidos.get(6).setFecha(LocalDate.now().minusDays(20));
-        todosPedidos.get(7).setFecha(LocalDate.now().minusDays(2));
+            // Crear pedidos de prueba con datos variados
+            todosPedidos = Arrays.asList(
+                    new Pedido("PED-001", Arrays.asList(
+                            new ItemCarrito(producto1, 1),
+                            new ItemCarrito(producto2, 1),
+                            new ItemCarrito(producto5, 2)
+                    ), 22300.0, "Completado", "Av. Reforma 150", "cliente1@empresa.com"),
+                    new Pedido("PED-002", Arrays.asList(
+                            new ItemCarrito(producto2, 3),
+                            new ItemCarrito(producto3, 1),
+                            new ItemCarrito(producto4, 2)
+                    ), 14750.0, "Pendiente", "Calle Juárez 45", "cliente2@mail.com"),
+                    new Pedido("PED-003", Arrays.asList(
+                            new ItemCarrito(producto1, 2),
+                            new ItemCarrito(producto4, 1),
+                            new ItemCarrito(producto8, 1)
+                    ), 47800.0, "Completado", "Blvd. López Mateos 1200", "cliente3@correo.com"),
+                    new Pedido("PED-004", Arrays.asList(
+                            new ItemCarrito(producto3, 1),
+                            new ItemCarrito(producto5, 3),
+                            new ItemCarrito(producto7, 2)
+                    ), 10400.0, "Cancelado", "Paseo de la Rosas 67", "cliente4@example.com"),
+                    new Pedido("PED-005", Arrays.asList(
+                            new ItemCarrito(producto2, 5),
+                            new ItemCarrito(producto3, 2),
+                            new ItemCarrito(producto4, 1),
+                            new ItemCarrito(producto5, 1)
+                    ), 19250.0, "Pendiente", "Calle Central 89", "cliente5@negocio.com"),
+                    new Pedido("PED-006", Arrays.asList(
+                            new ItemCarrito(producto6, 1),
+                            new ItemCarrito(producto7, 2)
+                    ), 6200.0, "Completado", "Av. Universidad 550", "cliente6@institucion.edu"),
+                    new Pedido("PED-007", Arrays.asList(
+                            new ItemCarrito(producto1, 1),
+                            new ItemCarrito(producto3, 1),
+                            new ItemCarrito(producto8, 2)
+                    ), 27700.0, "Completado", "Calle Morelos 12", "cliente7@servicio.com"),
+                    new Pedido("PED-008", Arrays.asList(
+                            new ItemCarrito(producto4, 3),
+                            new ItemCarrito(producto6, 1)
+                    ), 16700.0, "Pendiente", "Av. Revolución 345", "cliente8@empresa.net")
+            );
 
-        // Generar estadísticas con los datos de prueba
-        generarEstadisticas();
-        
-        logger.info("Datos de prueba cargados exitosamente. Total de pedidos: " + todosPedidos.size());
-        
-    } catch (Exception e) {
-        logger.log(Level.SEVERE, "Error al cargar datos de prueba", e);
-        FacesContext.getCurrentInstance().addMessage(null, 
-            new FacesMessage(FacesMessage.SEVERITY_FATAL, 
-            "Error crítico: No se pudieron cargar los datos de prueba", 
-            "Por favor contacte al administrador del sistema."));
-        
-        // Asegurarse de que haya al menos una lista vacía para evitar NPEs
-        todosPedidos = new ArrayList<>();
-        ventasPorEstado = new HashMap<>();
-        ventasPorProducto = new HashMap<>();
+            // Asignar fechas variadas para pruebas de filtrado
+            todosPedidos.get(0).setFecha(LocalDate.now().minusDays(5));
+            todosPedidos.get(1).setFecha(LocalDate.now().minusDays(3));
+            todosPedidos.get(2).setFecha(LocalDate.now().minusDays(10));
+            todosPedidos.get(3).setFecha(LocalDate.now().minusDays(15));
+            todosPedidos.get(4).setFecha(LocalDate.now().minusDays(1));
+            todosPedidos.get(5).setFecha(LocalDate.now().minusDays(7));
+            todosPedidos.get(6).setFecha(LocalDate.now().minusDays(20));
+            todosPedidos.get(7).setFecha(LocalDate.now().minusDays(2));
+
+            // Generar estadísticas con los datos de prueba
+            generarEstadisticas();
+
+            logger.info("Datos de prueba cargados exitosamente. Total de pedidos: " + todosPedidos.size());
+
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error al cargar datos de prueba", e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_FATAL,
+                            "Error crítico: No se pudieron cargar los datos de prueba",
+                            "Por favor contacte al administrador del sistema."));
+
+            // Asegurarse de que haya al menos una lista vacía para evitar NPEs
+            todosPedidos = new ArrayList<>();
+            ventasPorEstado = new HashMap<>();
+            ventasPorProducto = new HashMap<>();
+        }
     }
-}
 
     private void generarEstadisticas() {
         // Filtrar por rango de fechas
@@ -295,7 +290,7 @@ public class ReporteBean implements Serializable {
                 ventasPorProducto.merge(nombreProducto, totalProducto, Double::sum);
             });
         });
-        
+
         // Actualizar gráficas
         crearGraficas();
     }
@@ -306,90 +301,89 @@ public class ReporteBean implements Serializable {
     }
 
     private void crearGraficaCircular() {
-    pieModel = new PieChartModel();
-    ChartData data = new ChartData();
+        pieModel = new PieChartModel();
+        ChartData data = new ChartData();
 
-    PieChartDataSet dataSet = new PieChartDataSet();
-    List<Number> values = new ArrayList<>();
-    List<String> labels = new ArrayList<>();
-    List<String> bgColors = new ArrayList<>();
+        PieChartDataSet dataSet = new PieChartDataSet();
+        List<Number> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        List<String> bgColors = new ArrayList<>();
 
-    // Colores para la gráfica
-    String[] colores = {
-        "rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)",
-        "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(255, 159, 64)"
-    };
+        // Colores para la gráfica
+        String[] colores = {
+            "rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 205, 86)",
+            "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(255, 159, 64)"
+        };
 
-    // Agregar datos de ventas por estado
-    int colorIndex = 0;
-    for (Map.Entry<String, Integer> entry : ventasPorEstado.entrySet()) {
-        values.add(entry.getValue());
-        labels.add(entry.getKey());
-        bgColors.add(colores[colorIndex % colores.length]);
-        colorIndex++;
+        // Agregar datos de ventas por estado
+        int colorIndex = 0;
+        for (Map.Entry<String, Integer> entry : ventasPorEstado.entrySet()) {
+            values.add(entry.getValue());
+            labels.add(entry.getKey());
+            bgColors.add(colores[colorIndex % colores.length]);
+            colorIndex++;
+        }
+
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(bgColors);
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+
+        // Configuración de la gráfica
+        pieModel.setData(data);
+
+        // Crear opciones y agregar título
+        PieChartOptions options = new PieChartOptions();
+        Title title = new Title();
+        title.setText("Distribución de Pedidos por Estado");
+        title.setDisplay(true);
+
+        options.setTitle(title);
+        pieModel.setOptions(options); // Aquí se asigna correctamente
     }
-
-    dataSet.setData(values);
-    dataSet.setBackgroundColor(bgColors);
-    data.addChartDataSet(dataSet);
-    data.setLabels(labels);
-
-    // Configuración de la gráfica
-    pieModel.setData(data);
-
-    // Crear opciones y agregar título
-    PieChartOptions options = new PieChartOptions();
-    Title title = new Title();
-    title.setText("Distribución de Pedidos por Estado");
-    title.setDisplay(true);
-    
-    options.setTitle(title);
-    pieModel.setOptions(options); // Aquí se asigna correctamente
-}
 
     private void crearGraficaBarras() {
-    barModel = new BarChartModel();
-    ChartData data = new ChartData();
+        barModel = new BarChartModel();
+        ChartData data = new ChartData();
 
-    BarChartDataSet dataSet = new BarChartDataSet();
-    dataSet.setLabel("Ventas por Producto");
-    List<Number> values = new ArrayList<>();
-    List<String> bgColors = new ArrayList<>();
-    List<String> labels = new ArrayList<>();
+        BarChartDataSet dataSet = new BarChartDataSet();
+        dataSet.setLabel("Ventas por Producto");
+        List<Number> values = new ArrayList<>();
+        List<String> bgColors = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
 
-    // Colores para la gráfica
-    String[] colores = {
-        "rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 205, 86)",
-        "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(255, 159, 64)"
-    };
+        // Colores para la gráfica
+        String[] colores = {
+            "rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 205, 86)",
+            "rgb(75, 192, 192)", "rgb(153, 102, 255)", "rgb(255, 159, 64)"
+        };
 
-    // Agregar datos de ventas por producto
-    int colorIndex = 0;
-    for (Map.Entry<String, Double> entry : ventasPorProducto.entrySet()) {
-        values.add(entry.getValue());
-        labels.add(entry.getKey());
-        bgColors.add(colores[colorIndex % colores.length]);
-        colorIndex++;
+        // Agregar datos de ventas por producto
+        int colorIndex = 0;
+        for (Map.Entry<String, Double> entry : ventasPorProducto.entrySet()) {
+            values.add(entry.getValue());
+            labels.add(entry.getKey());
+            bgColors.add(colores[colorIndex % colores.length]);
+            colorIndex++;
+        }
+
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(bgColors);
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+
+        // Configuración de la gráfica
+        barModel.setData(data);
+
+        // Crear opciones y agregar título
+        BarChartOptions options = new BarChartOptions();
+        Title title = new Title();
+        title.setText("Ventas por Producto (en $)");
+        title.setDisplay(true);
+
+        options.setTitle(title);
+        barModel.setOptions(options); // Aquí se asigna correctamente
     }
-
-    dataSet.setData(values);
-    dataSet.setBackgroundColor(bgColors);
-    data.addChartDataSet(dataSet);
-    data.setLabels(labels);
-
-    // Configuración de la gráfica
-    barModel.setData(data);
-
-    // Crear opciones y agregar título
-    BarChartOptions options = new BarChartOptions();
-    Title title = new Title();
-    title.setText("Ventas por Producto (en $)");
-    title.setDisplay(true);
-    
-    options.setTitle(title);
-    barModel.setOptions(options); // Aquí se asigna correctamente
-}
-
 
     public void filtrarReporte() {
         generarEstadisticas();
@@ -397,169 +391,162 @@ public class ReporteBean implements Serializable {
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Reporte actualizado", null));
     }
 
-    public void generarReportePDF() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
+   public void generarReportePDF() {
+    FacesContext facesContext = FacesContext.getCurrentInstance();
+    ExternalContext externalContext = facesContext.getExternalContext();
 
-        if (todosPedidos == null || todosPedidos.isEmpty()) {
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "No hay datos para generar el reporte", ""));
-            return;
-        }
-
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
-
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
-            try {
-                float margin = 50;
-                float yStart = page.getMediaBox().getHeight() - margin;
-                float yPosition = yStart;
-
-                // Título del reporte
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("REPORTE DE PEDIDOS");
-                contentStream.endText();
-                yPosition -= LEADING * 2;
-
-                // Gráfica circular de estados
-                yPosition = agregarGraficaCircularPDF(document, contentStream, margin, yPosition);
-
-                if (yPosition < margin + 300) {
-                    contentStream.close();
-                    page = new PDPage();
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    yPosition = yStart;
-                }
-
-                // Gráfica de barras de productos
-                yPosition = agregarGraficaBarrasPDF(document, contentStream, margin, yPosition);
-
-                if (yPosition < margin + 300) {
-                    contentStream.close();
-                    page = new PDPage();
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    yPosition = yStart;
-                }
-
-                // Estadísticas resumidas
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("ESTADÍSTICAS:");
-                contentStream.endText();
-                yPosition -= LEADING;
-
-                contentStream.setFont(PDType1Font.HELVETICA, 10);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin + 15, yPosition);
-                contentStream.showText("- Total de pedidos: " + totalPedidos);
-                contentStream.endText();
-                yPosition -= LEADING;
-
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin + 15, yPosition);
-                contentStream.showText("- Total de ventas: $" + totalVentas);
-                contentStream.endText();
-                yPosition -= LEADING * 1.5f;
-
-                // Listado de pedidos
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("DETALLE DE PEDIDOS (" + todosPedidos.size() + "):");
-                contentStream.endText();
-                yPosition -= LEADING * 1.5f;
-
-                contentStream.setFont(PDType1Font.HELVETICA, 10);
-                for (Pedido pedido : todosPedidos) {
-                    if (yPosition < margin + (LEADING * 8)) {
-                        contentStream.close();
-                        page = new PDPage();
-                        document.addPage(page);
-                        contentStream = new PDPageContentStream(document, page);
-                        yPosition = yStart;
-                    }
-
-                    // Información del pedido
-                    contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin, yPosition);
-                    contentStream.showText("Pedido: " + pedido.getId());
-                    contentStream.endText();
-                    yPosition -= LEADING;
-
-                    contentStream.setFont(PDType1Font.HELVETICA, 10);
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin + 15, yPosition);
-                    contentStream.showText("- Fecha: " + pedido.getFecha());
-                    contentStream.endText();
-                    yPosition -= LEADING;
-
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin + 15, yPosition);
-                    contentStream.showText("- Estado: " + pedido.getEstado());
-                    contentStream.endText();
-                    yPosition -= LEADING;
-
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin + 15, yPosition);
-                    contentStream.showText("- Total: $" + pedido.getTotal());
-                    contentStream.endText();
-                    yPosition -= LEADING;
-
-                    // Productos
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin + 15, yPosition);
-                    contentStream.showText("- Productos:");
-                    contentStream.endText();
-                    yPosition -= LEADING;
-
-                    for (ItemCarrito item : pedido.getItems()) {
-                        contentStream.beginText();
-                        contentStream.newLineAtOffset(margin + 30, yPosition);
-                        contentStream.showText("• " + item.getCantidad() + " x " + item.getProducto().getNombre()
-                                + " ($" + item.getProducto().getPrecio() + " c/u)");
-                        contentStream.endText();
-                        yPosition -= LEADING;
-                    }
-
-                    yPosition -= LEADING;
-                }
-
-            } finally {
-                if (contentStream != null) {
-                    contentStream.close();
-                }
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            document.save(baos);
-
-            externalContext.responseReset();
-            externalContext.setResponseContentType("application/pdf");
-            externalContext.setResponseContentLength(baos.size());
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"reporte_pedidos.pdf\"");
-
-            try (OutputStream output = externalContext.getResponseOutputStream()) {
-                output.write(baos.toByteArray());
-                output.flush();
-            }
-
-            facesContext.responseComplete();
-
-        } catch (Exception e) {
-            facesContext.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar PDF", e.getMessage()));
-            e.printStackTrace();
-        }
+    if (todosPedidos == null || todosPedidos.isEmpty()) {
+        facesContext.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "No hay datos para generar el reporte", ""));
+        return;
     }
+
+    try (PDDocument document = new PDDocument()) {
+        PDPage page = new PDPage();
+        document.addPage(page);
+
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+        try {
+            float margin = 50;
+            float yStart = page.getMediaBox().getHeight() - margin;
+            float yPosition = yStart;
+
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("REPORTE DE PEDIDOS");
+            contentStream.endText();
+            yPosition -= LEADING * 2;
+
+            yPosition = agregarGraficaCircularPDF(document, contentStream, margin, yPosition);
+
+            if (yPosition < margin + 300) {
+                contentStream.close();
+                page = new PDPage();
+                document.addPage(page);
+                contentStream = new PDPageContentStream(document, page);
+                yPosition = yStart;
+            }
+
+            yPosition = agregarGraficaBarrasPDF(document, contentStream, margin, yPosition);
+
+            if (yPosition < margin + 300) {
+                contentStream.close();
+                page = new PDPage();
+                document.addPage(page);
+                contentStream = new PDPageContentStream(document, page);
+                yPosition = yStart;
+            }
+
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("ESTADÍSTICAS:");
+            contentStream.endText();
+            yPosition -= LEADING;
+
+            contentStream.setFont(PDType1Font.HELVETICA, 10);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin + 15, yPosition);
+            contentStream.showText("- Total de pedidos: " + totalPedidos);
+            contentStream.endText();
+            yPosition -= LEADING;
+
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin + 15, yPosition);
+            contentStream.showText("- Total de ventas: $" + totalVentas);
+            contentStream.endText();
+            yPosition -= LEADING * 1.5f;
+
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(margin, yPosition);
+            contentStream.showText("DETALLE DE PEDIDOS (" + todosPedidos.size() + "):");
+            contentStream.endText();
+            yPosition -= LEADING * 1.5f;
+
+            contentStream.setFont(PDType1Font.HELVETICA, 10);
+            for (Pedido pedido : todosPedidos) {
+                if (yPosition < margin + (LEADING * 8)) {
+                    contentStream.close();
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    yPosition = yStart;
+                }
+
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Pedido: " + pedido.getId());
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.setFont(PDType1Font.HELVETICA, 10);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Fecha: " + pedido.getFecha());
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Estado: " + pedido.getEstado());
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Total: $" + pedido.getTotal());
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin + 15, yPosition);
+                contentStream.showText("- Productos:");
+                contentStream.endText();
+                yPosition -= LEADING;
+
+                for (ItemCarrito item : pedido.getItems()) {
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin + 30, yPosition);
+                    contentStream.showText("• " + item.getCantidad() + " x " + item.getProducto().getNombre()
+                            + " ($" + item.getProducto().getPrecio() + " c/u)");
+                    contentStream.endText();
+                    yPosition -= LEADING;
+                }
+
+                yPosition -= LEADING;
+            }
+
+        } finally {
+            if (contentStream != null) {
+                contentStream.close();
+            }
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        document.save(baos);
+
+        ArchivosPDF archivosPDF = new ArchivosPDF();
+        String nombreArchivo = "reporte_pedidos_" + System.currentTimeMillis() + ".pdf";
+        String resultado = archivosPDF.subirPDF(baos, nombreArchivo);
+
+        facesContext.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "PDF generado y compartido", resultado));
+
+        // ✅ Redireccionar al enlace después de generar PDF
+        externalContext.redirect("https://ui-file-system.vercel.app/dashboard");
+
+        facesContext.responseComplete();
+
+    } catch (Exception e) {
+        facesContext.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al generar PDF", e.getMessage()));
+        e.printStackTrace();
+    }
+}
 
     private float agregarGraficaCircularPDF(PDDocument document, PDPageContentStream contentStream,
             float margin, float yPosition) throws Exception {

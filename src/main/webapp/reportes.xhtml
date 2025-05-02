@@ -21,13 +21,13 @@
             --warning-color: #f8961e;
             --info-color: #4895ef;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             color: #333;
         }
-        
+
         .header-section {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
@@ -36,7 +36,7 @@
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        
+
         .report-container {
             background: white;
             border-radius: 8px;
@@ -46,12 +46,12 @@
             border-left: 4px solid var(--primary-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .report-container:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        
+
         .stat-card {
             background: #fff;
             border-radius: 8px;
@@ -62,32 +62,32 @@
             transition: all 0.3s ease;
             border-top: 3px solid var(--primary-color);
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        
+
         .stat-value {
             font-size: 28px;
             font-weight: bold;
             color: var(--primary-color);
             margin: 10px 0;
         }
-        
+
         .stat-label {
             color: #6c757d;
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .stat-icon {
             font-size: 24px;
             color: var(--primary-color);
             margin-bottom: 10px;
         }
-        
+
         .filter-section {
             margin-bottom: 25px;
             padding: 20px;
@@ -96,14 +96,14 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border-left: 4px solid var(--info-color);
         }
-        
+
         table {
             width: 100%;
             margin-top: 20px;
             border-collapse: separate;
             border-spacing: 0;
         }
-        
+
         th {
             background-color: var(--primary-color);
             color: white;
@@ -111,16 +111,16 @@
             top: 0;
             padding: 12px 15px;
         }
-        
+
         td {
             padding: 10px 15px;
             border-bottom: 1px solid #eee;
         }
-        
+
         tr:hover td {
             background-color: #f5f7fa;
         }
-        
+
         .btn-volver {
             margin-bottom: 20px;
             background-color: #6c757d;
@@ -130,14 +130,14 @@
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        
+
         .btn-volver:hover {
             background-color: #5a6268;
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
@@ -146,29 +146,29 @@
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        
+
         .badge-pendiente {
             background-color: var(--warning-color);
             color: white;
         }
-        
+
         .badge-completado {
             background-color: var(--success-color);
             color: white;
         }
-        
+
         .badge-cancelado {
             background-color: var(--danger-color);
             color: white;
         }
-        
+
         .section-title {
             color: var(--primary-color);
             border-bottom: 2px solid #eee;
@@ -177,16 +177,16 @@
             display: flex;
             align-items: center;
         }
-        
+
         .section-title i {
             margin-right: 10px;
             font-size: 1.2em;
         }
-        
+
         .progress-bar {
             background-color: var(--primary-color);
         }
-        
+
         .status-indicator {
             display: inline-block;
             width: 12px;
@@ -194,7 +194,7 @@
             border-radius: 50%;
             margin-right: 5px;
         }
-        
+
         .chart-container {
             height: 300px;
             margin-top: 20px;
@@ -229,10 +229,14 @@
                                 <f:selectItem itemValue="Cancelado" itemLabel="Cancelado"/>
                             </h:selectOneMenu>
                         </div>
-                        <div class="col-md-3 d-flex align-items-end">
-                            <h:commandButton value="Generar PDF" action="#{reporteBean.generarReportePDF}" 
-                                             styleClass="btn btn-primary"/>
-                        </div>
+                        <h:form>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <h:commandButton value="Generar PDF" 
+                                                 action="#{reporteBean.generarReportePDF}" 
+                                                 styleClass="btn btn-primary"
+                                                 onclick="return verificarYRedirigir();" />
+                            </div>
+                        </h:form>
                     </div>
                 </h:form>
             </div>
@@ -353,5 +357,27 @@
                 </h:dataTable>
             </div>
         </div>
+        
+        <script>
+    function verificarYRedirigir() {
+        const url = "https://ui-file-system.vercel.app/dashboard";
+
+        if (!sessionStorage.getItem('paginaDashboardAbierta')) {
+            // Abrir en nueva pestaña
+            const win = window.open(url, '_blank');
+            if (win) {
+                // Se abrió correctamente
+                sessionStorage.setItem('paginaDashboardAbierta', 'true');
+                return true; // permite ejecutar el action de JSF
+            } else {
+                alert("Por favor, permite ventanas emergentes para abrir la página.");
+                return false;
+            }
+        } else {
+            alert("La página ya está abierta en otra pestaña.");
+            return false; // evita que se genere nuevamente si ya está abierta
+        }
+    }
+</script>
     </h:body>
 </html>
