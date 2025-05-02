@@ -67,70 +67,74 @@ public class DevolucionPedidoBean implements Serializable {
     }
 
     public void consultarPedidos() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccionPedidos;
-        Client client = null;
+    FacesContext context = FacesContext.getCurrentInstance();
+    String endpoint = direccionIp + "/DatabaseService/api/service/" + coleccionPedidos;
+    Client client = null;
 
-        try {
-            client = ClientBuilder.newClient();
-            WebTarget target = client.target(endpoint);
-            
-            // Agregar timeout a la conexión
-            Response response = target.request(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .property("jersey.config.client.connectTimeout", 5000)
-                    .property("jersey.config.client.readTimeout", 10000)
-                    .get();
+    try {
+        client = ClientBuilder.newClient();
+        WebTarget target = client.target(endpoint);
 
-            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                String jsonResponse = response.readEntity(String.class);
-                try {
-                    Jsonb jsonb = JsonbBuilder.create();
-                    Pedido[] pedidosArray = jsonb.fromJson(jsonResponse, Pedido[].class);
-                    pedidos = Arrays.asList(pedidosArray);
-                    errorConexion = false;
-                } catch (Exception e) {
-                    logger.log(Level.SEVERE, "Error al parsear JSON: " + e.getMessage(), e);
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Error al procesar los datos recibidos", null));
-                    cargarDatosDePrueba();
-                }
-            } else {
-                String errorMsg = "Error en el servicio: " + response.getStatus();
-                try {
-                    errorMsg += " - " + response.readEntity(String.class);
-                } catch (Exception e) {
-                    errorMsg += " (No se pudo obtener mensaje de error)";
-                }
-                logger.log(Level.WARNING, errorMsg);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMsg, null));
-                
-                // Fallback a datos de prueba
+        // Configurar timeout
+        Response response = target.request(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .property("jersey.config.client.connectTimeout", 5000)
+                .property("jersey.config.client.readTimeout", 10000)
+                .get();
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            String jsonResponse = response.readEntity(String.class);
+            try {
+                Jsonb jsonb = JsonbBuilder.create();
+                Pedido[] pedidosArray = jsonb.fromJson(jsonResponse, Pedido[].class);
+                pedidos = Arrays.asList(pedidosArray);
+                errorConexion = false;
+
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Éxito", "Pedidos cargados correctamente."));
+
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Error al parsear JSON: " + e.getMessage(), e);
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Error al procesar los datos recibidos", null));
                 cargarDatosDePrueba();
-                errorConexion = true;
             }
-        } catch (jakarta.ws.rs.ProcessingException e) {
-            logger.log(Level.SEVERE, "Error de conexión o timeout: " + e.getMessage(), e);
+        } else {
+            String errorMsg = "Error en el servicio: " + response.getStatus();
+            try {
+                errorMsg += " - " + response.readEntity(String.class);
+            } catch (Exception e) {
+                errorMsg += " (No se pudo obtener mensaje de error)";
+            }
+            logger.log(Level.WARNING, errorMsg);
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error de conexión con el servidor. Verifique su conexión a internet o intente más tarde.", null));
+                    "No se pudo establecer conexión. Intente más tarde.", null));
             cargarDatosDePrueba();
             errorConexion = true;
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error inesperado: " + e.getMessage(), e);
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error inesperado al consultar pedidos: " + e.getMessage(), null));
-            cargarDatosDePrueba();
-            errorConexion = true;
-        } finally {
-            if (client != null) {
-                try {
-                    client.close();
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, "Error al cerrar el cliente HTTP: " + e.getMessage(), e);
-                }
+        }
+    } catch (jakarta.ws.rs.ProcessingException e) {
+        logger.log(Level.SEVERE, "Error de conexión o timeout: " + e.getMessage(), e);
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                "Error de conexión con el servidor. Verifique su conexión o intente más tarde.", null));
+        cargarDatosDePrueba();
+        errorConexion = true;
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Error inesperado: " + e.getMessage(), e);
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                "Error inesperado al consultar pedidos: " + e.getMessage(), null));
+        cargarDatosDePrueba();
+        errorConexion = true;
+    } finally {
+        if (client != null) {
+            try {
+                client.close();
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Error al cerrar el cliente HTTP: " + e.getMessage(), e);
             }
         }
     }
+}
+
 
     private void cargarDatosDePrueba() {
         try {
@@ -235,29 +239,31 @@ public class DevolucionPedidoBean implements Serializable {
         }
     }
     
-    public void agregarDevolucion(Pedido pedido, String motivo, String estatus) {
-        try {
-            if (pedido == null) {
-                throw new IllegalArgumentException("Pedido no puede ser nulo");
-            }
-            
-            Devolucion nuevaDevolucion = new Devolucion(
-                devoluciones.size() + 1, // ID autoincremental
-                new Compra(pedido), // Asumo que Compra puede crearse a partir de Pedido
-                motivo,
-                estatus,
-                "Devolución creada"
-            );
-            
-            devoluciones.add(nuevaDevolucion);
-            guardarDevolucionEnBaseDatos(nuevaDevolucion);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error al agregar devolución: " + e.getMessage(), e);
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Error al crear la devolución", null));
-        }
+    private String motivo;
+private Pedido pedidoSeleccionado;
+// + getters y setters
+
+public void agregarDevolucion() {
+    if (pedidoSeleccionado == null || motivo == null || motivo.isEmpty()) {
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_WARN,
+            "Advertencia", "Complete todos los campos"));
+        return;
     }
+    
+    Devolucion devolucion = new Devolucion(
+        generarNuevoIdDevolucion(),
+        new Compra(pedidoSeleccionado),
+        motivo,
+        "Pendiente",
+        "Devolución creada"
+    );
+    
+    guardarDevolucionEnBaseDatos(devolucion);
+    // Limpiar campos después de guardar
+    this.motivo = null;
+    this.pedidoSeleccionado = null;
+}
 
     private void guardarDevolucionEnBaseDatos(Devolucion devolucion) {
         if (devolucion == null) {
@@ -387,4 +393,8 @@ public class DevolucionPedidoBean implements Serializable {
     public void setColeccionPedidos(String coleccionPedidos) { this.coleccionPedidos = coleccionPedidos; }
     public boolean isUsarDatosPrueba() { return usarDatosPrueba; }
     public void setUsarDatosPrueba(boolean usarDatosPrueba) { this.usarDatosPrueba = usarDatosPrueba; }
+
+    private int generarNuevoIdDevolucion() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
