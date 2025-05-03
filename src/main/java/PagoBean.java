@@ -23,6 +23,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.util.List;
+import org.primefaces.PrimeFaces;
 
 @Named("pagoBean")
 @SessionScoped
@@ -88,7 +89,17 @@ public class PagoBean implements Serializable {
         }
     }
 
-    private boolean enviarDatosAlERP() {
+    private String mensajeERP;
+
+    public String getMensajeERP() {
+        return mensajeERP;
+    }
+
+    public void setMensajeERP(String mensajeERP) {
+        this.mensajeERP = mensajeERP;
+    }
+
+    public boolean enviarDatosAlERP() {
         try {
             HttpClient client = HttpClient.newHttpClient();
 
@@ -96,10 +107,26 @@ public class PagoBean implements Serializable {
             for (int i = 0; i < items.size(); i++) {
                 ItemCarrito item = items.get(i);
                 if (item.getProducto() != null) {
+                    Producto producto = item.getProducto();
                     productosJson.append(String.format(
-                            "{\"nombre\":\"%s\", \"tipo\":\"%s\"}",
-                            item.getProducto().getNombre(),
-                            item.getProducto().getCategory()
+                        "{"
+                        + "\"id\":\"%s\","
+                        + "\"nombre\":\"%s\","
+                        + "\"descripcion\":\"%s\","
+                        + "\"imagen\":\"%s\","
+                        + "\"precio\":%.2f,"
+                        + "\"stock\":%d,"
+                        + "\"subtotal\":\"%.2f\","
+                        + "\"categoria\":\"%s\""
+                        + "}",
+                        producto.getId(),
+                        producto.getNombre(),
+                        producto.getDescripcion(),
+                        producto.getImagen(),
+                        producto.getPrecio(),
+                        producto.getStock(),
+                        item.getCantidad()*producto.getPrecio(),
+                        producto.getCategory()
                     ));
                     if (i < items.size() - 1) {
                         productosJson.append(",");
@@ -109,24 +136,21 @@ public class PagoBean implements Serializable {
             productosJson.append("]");
 
             String jsonBody = String.format(
-                    "{"
-                    + "\"idCliente\":\"%s\","
-                    + "\"nombreCompleto\":\"%s\","
-                    + "\"tipoPago\":\"%s\","
-                    + "\"productos\":%s,"
-                    + "\"fecha\":\"%s\","
-                    + "\"total\":%.2f"
-                    + "}",
-                    perfilData.getId(), // Asegúrate que este getter exista en PerfilData
-                    perfilData.getNombre(),
-                    perfilData.getNumCuenta(), // Asegúrate de tener este campo en PerfilData
-                    productosJson.toString(),
-                    java.time.LocalDate.now(), // Fecha actual
-                    total
+                "{"
+                + "\"idCliente\":\"%s\","
+                + "\"nombreCompleto\":\"%s\","
+                + "\"tipoPago\":\"%s\","
+                + "\"productos\":%s,"
+                + "\"fecha\":\"%s\","
+                + "\"total\":%.2f"
+                + "}",
+                perfilData.getId(),
+                perfilData.getNombre(),
+                perfilData.getNumCuenta(),
+                productosJson.toString(),
+                java.time.LocalDate.now(),
+                total
             );
-
-            System.out.println("📦 JSON enviado al ERP:");
-            System.out.println(jsonBody);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("http://localhost:8080/ApiERP/api/pagos"))
@@ -135,16 +159,24 @@ public class PagoBean implements Serializable {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(jsonBody);
 
-            System.out.println("📬 Respuesta del ERP: " + response.body());
-            System.out.println("🔢 Código de estado: " + response.statusCode());
+            if (response.statusCode() == 200) {
+                mensajeERP = "Pago procesado correctamente";
+            } else {
+                mensajeERP = "Error al procesar el pago\n\n❌ Codigo del error: " + response.statusCode();
+            }
 
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
             return response.statusCode() == 200;
+
         } catch (IOException | InterruptedException e) {
-            System.out.println("❌ ERROR al enviar datos al ERP: " + e.getMessage());
+            mensajeERP = "❌ Error de conexión: " + e.getMessage();
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
             return false;
         }
     }
+
 
     private Pedido agregarPedido() throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();

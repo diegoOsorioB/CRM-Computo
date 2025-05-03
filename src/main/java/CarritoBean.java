@@ -38,6 +38,7 @@ public class CarritoBean implements Serializable {
                 if (item.getStockTemporal() > 0) {
                     item.setCantidad(item.getCantidad() + 1);
                     item.setStockTemporal(item.getStockTemporal() - 1); // Reducir stock temporal
+                    System.out.println(item.getStockTemporal());
                 } else {
                     System.out.println("⚠️ Stock insuficiente para " + producto.getNombre());
                 }

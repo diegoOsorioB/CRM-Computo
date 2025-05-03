@@ -159,8 +159,8 @@ public class ButtonController {
     public void registrarUsuario() {
         consultarP();
         FacesContext context = FacesContext.getCurrentInstance();
-        String token = (String) context.getExternalContext().getSessionMap().get("authTokenA");
-        System.out.println("------" + token + "");
+       // String token = (String) context.getExternalContext().getSessionMap().get("authTokenA");
+      //  System.out.println("------" + token + "");
 
         if (!user.isAceptaTerminos()) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -203,15 +203,15 @@ public class ButtonController {
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(api.getURLBD() + "/usuarios"))
+                    .uri(URI.create(api.getURLRYU()+"/Roles_Usuarios_API/api/clientes/registrar"))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + token)
+            //        .header("Authorization", "Bearer " + token)
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == 200 || response.statusCode() == 201 ) {
                 System.out.println("Usuario registrado con éxito");
                 System.out.println("Respuesta: Admin " + response.body());
                 FacesContext.getCurrentInstance().getExternalContext().redirect("Product.xhtml");

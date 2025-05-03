@@ -4,13 +4,13 @@ import jakarta.inject.Named;
 @Named
 @ApplicationScoped
 public class APISController {
-    private final String URLBD = "https://b1d0-2806-104e-16-b7ce-6bac-f5a0-b133-2795.ngrok-free.app/DatabaseService/api/service";
+    private final String URLBD = "https://4352-2806-104e-16-b7ce-88-e88a-e572-3f6d.ngrok-free.app/DatabaseService/api/service";
     private final String URLERP = "https://f718-2806-104e-21-9c0b-29cc-6273-130d-c65e.ngrok-free.app/destinity/erp/api/";
-    private final String URLRYU = "https://2aff-2806-265-483-1925-9137-43e8-8ad1-5759.ngrok-free.app/Roles_Usuarios_API/api/usuarios/registrar";
-    private final String URLLOGIN = "https://b1d0-2806-104e-16-b7ce-6bac-f5a0-b133-2795.ngrok-free.app/DatabaseService/api/auth/login";
+    private final String URLRYU = "https://0192-2806-265-483-1f4-940e-53e3-fc41-3895.ngrok-free.app";
+    private final String URLLOGIN = "https://4352-2806-104e-16-b7ce-88-e88a-e572-3f6d.ngrok-free.app/DatabaseService/api/auth/login";
     private final String URLFPS = "http://192.168.100.52:8080";
-    private final String API_URL_1 = "https://84d3-2806-104e-d-19f5-ec59-b82f-101d-94c2.ngrok-free.ap8p/proveedores/api/products";
-    private final String API_URL_2 = "https://9458-2806-265-48d-1ca-f870-3283-ff65-c590.ngrok-free.ap8p/proveedores2/api/products";
+    private final String API_URL_1 = "https://293e-2806-104e-d-36c4-bd52-c0ea-60ab-607f.ngrok-free.app/proveedores/api/products";
+    private final String API_URL_2 = "https://f1e8-2806-2a0-1018-3fea-8d81-a91-ba00-1e7e.ngrok-free.app/Proyecto_2.0/api/productos";
 
     public String getAPI_URL_1() {
         return API_URL_1;
