@@ -86,12 +86,6 @@
                     <h:message for="password" styleClass="error-message"/>
                 </div>
 
-                <!-- Checkbox de administrador -->
-                <div class="mb-3">
-                    <h:selectBooleanCheckbox id="admin" value="#{buttonController.admin}" style="margin-right: 5px;" />
-                    <h:outputLabel for="admin" value="¿Eres administrador?" style="color:white;" />
-                </div>
-
                 <h:commandButton value="Ingresar" action="#{buttonController.consultar()}" styleClass="btn btn-primary"/>
                 <div class="forgot-password mt-3">
                     <h:link value="¿Olvidaste tu contraseña?" outcome="ForgotPass.xhtml"/>
