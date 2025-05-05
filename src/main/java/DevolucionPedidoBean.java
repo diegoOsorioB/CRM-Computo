@@ -49,22 +49,50 @@ public class DevolucionPedidoBean implements Serializable {
     private Devolucion devolucionActual = new Devolucion();
 
     @PostConstruct
-    public void init() {
-        try {
-            if (usarDatosPrueba) {
-                cargarDatosDePrueba();
-            } else {
-                consultarPedidos();
-            }
-            generarReportes();
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error crítico en inicialización: " + e.getMessage(), e);
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_FATAL, 
-                "Error crítico al inicializar el componente", null));
+public void init() {
+    try {
+        // 1. Primero verificar conectividad
+        if (!usarDatosPrueba && !verificarDisponibilidadEndpoint()) {
+            logger.warning("Modo offline activado - Endpoint no disponible");
+            cargarDatosDePrueba();
+            return;
+        }
+
+        // 2. Intentar cargar datos reales si hay conexión
+        if (!usarDatosPrueba) {
+            consultarPedidos();
+        } else {
             cargarDatosDePrueba();
         }
+
+        // 3. Generar reportes solo si hay datos
+        if (pedidos != null && !pedidos.isEmpty()) {
+            generarReportes();
+        }
+        
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Error en inicialización: " + e.getMessage(), e);
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Error del sistema", "Por favor contacte al administrador");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        cargarDatosDePrueba(); // Fallback seguro
     }
+}
+
+private boolean verificarDisponibilidadEndpoint() {
+    try {
+        String pingUrl = direccionIp.replace("/DatabaseService", "") + "/status";
+        Client client = ClientBuilder.newClient();
+        Response response = client.target(pingUrl)
+                .request()
+                .get();
+        
+        return response.getStatus() == 200;
+    } catch (Exception e) {
+        logger.log(Level.WARNING, "Error al verificar endpoint: " + e.getMessage());
+        return false;
+    }
+}
 
     public void consultarPedidos() {
     FacesContext context = FacesContext.getCurrentInstance();
