@@ -124,7 +124,7 @@ public class PedidoBean implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al conectar con la API", ""));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar pedidos desde la Base de Datos", ""));
             
 
         }
@@ -200,7 +200,7 @@ public class PedidoBean implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al conectar con la API", ""));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar pedidos en la Base de Datos", ""));
         }
     }
 

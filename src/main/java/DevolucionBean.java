@@ -35,7 +35,7 @@ public class DevolucionBean implements Serializable {
     private APISController urlDB; 
 
     @PostConstruct
-    public void init() {
+    public void init() {        
         token = getToken();
         if (token == null) {
             FacesContext.getCurrentInstance().addMessage(null, 
@@ -136,7 +136,7 @@ public class DevolucionBean implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al conectar con la API: " + e.getMessage(), ""));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al conectar con la Base de Datos ", ""));
         }
     }
 
