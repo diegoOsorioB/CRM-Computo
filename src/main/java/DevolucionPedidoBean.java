@@ -28,7 +28,7 @@ public class DevolucionPedidoBean implements Serializable {
     private static final Logger logger = Logger.getLogger(DevolucionPedidoBean.class.getName());
     
     // Configuración de conexión
-    private String direccionIp = "https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app";
+    private String direccionIp = "https://40b4-2806-2f0-a160-fe13-d6d-46b9-379d-81be.ngrok-free.app";
     private String coleccionPedidos = "pedidos";
     private final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
     
