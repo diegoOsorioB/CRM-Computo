@@ -33,10 +33,12 @@ public class CarritoBean implements Serializable {
    public void agregarProducto(Producto producto) {
     if (producto != null) {
         for (ItemCarrito item : items) {
-            if (item.getProducto().getId().equals(producto.getId())) {
+            if (item.getProducto() != null && item.getProducto().getId() != null && producto.getId() != null && item.getProducto().getId().equals(producto.getId())) {
+ 
                 if (item.getStockTemporal() > 0) {
                     item.setCantidad(item.getCantidad() + 1);
                     item.setStockTemporal(item.getStockTemporal() - 1); // Reducir stock temporal
+                    System.out.println(item.getStockTemporal());
                 } else {
                     System.out.println("⚠️ Stock insuficiente para " + producto.getNombre());
                 }
@@ -77,7 +79,7 @@ public class CarritoBean implements Serializable {
 
     public void incrementarCantidad(Producto producto) {
         for (ItemCarrito item : items) {
-            if (item.getProducto().getId() == producto.getId()) {
+            if (item.getProducto().getId().equals(producto.getId())) {
                 item.setCantidad(item.getCantidad() + 1);
                 break;
             }

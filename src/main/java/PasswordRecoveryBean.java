@@ -74,7 +74,7 @@ public class PasswordRecoveryBean {
         });
 
         // Crear mensaje de correo con enlace personalizado
-        String resetLink = api.getURLFPS()+"/CRM-TIENDA/ResetPassword.xhtml?email=" + toEmail;
+        String resetLink = api.getURLFPS()+"/CRMC/ResetPassword.xhtml?email=" + toEmail;
 
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(fromEmail));

@@ -22,7 +22,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.primefaces.PrimeFaces;
 
 @Named("pagoBean")
 @SessionScoped
@@ -42,7 +45,7 @@ public class PagoBean implements Serializable {
     @Inject
     private EmailService emailService;
 
-    public String procesarPago() {
+    public String procesarPago() throws Exception {
         this.items = carritoBean.getItems();  // Asigna los productos del carrito
         this.total = carritoBean.getTotal();
 
@@ -72,11 +75,10 @@ public class PagoBean implements Serializable {
                     emailService.enviarCorreo(nuevoPedido.getCorreoUsuario(), asunto, contenido);
                 }
             } catch (Exception e) {
-                System.out.println("Ocurrio un error "+e);
+                System.out.println("Ocurrio un error " + e);
             }
             generarComprobantePDF();
             carritoBean.vaciarCarrito();
-            
 
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Pago realizado con éxito", null));
@@ -89,54 +91,126 @@ public class PagoBean implements Serializable {
         }
     }
 
-    private boolean enviarDatosAlERP() {
-      /*  try {
-            HttpClient client = HttpClient.newHttpClient();
-            String jsonBody = String.format("{\"nombre\":\"%s\",\"correo\":\"%s\",\"tarjeta\":\"%s\"}",
-                    perfilData.getNombre(), perfilData.getEmail(), perfilData.getNumCuenta());
+    private String mensajeERP;
 
+    public String getMensajeERP() {
+        return mensajeERP;
+    }
+
+    public void setMensajeERP(String mensajeERP) {
+        this.mensajeERP = mensajeERP;
+    }
+
+    public boolean enviarDatosAlERP() throws Exception {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+
+            StringBuilder productosArray = new StringBuilder("[");
+        double totalAmount = 0;
+
+        for (int i = 0; i < items.size(); i++) {
+            ItemCarrito item = items.get(i);
+            Producto producto = item.getProducto();
+            double subtotal = item.getCantidad() * producto.getPrecio();
+            totalAmount += subtotal;
+
+            productosArray.append(String.format(
+                    "{"
+                    + "\"id\": \"%s\","
+                    + "\"name\": \"%s\","
+                    + "\"price\": %.2f,"
+                    + "\"quantity\": %d,"
+                    + "\"subTotal\": %.2f"
+                    + "}",
+                    producto.getId(),
+                    producto.getNombre(),
+                    producto.getPrecio(),
+                    item.getCantidad(),
+                    subtotal
+            ));
+
+            if (i < items.size() - 1) {
+                productosArray.append(",");
+            }
+        }
+        productosArray.append("]");
+
+        // Construir el JSON completo
+        String jsonBody = String.format(
+                "{"
+                + "\"customerInfo\": {"
+                +     "\"id\": \"%s\","
+                +     "\"name\": \"%s\","
+                +     "\"email\": \"%s\""
+                + "},"
+                + "\"productSold\": %s,"
+                + "\"paymentMethod\": \"%s\","
+                + "\"totalAmount\": %.2f,"
+                + "\"status\": \"%s\","
+                + "\"saleDate\": \"%s\""
+                + "}",
+                perfilData.getId(),
+                perfilData.getNombre(),
+                perfilData.getEmail(),
+                productosArray.toString(),
+                "Tarjeta", // o perfilData.getTipoPago()
+                totalAmount,
+                "Pagado",
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        );
+            APISController api = new APISController();
+            // Enviar solicitud HTTP
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/ApiERP/api/pagos"))
+                    .uri(URI.create(api.getURLERP()))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(jsonBody); // Para depuración
+            System.out.println(response.body());
 
-            System.out.println("Cuerpo de la respuesta: " + response.body());
-            System.out.println("Código de estado: " + response.statusCode());
+            if (response.statusCode() == 200 ||  response.statusCode() == 201) {
+                mensajeERP = "Pago procesado correctamente";
+                agregarPedido();
+                carritoBean.vaciarCarrito();
+                
+            } else {
+                mensajeERP = "Error al procesar el pago\n\n❌ Código del error: " + response.statusCode();
+            }
 
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
             return response.statusCode() == 200;
+
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error al enviar datos al ERP: " + e.getMessage());
+            mensajeERP = "❌ Error de conexión: " + e.getMessage();
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
             return false;
-        }*/
-      return true;
+        }
     }
 
     private Pedido agregarPedido() throws Exception {
-    FacesContext context = FacesContext.getCurrentInstance();
-    String emailUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
-        System.out.println(emailUsuario+"++++++++++++++-------------");
+        FacesContext context = FacesContext.getCurrentInstance();
+        String emailUsuario = (String) context.getExternalContext().getSessionMap().get("userEmail");
+        System.out.println(emailUsuario + "++++++++++++++-------------");
 
-    if (emailUsuario == null || emailUsuario.isEmpty()) {
-        System.out.println("❌ ERROR: No se encontró el email del usuario en la sesión.");
-        throw new Exception("Usuario no autenticado");
+        if (emailUsuario == null || emailUsuario.isEmpty()) {
+            System.out.println("❌ ERROR: No se encontró el email del usuario en la sesión.");
+            throw new Exception("Usuario no autenticado");
+        }
+
+        String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
+        Pedido nuevoPedido = new Pedido(null, items, total, "En proceso", direccionCliente, emailUsuario);
+
+        pedidoService.agregarPedido(items, total, direccionCliente);
+
+        System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
+
+        pedidoB.setPedido(nuevoPedido);
+        pedidoB.insertarPedido();
+        return nuevoPedido;
     }
 
-    String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
-    Pedido nuevoPedido = new Pedido(null,items, total, "En proceso", direccionCliente, emailUsuario);
-
-    pedidoService.agregarPedido(items, total, direccionCliente);
-
-    System.out.println("🆔 Pedido agregado con ID: " + nuevoPedido.getId());
-    
-
-    pedidoB.setPedido(nuevoPedido);
-    pedidoB.insertarPedido();
-    return nuevoPedido;
-}
-    
     private String construirContenidoCorreo(Pedido pedido) {
         StringBuilder contenido = new StringBuilder();
         contenido.append("Estimado Cliente").append(",\n\n");
@@ -166,71 +240,69 @@ public class PagoBean implements Serializable {
         return contenido.toString();
     }
 
-  private void generarComprobantePDF() {
-    try {
-        // 📌 Obtener la carpeta de descargas del usuario
-        String userHome = System.getProperty("user.home");
-        String downloadsPath = Paths.get(userHome, "Downloads", "Comprobante_Pago.pdf").toString();
-        
-        // 📌 Asegurar que la carpeta de descargas exista
-        File downloadsDir = new File(Paths.get(userHome, "Downloads").toString());
-        if (!downloadsDir.exists()) {
-            System.out.println("? La carpeta 'Downloads' no existe. Creándola...");
-            boolean creada = downloadsDir.mkdirs();
-            if (!creada) {
-                System.out.println("❌ ERROR: No se pudo crear la carpeta de descargas.");
-                return;
-            }
-        }
+    private void generarComprobantePDF() {
+        try {
+            // 📌 Obtener la carpeta de descargas del usuario
+            String userHome = System.getProperty("user.home");
+            String downloadsPath = Paths.get(userHome, "Downloads", "Comprobante_Pago.pdf").toString();
 
-        // 📌 Crear el archivo PDF
-        PdfWriter writer = new PdfWriter(new FileOutputStream(downloadsPath));
-        PdfDocument pdf = new PdfDocument(writer);
-        Document document = new Document(pdf);
-
-        // 📌 Agregar título
-        document.add(new Paragraph("Comprobante de Pago").setBold().setFontSize(18));
-        document.add(new Paragraph("Total: $" + total).setBold());
-
-        // 📌 Crear la tabla de productos
-        Table table = new Table(new float[]{3, 1, 1});
-        table.addCell(new Cell().add(new Paragraph("Producto").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Cantidad").setBold()));
-        table.addCell(new Cell().add(new Paragraph("Subtotal").setBold()));
-
-        // 📌 Verificar si hay productos en la lista
-        if (items != null && !items.isEmpty()) {
-            for (ItemCarrito item : items) {
-                if (item.getProducto() != null) { // Verificar que el producto no sea nulo
-                    table.addCell(new Cell().add(new Paragraph(item.getProducto().getNombre())));
-                    table.addCell(new Cell().add(new Paragraph(String.valueOf(item.getCantidad()))));
-                    table.addCell(new Cell().add(new Paragraph("$" + (item.getProducto().getPrecio() * item.getCantidad()))));
-                } else {
-                    table.addCell(new Cell().add(new Paragraph("Producto no disponible")));
-                    table.addCell(new Cell().add(new Paragraph("-")));
-                    table.addCell(new Cell().add(new Paragraph("-")));
+            // 📌 Asegurar que la carpeta de descargas exista
+            File downloadsDir = new File(Paths.get(userHome, "Downloads").toString());
+            if (!downloadsDir.exists()) {
+                System.out.println("? La carpeta 'Downloads' no existe. Creándola...");
+                boolean creada = downloadsDir.mkdirs();
+                if (!creada) {
+                    System.out.println("❌ ERROR: No se pudo crear la carpeta de descargas.");
+                    return;
                 }
             }
-        } else {
-            table.addCell(new Cell(1, 3).add(new Paragraph("No hay productos en el carrito.")));
+
+            // 📌 Crear el archivo PDF
+            PdfWriter writer = new PdfWriter(new FileOutputStream(downloadsPath));
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            // 📌 Agregar título
+            document.add(new Paragraph("Comprobante de Pago").setBold().setFontSize(18));
+            document.add(new Paragraph("Total: $" + total).setBold());
+
+            // 📌 Crear la tabla de productos
+            Table table = new Table(new float[]{3, 1, 1});
+            table.addCell(new Cell().add(new Paragraph("Producto").setBold()));
+            table.addCell(new Cell().add(new Paragraph("Cantidad").setBold()));
+            table.addCell(new Cell().add(new Paragraph("Subtotal").setBold()));
+
+            // 📌 Verificar si hay productos en la lista
+            if (items != null && !items.isEmpty()) {
+                for (ItemCarrito item : items) {
+                    if (item.getProducto() != null) { // Verificar que el producto no sea nulo
+                        table.addCell(new Cell().add(new Paragraph(item.getProducto().getNombre())));
+                        table.addCell(new Cell().add(new Paragraph(String.valueOf(item.getCantidad()))));
+                        table.addCell(new Cell().add(new Paragraph("$" + (item.getProducto().getPrecio() * item.getCantidad()))));
+                    } else {
+                        table.addCell(new Cell().add(new Paragraph("Producto no disponible")));
+                        table.addCell(new Cell().add(new Paragraph("-")));
+                        table.addCell(new Cell().add(new Paragraph("-")));
+                    }
+                }
+            } else {
+                table.addCell(new Cell(1, 3).add(new Paragraph("No hay productos en el carrito.")));
+            }
+
+            document.add(table);
+
+            // 📌 Agregar dirección de envío
+            String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
+            document.add(new Paragraph("Dirección de Envío: " + direccionCliente));
+
+            document.close();
+            System.out.println("✅ PDF generado correctamente en: " + downloadsPath);
+
+        } catch (IOException e) {
+            System.out.println("❌ ERROR al generar el PDF:");
+            e.printStackTrace();
         }
-
-        document.add(table);
-
-        // 📌 Agregar dirección de envío
-        String direccionCliente = perfilData.getDireccion() + " " + perfilData.getCiudad();
-        document.add(new Paragraph("Dirección de Envío: " + direccionCliente));
-
-        document.close();
-        System.out.println("✅ PDF generado correctamente en: " + downloadsPath);
-
-    } catch (IOException e) {
-        System.out.println("❌ ERROR al generar el PDF:");
-        e.printStackTrace();
     }
-}
-
-
 
     public List<ItemCarrito> getItems() {
         return items;

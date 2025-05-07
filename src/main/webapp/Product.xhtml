@@ -121,22 +121,6 @@
                 font-weight: bold;
                 transition: all 0.3s ease;
             }
-            .btn-carrito:hover {
-                background-color: #218838;
-                transform: scale(1.05);
-            }
-            .btn-favoritos {
-                background-color: #dc3545; /* Rojo */
-                color: white;
-                border: none;
-                padding: 10px;
-                width: 100%;
-                font-size: 1rem;
-                border-radius: 8px;
-                text-transform: uppercase;
-                font-weight: bold;
-                transition: all 0.3s ease;
-            }
             footer {
                 background-color: white;
                 padding: 20px;
@@ -152,11 +136,61 @@
             footer ul li {
                 margin-bottom: 5px;
             }
+            /* Estilos para las imágenes de productos */
+            .card-img-container {
+                height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background-color: #f8f9fa;
+                padding: 10px;
+            }
+            
+            .card-img-top {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+            
+            .card {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .card-body {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .card-body .btn-group {
+                margin-top: auto;
+            }
+            
+            /* Estilos para el modal */
+            .modal-img-container {
+                height: 300px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+                background-color: #f8f9fa;
+            }
+            
+            .modal-img-container img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
         </style>                
     </h:head>
     <h:body>
         <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
             <div class="container-fluid">
+                <!-- Mostrar mensajes tipo growl (emergentes) -->
+                <p:growl id="growl" showDetail="true" life="5000" />
                 <a class="navbar-brand" href="Product.xhtml" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -174,11 +208,10 @@
                             <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
                                          onkeyup="this.form.submit()"/>
                             <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light">
-                                <f:ajax execute="@form" render="@form productos-container"/>
+                                <f:ajax execute="@form" render="@all"/>
                             </h:commandButton>
                         </div>
                     </h:form>
-
 
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown profile-dropdown">
@@ -186,7 +219,6 @@
                                 <i class="bi bi-person-circle fs-4"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-
                                 <!-- Mostrar solo si el usuario es administrador -->
                                 <c:if test="${sessionScope.userRole eq 'ADMIN'}">
                                     <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
@@ -205,43 +237,44 @@
             </div>
         </nav>
 
-
         <div class="container">
             <h2 class="text-center mb-4">Lista de Productos</h2>
 
-            <h:outputText value="Lista de productos vacía" 
-                          rendered="#{empty productoController.productos}"
-                          style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: gray; margin-top: 20px;" />
-
-            <h:outputText value="Producto No Encontrado" 
-                          rendered="#{productoController.noResultados}"
+            <h:outputText value="503 Service Unavailable" 
+                          rendered="#{empty productoController.productos and productoController.apiConectada}"
+                style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
+            
+            <h:outputText value="Producto no encontrado" 
+                          rendered="#{productoController.noResultados and productoController.apiConectada}"
                           style="display: block; text-align: center; font-size: 24px; font-weight: bold; color: red; margin-top: 20px;" />
 
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 <ui:repeat value="#{productoController.productos}" var="producto">
                     <div class="col">
-                        <div class="card">
-                            <h:graphicImage value="#{producto.imagen}" class="card-img-top"/>
+                        <div class="card h-100">
+                            <div class="card-img-container">
+                                <h:graphicImage value="#{producto.imagen}" class="card-img-top"/>
+                            </div>
                             <div class="card-body text-center">
                                 <h5 class="card-title">#{producto.nombre}</h5>
                                 <p class="card-text">#{producto.descripcion}</p>
                                 <p class="fw-bold">$#{producto.precio}</p>
-
-                                <button type="button" class="btn-detalle" data-bs-toggle="modal" data-bs-target="#detalleModal#{producto.id}">
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <button type="button" class="btn-detalle mb-2" data-bs-toggle="modal" data-bs-target="#detalleModal#{producto.id}">
                                     Ver Detalle
                                 </button>
 
                                 <h:form>
-                                    <!-- Aseguramos que el producto es el correcto -->
                                     <h:commandButton value="Agregar al carrito" 
                                                      action="#{carritoBean.agregarProducto(producto)}" 
-                                                     styleClass="btn-carrito mt-2">
+                                                     styleClass="btn-carrito mb-2">
                                         <f:ajax execute="@form" render="@all"/>
                                     </h:commandButton>
 
                                     <h:commandButton value="Lista de deseos" 
                                                      action="#{carritoBean.agregarAListaDeseos(producto)}"
-                                                     styleClass="btn-lista-deseos mt-2">
+                                                     styleClass="btn-lista-deseos">
                                         <f:ajax execute="@form" render="@all"/>
                                     </h:commandButton>
                                 </h:form>
@@ -258,10 +291,11 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <h:graphicImage value="#{producto.imagen}" style="width: 100%; height: auto;"/>
+                                    <div class="modal-img-container">
+                                        <h:graphicImage value="#{producto.imagen}" styleClass="img-fluid"/>
+                                    </div>
                                     <p><strong>Descripción:</strong> #{producto.descripcion}</p>
                                     <p><strong>Precio:</strong> $#{producto.precio}</p>
-                                    <p><strong>Stock:</strong> #{producto.stock}</p>
                                     <p><strong>Categoría:</strong> #{producto.category}</p>
                                     <p><strong>Estado:</strong> #{producto.status}</p>
                                 </div>
@@ -272,7 +306,6 @@
                         </div>
                     </div>
                 </ui:repeat>
-
             </div>
         </div>
 
