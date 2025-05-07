@@ -16,12 +16,22 @@ import java.net.http.HttpResponse;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.primefaces.PrimeFaces;
 
 @Named
 @SessionScoped
 public class PerfilData implements Serializable {
 
     APISController api = new APISController();
+    private String mensajePD;
+
+    public String getMensajePD() {
+        return mensajePD;
+    }
+
+    public void setMensajePD(String mensajePD) {
+        this.mensajePD = mensajePD;
+    }
 
     private static final Logger LOGGER = Logger.getLogger(PerfilData.class.getName());
 
@@ -55,10 +65,9 @@ public class PerfilData implements Serializable {
         if (this.email != null) {
             cargarPerfilDesdeAPI(this.email);
         } else {
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Servicio no disponible." ,
-                             null));
+            mensajePD = "Servicio no disponible";
+
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
         }
     }
 
@@ -68,7 +77,7 @@ public class PerfilData implements Serializable {
 
         try {
             HttpClient client = HttpClient.newHttpClient();
-            String url = api.getURLBD() + "/usuarios?correo=" + correo;
+            String url = api.getURLBD() + "/clientes?correo=" + correo;
             // String url = "https://afef-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app/DatabaseService/api/service/usuarios?correo=" + correo;
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -106,7 +115,7 @@ public class PerfilData implements Serializable {
 
                         System.out.println("✅ ID extraído correctamente: " + this.id);
                     } else {
-                        System.out.println("⚠️ No se encontró información en la API.");
+                        mensajePD = "Informacion de usuario no encontrada";
                     }
                 } else {
                     System.out.println("⚠️ La API devolvió un array vacío.");
@@ -123,12 +132,15 @@ public class PerfilData implements Serializable {
                     this.imagenUrl = "/uploads/default.jpg";
                 }
 
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil cargado correctamente", ""));
             } else {
-                LOGGER.log(Level.SEVERE, "❌ Error al obtener el perfil: " + response.statusCode());
+                mensajePD = "Error: " + response.statusCode();
+
+                PrimeFaces.current().executeScript("PF('erpDialog').show();");
             }
         } catch (IOException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "❌ Error al procesar la solicitud de perfil", e);
+            mensajePD = "Error: " + e;
+
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
         }
     }
 
@@ -138,18 +150,39 @@ public class PerfilData implements Serializable {
         String token = (String) context.getExternalContext().getSessionMap().get("authTokenA");
 
         if (this.id == null || this.id.isEmpty()) {
-            System.out.println("⚠️ ID no disponible. No se puede actualizar el perfil.");
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "El ID no está disponible", ""));
+            mensajePD = "Error: Usuario no encontrado";
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
             return;
         }
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(this);
-            System.out.println("📤 JSON generado para actualizar: " + json);
+            ObjectNode jsonBody = mapper.createObjectNode();
+
+            // Campos obligatorios o comunes
+            jsonBody.put("nombre", this.nombre);
+            jsonBody.put("apellidoPaterno", this.apellidoPaterno);
+            jsonBody.put("apellidoMaterno", this.apellidoMaterno);
+            jsonBody.put("telefono", this.telefono);
+            jsonBody.put("correo", this.email);
+            jsonBody.put("direccion", this.direccion);
+            jsonBody.put("ciudad", this.ciudad);
+            jsonBody.put("codigoPostal", this.codigoPostal);
+            jsonBody.put("numCuenta", this.numCuenta);
+
+            // Solo se actualiza la contraseña si no está vacía
+            if (this.password != null && !this.password.trim().isEmpty()) {
+                
+                jsonBody.put("password", this.password);
+                
+
+            }
+
+            String json = mapper.writeValueAsString(jsonBody);
+            System.out.println("📤 JSON generado para actualizar (manual): " + json);
 
             HttpClient client = HttpClient.newHttpClient();
-            String url = api.getURLBD() + "/usuarios/" + this.id;
+            String url = api.getURLBD() + "/clientes/" + this.id;
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -163,15 +196,16 @@ public class PerfilData implements Serializable {
             System.out.println("📥 Respuesta del servidor al actualizar: " + response.body());
 
             if (response.statusCode() == 200) {
-                // FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Perfil actualizado correctamente", ""));
+                mensajePD = "Datos actualizados correctamente";
+                PrimeFaces.current().executeScript("PF('erpDialog').show();");
                 context.getExternalContext().redirect("Product.xhtml");
             } else {
-                //  FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar el perfil", ""));
+                mensajePD = "Error: " + response.statusCode();
+                PrimeFaces.current().executeScript("PF('erpDialog').show();");
             }
         } catch (IOException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "❌ Error al actualizar el perfil", e);
+            mensajePD = "Error: " + e;
+            PrimeFaces.current().executeScript("PF('erpDialog').show();");
         }
     }
 

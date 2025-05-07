@@ -174,107 +174,266 @@
                 color: #ddd;
                 margin-bottom: 20px;
             }
-            .container2 {
-                background: #666666;
-                padding: 30px;
-                border-radius: 0;
-                box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+            /* Efectos y animaciones */
+            .order-card {
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            }
+
+            .order-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.08);
+            }
+
+            /* Mejoras en los botones */
+            .btn-walmart {
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 5px rgba(0, 113, 206, 0.2);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .btn-walmart:hover {
+                box-shadow: 0 4px 8px rgba(0, 113, 206, 0.3);
+            }
+
+            /* Degradados modernos */
+            .walmart-header {
+                background: linear-gradient(135deg, var(--primary-color) 0%, #004a8f 100%);
+            }
+
+            /* Sombras mejoradas */
+            .card {
+                box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            }
+
+            /* Efecto de carga skeleton */
+            .skeleton {
+                animation: skeleton-loading 1.5s infinite ease-in-out;
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                border-radius: 4px;
+            }
+
+            /* Badges modernos */
+            .badge {
+                padding: 5px 10px;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+            }
+
+            /* Mejoras en los inputs */
+            .return-reason-select {
+                transition: all 0.3s ease;
+                border: 2px solid #ddd;
+            }
+
+            .return-reason-select:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(0, 113, 206, 0.1);
+                outline: none;
+            }
+
+            /* Efecto de hover en tarjetas de ayuda */
+            .help-item {
+                transition: all 0.3s ease;
+                border-left: 3px solid transparent;
+            }
+
+            .help-item:hover {
+                border-left: 3px solid var(--primary-color);
+                background-color: rgba(0, 113, 206, 0.05);
+            }
+
+            /* Tooltips */
+            .tooltip {
+                position: relative;
+                display: inline-block;
+            }
+
+            .tooltip .tooltiptext {
+                visibility: hidden;
+                width: 120px;
+                background-color: var(--dark-color);
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                transform: translateX(-50%);
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+                opacity: 1;
+            }
+
+            /* Progress bars */
+            .progress-container {
                 width: 100%;
-                color: white;
+                background-color: #f1f1f1;
+                border-radius: 4px;
+                margin: 10px 0;
             }
-            .container2 .row {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-around;
+
+            .progress-bar {
+                height: 8px;
+                border-radius: 4px;
+                background-color: var(--primary-color);
+                transition: width 0.5s ease;
             }
-            .container2 .col-md-4 {
-                flex: 1 1 300px;
-                margin-bottom: 20px;
+
+            /* Tabs modernos */
+            .tab-container {
+                border-bottom: 1px solid #ddd;
             }
-            .container2 ul {
-                list-style: none;
-                padding: 0;
+
+            .tab {
+                padding: 10px 20px;
+                cursor: pointer;
+                position: relative;
+                transition: all 0.3s ease;
             }
-            .container2 ul li {
-                margin-bottom: 5px;
-            }                        
-            .navbar {
-                background: #007BFF;
-                padding: 10px 0;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+            .tab.active {
+                color: var(--primary-color);
             }
-            .navbar-brand {
-                font-weight: bold;
+
+            .tab.active:after {
+                content: '';
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background-color: var(--primary-color);
             }
-            .profile-dropdown .dropdown-toggle::after {
-                display: none;
+
+            /* Efecto de onda en botones */
+            .btn-ripple {
+                position: relative;
+                overflow: hidden;
             }
-            .profile-dropdown .dropdown-menu {
-                right: 0;
-                left: auto;
+
+            .btn-ripple:after {
+                content: "";
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+                background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+                background-repeat: no-repeat;
+                background-position: 50%;
+                transform: scale(10, 10);
+                opacity: 0;
+                transition: transform .5s, opacity 1s;
             }
-            footer {
-                background-color: white;
-                padding: 20px;
-                margin-top: 40px;
+
+            .btn-ripple:active:after {
+                transform: scale(0, 0);
+                opacity: 0.3;
+                transition: 0s;
             }
-            footer h5 {
+
+            /* Cards con iconos */
+            .icon-card {
+                text-align: center;
+                padding: 25px 15px;
+                transition: all 0.3s ease;
+            }
+
+            .icon-card i {
+                font-size: 2.5rem;
+                color: var(--primary-color);
                 margin-bottom: 15px;
             }
-            footer ul {
-                list-style: none;
-                padding: 0;
+
+            .icon-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             }
-            footer ul li {
-                margin-bottom: 5px;
+            <!-- Estilos para mensajes -->
+            /* Estilos base para mensajes */
+            .ui-messages {
+                margin: 10px 0;
+                padding: 15px;
+                border-radius: 4px;
+            }
+
+            .ui-messages-error, .ui-message-error {
+                background-color: #fff6f6;
+                border-color: #f5c6cb;
+                color: #721c24;
+            }
+
+            .ui-messages-warn, .ui-message-warn {
+                background-color: #fff8e6;
+                border-color: #ffeeba;
+                color: #856404;
+            }
+
+            .ui-messages-info, .ui-message-info {
+                background-color: #e7f4ff;
+                border-color: #b8daff;
+                color: #004085;
+            }
+
+            .alert {
+                border-radius: 4px;
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid transparent;
+                font-size: 14px;
+            }
+
+            .alert-warning {
+                background-color: #fff3cd;
+                border-color: #ffeeba;
+                color: #856404;
+            }
+
+            .alert-danger {
+                background-color: #f8d7da;
+                border-color: #f5c6cb;
+                color: #721c24;
+            }
+
+            .alert-success {
+                background-color: #d4edda;
+                border-color: #c3e6cb;
+                color: #155724;
+            }
+
+            .message-icon {
+                margin-right: 10px;
+                font-size: 18px;
             }
         </style>
     </h:head>
 
     <h:body>
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #007BFF;">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="Product.xhtml" style="font-family: 'Arial Black', sans-serif; font-size: 1.5em; color: #FFFFFF;">CRM PRODUCT</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="Carrito.xhtml" style="color: #FFFFFF;"><i class="bi bi-cart"></i> Carrito</a></li>
-                        <li class="nav-item"><a class="nav-link" href="ListaDeseos.xhtml" style="color: #FFFFFF;"><i class="bi bi-heart"></i> Lista de deseos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#{facesContext.externalContext.requestContextPath}/atencionCliente.xhtml" style="color: #FFFFFF;"><i class="bi bi-person"></i> Atención a Cliente</a></li>
-                    </ul>
-
-                    <h:form class="d-flex">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                <h:inputText value="#{productoController.criterioBusqueda}" class="form-control"
-                                             onkeyup="this.form.submit()"/>
-                                <h:commandButton value="Buscar" action="#{productoController.filtrarProductos}" class="btn btn-light"/>
-                            </div>
-                    </h:form>
-
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown profile-dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
-                                <i class="bi bi-person-circle fs-4"></i>
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-
-                                <!-- Mostrar solo si el usuario es administrador -->
-                                <c:if test="${sessionScope.userRole eq 'ADMIN'}">
-                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
-                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Administrador</a></li>
-                                </c:if>
-                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Historial de Compras</a></li>
-                                <c:if test="${sessionScope.userRole ne 'ADMIN'}">
-                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
-                                </c:if>
-                                <li><hr class="dropdown-divider"/></li>
-                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+        <!-- Encabezado estilo Walmart -->
+        <header class="walmart-header mb-4">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="#" class="walmart-logo text-decoration-none">
+                        <i class="fas fa-shopping-bag me-2"></i>Mi<span>Tienda</span>
+                    </a>
+                    <div>
+                        <h:form>
+                            <h:button value="Volver a la tienda" outcome="index" styleClass="btn btn-light btn-sm me-2" />
+                            <h:button value="Mi cuenta" outcome="mi-cuenta" styleClass="btn btn-outline-light btn-sm" />
+                        </h:form>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -291,17 +450,35 @@
                             <a href="#" class="list-group-item list-group-item-action active">
                                 <i class="fas fa-exchange-alt me-2"></i>Devoluciones
                             </a>
-                            <a href="Devoluciones.xhtml" class="list-group-item list-group-item-action">
+                            <a href="#" class="list-group-item list-group-item-action">
                                 <i class="fas fa-shipping-fast me-2"></i>Seguimiento de pedidos
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action">
+                            <a href="#" class="list-group-item list-group-item-action"
+                               onclick="PF('growlWidget').renderMessage({
+                                           'summary': 'Opción deshabilitada',
+                                           'detail': 'Nuestros ingenieros están solucionando el problema.',
+                                           'severity': 'warn'
+                                       });
+                                       return false;">
                                 <i class="fas fa-credit-card me-2"></i>Métodos de pago
                             </a>
-                            <a href="EditProfile.xhtml" class="list-group-item list-group-item-action">
+                            <a href="#" class="list-group-item list-group-item-action">
                                 <i class="fas fa-user-circle me-2"></i>Mi cuenta
                             </a>
                         </div>
                     </div>
+
+                    <!-- Mensajes de filtro -->
+                    <h:panelGroup id="filtroMessages">
+                        <ui:fragment rendered="#{not empty devolucionPedidoBean.estadoFiltro}">
+                            <div class="message-container mb-3">
+                                <div class="message-content">
+                                    <i class="fas fa-filter me-2 text-primary"></i>
+                                    Mostrando pedidos filtrados por: <strong>#{devolucionPedidoBean.estadoFiltro}</strong>
+                                </div>
+                            </div>
+                        </ui:fragment>
+                    </h:panelGroup>
 
                     <!-- Datos rápidos -->
                     <div class="card">
@@ -313,6 +490,51 @@
                                 <div class="stats-value">#{devolucionPedidoBean.pedidos.size()}</div>
                                 <div class="stats-label">Pedidos realizados</div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acciones distribuidas -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="fas fa-cog me-2"></i>Acciones rápidas
+                        </div>
+                        <div class="card-body">
+                            <h:form>
+                                <!-- Cuando no hay conexión a la base de datos -->
+                                <h:commandButton value="Cargar pedidos" 
+                                                 styleClass="btn btn-walmart mb-2 w-100"
+                                                 action="#{devolucionPedidoBean.consultarPedidos}"/>
+
+                                <!-- Cuando se supera el tiempo de espera -->
+                                <h:commandButton value="Actualizar lista" 
+                                                 styleClass="btn btn-walmart mb-2 w-100"
+                                                 onclick="PF('growlWidget').renderMessage({
+                                                             'summary': 'Tiempo de espera agotado',
+                                                             'detail': 'La operación tardó demasiado en completarse. Por favor intente nuevamente.',
+                                                             'severity': 'error'
+                                                         });
+                                                         return false;"/>
+
+                                <!-- Cuando se cargan datos de prueba -->
+                                <h:commandButton value="Ver detalles" 
+                                                 styleClass="btn btn-walmart-secondary mb-2 w-100"
+                                                 onclick="PF('growlWidget').renderMessage({
+                                                             'summary': 'Datos de prueba',
+                                                             'detail': 'Actualmente se están mostrando datos de prueba. La funcionalidad completa estará disponible pronto.',
+                                                             'severity': 'info'
+                                                         });
+                                                         return false;"/>
+
+                                <!-- Cuando hay un error inesperado -->
+                                <h:commandButton value="Procesar devolución" 
+                                                 styleClass="btn btn-danger mb-2 w-100"
+                                                 onclick="PF('growlWidget').renderMessage({
+                                                             'summary': 'Error inesperado',
+                                                             'detail': 'Ocurrió un error al procesar su solicitud. Nuestro equipo ha sido notificado.',
+                                                             'severity': 'error'
+                                                         });
+                                                         return false;"/>
+                            </h:form>
                         </div>
                     </div>
                 </div>
@@ -329,10 +551,11 @@
                             <h4 class="mb-0">¿Necesitas devolver un producto?</h4>
                         </div>
                         <p>
-    Selecciona el pedido que deseas devolver y sigue los pasos. Aceptamos devoluciones 
-    dentro de los 30 días posteriores a la entrega. Por favor revisa nuestra 
-    <a href="#" class="text-primary" onclick="PF('devolucionModal').show(); return false;">política de devoluciones</a> para más información.
-</p>
+                            Selecciona el pedido que deseas devolver y sigue los pasos. Aceptamos devoluciones 
+                            dentro de los 30 días posteriores a la entrega. Por favor revisa nuestra 
+                            <a href="#" class="text-primary" onclick="PF('devolucionModal').show();
+                                    return false;">política de devoluciones</a> para más información.
+                        </p>
                     </div>
 
                     <!-- Filtros -->
@@ -352,8 +575,9 @@
                                     </h:selectOneMenu>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <h:outputLabel value="Buscar por número de pedido" styleClass="form-label"/>
-                                    <h:inputText styleClass="form-control" placeholder="Ingresa ID de pedido"/>
+                                    <h:inputText styleClass="form-control">
+                                        <f:passThroughAttribute name="placeholder" value="Ingresa ID de pedido" />
+                                    </h:inputText>
                                 </div>
                             </div>
                             <h:commandButton value="Aplicar filtros" styleClass="btn btn-walmart"/>
@@ -364,7 +588,7 @@
                     <p:dialog widgetVar="devolucionModal" header="Motivo de devolución" modal="true" resizable="false">
                         <h:form id="devolucionForm">
                             <div class="mb-3">
-                                <p>Mercado Libre te pedirá que elijas un motivo, como:</p>
+                                <p>Esta pagina web te pedirá que elijas un motivo, como:</p>
                                 <ul>
                                     <li>"No me gustó / No era lo que esperaba" (en algunos casos aplica solo dentro de los primeros 30 días).</li>
                                     <li>"El producto llegó dañado o defectuoso".</li>
@@ -402,7 +626,9 @@
                                 <i class="fas fa-box-open"></i>
                                 <h4>No se encontraron pedidos</h4>
                                 <p>Parece que no tienes pedidos que coincidan con los filtros seleccionados.</p>
-                                <h:button value="Ver todos los pedidos" outcome="Orders" styleClass="btn btn-walmart"/>
+                                <h:form>
+                                    <h:button value="Ver todos los pedidos" outcome="pedidos" styleClass="btn btn-walmart"/>
+                                </h:form>
                             </div>
                         </ui:fragment>
 
@@ -447,7 +673,7 @@
                                                 <h:form>
                                                     <h:commandButton value="Iniciar devolución" 
                                                                      styleClass="btn btn-walmart-secondary"
-                                                                     onclick="PF('devolucionModal').show(); return false;"/>
+                                                                     action="#{devolucionPedidoBean.agregarDevolucion()}"/>
                                                 </h:form>
                                             </ui:fragment>
                                         </div>
@@ -495,5 +721,7 @@
 
         <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <p:growl widgetVar="growlWidget" life="5000"/>
     </h:body>
 </html>

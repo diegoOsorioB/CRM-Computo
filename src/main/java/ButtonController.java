@@ -81,6 +81,7 @@ public class ButtonController {
                 String email = jsonResponse.getString("correo");
 
                 System.out.println("correo = " + email);
+                System.out.println(token);
                 session.setAttribute("authToken", token);
                 session.setAttribute("email", email);
                 facesContext.getExternalContext().redirect("Product.xhtml");
@@ -253,7 +254,7 @@ public class ButtonController {
             );
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(api.getURLRYU()))
+                    .uri(URI.create(api.getURLRYU()+"/Roles_Usuarios_API/api/usuarios/registrar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -325,7 +326,7 @@ public class ButtonController {
 
                 String userId = userObject.getString("_id");
                 JSONArray rolesArray = userObject.getJSONArray("roles");
-                String userRole = rolesArray.getString(0); // Obtener el primer rol
+               String userRole = rolesArray.getString(0); // Obtener el primer rol
 
                 user.setId(userId);
                 user.setRol(userRole);

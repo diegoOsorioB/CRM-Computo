@@ -22,6 +22,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.primefaces.PrimeFaces;
 
@@ -43,7 +45,7 @@ public class PagoBean implements Serializable {
     @Inject
     private EmailService emailService;
 
-    public String procesarPago() {
+    public String procesarPago() throws Exception {
         this.items = carritoBean.getItems();  // Asigna los productos del carrito
         this.total = carritoBean.getTotal();
 
@@ -99,72 +101,82 @@ public class PagoBean implements Serializable {
         this.mensajeERP = mensajeERP;
     }
 
-    public boolean enviarDatosAlERP() {
+    public boolean enviarDatosAlERP() throws Exception {
         try {
             HttpClient client = HttpClient.newHttpClient();
 
-            StringBuilder productosJson = new StringBuilder("[");
-            for (int i = 0; i < items.size(); i++) {
-                ItemCarrito item = items.get(i);
-                if (item.getProducto() != null) {
-                    Producto producto = item.getProducto();
-                    productosJson.append(String.format(
-                        "{"
-                        + "\"id\":\"%s\","
-                        + "\"nombre\":\"%s\","
-                        + "\"descripcion\":\"%s\","
-                        + "\"imagen\":\"%s\","
-                        + "\"precio\":%.2f,"
-                        + "\"stock\":%d,"
-                        + "\"subtotal\":\"%.2f\","
-                        + "\"categoria\":\"%s\""
-                        + "}",
-                        producto.getId(),
-                        producto.getNombre(),
-                        producto.getDescripcion(),
-                        producto.getImagen(),
-                        producto.getPrecio(),
-                        producto.getStock(),
-                        item.getCantidad()*producto.getPrecio(),
-                        producto.getCategory()
-                    ));
-                    if (i < items.size() - 1) {
-                        productosJson.append(",");
-                    }
-                }
-            }
-            productosJson.append("]");
+            StringBuilder productosArray = new StringBuilder("[");
+        double totalAmount = 0;
 
-            String jsonBody = String.format(
+        for (int i = 0; i < items.size(); i++) {
+            ItemCarrito item = items.get(i);
+            Producto producto = item.getProducto();
+            double subtotal = item.getCantidad() * producto.getPrecio();
+            totalAmount += subtotal;
+
+            productosArray.append(String.format(
+                    "{"
+                    + "\"id\": \"%s\","
+                    + "\"name\": \"%s\","
+                    + "\"price\": %.2f,"
+                    + "\"quantity\": %d,"
+                    + "\"subTotal\": %.2f"
+                    + "}",
+                    producto.getId(),
+                    producto.getNombre(),
+                    producto.getPrecio(),
+                    item.getCantidad(),
+                    subtotal
+            ));
+
+            if (i < items.size() - 1) {
+                productosArray.append(",");
+            }
+        }
+        productosArray.append("]");
+
+        // Construir el JSON completo
+        String jsonBody = String.format(
                 "{"
-                + "\"idCliente\":\"%s\","
-                + "\"nombreCompleto\":\"%s\","
-                + "\"tipoPago\":\"%s\","
-                + "\"productos\":%s,"
-                + "\"fecha\":\"%s\","
-                + "\"total\":%.2f"
+                + "\"customerInfo\": {"
+                +     "\"id\": \"%s\","
+                +     "\"name\": \"%s\","
+                +     "\"email\": \"%s\""
+                + "},"
+                + "\"productSold\": %s,"
+                + "\"paymentMethod\": \"%s\","
+                + "\"totalAmount\": %.2f,"
+                + "\"status\": \"%s\","
+                + "\"saleDate\": \"%s\""
                 + "}",
                 perfilData.getId(),
                 perfilData.getNombre(),
-                perfilData.getNumCuenta(),
-                productosJson.toString(),
-                java.time.LocalDate.now(),
-                total
-            );
-
+                perfilData.getEmail(),
+                productosArray.toString(),
+                "Tarjeta", // o perfilData.getTipoPago()
+                totalAmount,
+                "Pagado",
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        );
+            APISController api = new APISController();
+            // Enviar solicitud HTTP
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/ApiERP/api/pagos"))
+                    .uri(URI.create(api.getURLERP()))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(jsonBody);
+            System.out.println(jsonBody); // Para depuración
+            System.out.println(response.body());
 
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == 200 ||  response.statusCode() == 201) {
                 mensajeERP = "Pago procesado correctamente";
+                agregarPedido();
+                carritoBean.vaciarCarrito();
+                
             } else {
-                mensajeERP = "Error al procesar el pago\n\n❌ Codigo del error: " + response.statusCode();
+                mensajeERP = "Error al procesar el pago\n\n❌ Código del error: " + response.statusCode();
             }
 
             PrimeFaces.current().executeScript("PF('erpDialog').show();");
@@ -176,7 +188,6 @@ public class PagoBean implements Serializable {
             return false;
         }
     }
-
 
     private Pedido agregarPedido() throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
