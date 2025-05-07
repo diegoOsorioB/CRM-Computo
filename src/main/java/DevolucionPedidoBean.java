@@ -29,7 +29,7 @@ public class DevolucionPedidoBean implements Serializable {
     private static final Logger logger = Logger.getLogger(DevolucionPedidoBean.class.getName());
 
     // Configuración de conexión
-    private String direccionIp = "https://5b22-2806-104e-16-1f1-a261-a504-737d-f220.ngrok-free.app";
+    private String direccionIp = "https://40b4-2806-2f0-a160-fe13-d6d-46b9-379d-81be.ngrok-free.app";
     private String coleccionPedidos = "pedidos";
     private final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkaWVnb0BnbWFpbC5jb20iLCJiYXNlRGF0b3MiOiJDUk0iLCJleHAiOjE3NDMxOTU0NTgsImlhdCI6MTc0MzEwOTA1OH0.SY9bv8fRAOiLEzc2W5pO_HCjJxP3DgrZeMdht1A7Mhw";
 
@@ -50,22 +50,50 @@ public class DevolucionPedidoBean implements Serializable {
     private Devolucion devolucionActual = new Devolucion();
 
     @PostConstruct
-    public void init() {
-        try {
-            if (usarDatosPrueba) {
-                cargarDatosDePrueba();
-            } else {
-                consultarPedidos();
-            }
-            generarReportes();
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error crítico en inicialización: " + e.getMessage(), e);
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_FATAL,
-                            "Error crítico al inicializar el componente", null));
+public void init() {
+    try {
+        // 1. Primero verificar conectividad
+        if (!usarDatosPrueba && !verificarDisponibilidadEndpoint()) {
+            logger.warning("Modo offline activado - Endpoint no disponible");
+            cargarDatosDePrueba();
+            return;
+        }
+
+        // 2. Intentar cargar datos reales si hay conexión
+        if (!usarDatosPrueba) {
+            consultarPedidos();
+        } else {
             cargarDatosDePrueba();
         }
+
+        // 3. Generar reportes solo si hay datos
+        if (pedidos != null && !pedidos.isEmpty()) {
+            generarReportes();
+        }
+        
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Error en inicialización: " + e.getMessage(), e);
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Error del sistema", "Por favor contacte al administrador");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        cargarDatosDePrueba(); // Fallback seguro
     }
+}
+
+private boolean verificarDisponibilidadEndpoint() {
+    try {
+        String pingUrl = direccionIp.replace("/DatabaseService", "") + "/status";
+        Client client = ClientBuilder.newClient();
+        Response response = client.target(pingUrl)
+                .request()
+                .get();
+        
+        return response.getStatus() == 200;
+    } catch (Exception e) {
+        logger.log(Level.WARNING, "Error al verificar endpoint: " + e.getMessage());
+        return false;
+    }
+}
 
     public void consultarPedidos() {
         FacesContext context = FacesContext.getCurrentInstance();

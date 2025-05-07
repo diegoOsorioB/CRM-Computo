@@ -504,17 +504,6 @@
                                 <h:commandButton value="Cargar pedidos" 
                                                  styleClass="btn btn-walmart mb-2 w-100"
                                                  action="#{devolucionPedidoBean.consultarPedidos}"/>
-
-                                <!-- Cuando se supera el tiempo de espera -->
-                                <h:commandButton value="Actualizar lista" 
-                                                 styleClass="btn btn-walmart mb-2 w-100"
-                                                 onclick="PF('growlWidget').renderMessage({
-                                                             'summary': 'Tiempo de espera agotado',
-                                                             'detail': 'La operación tardó demasiado en completarse. Por favor intente nuevamente.',
-                                                             'severity': 'error'
-                                                         });
-                                                         return false;"/>
-
                                 <!-- Cuando se cargan datos de prueba -->
                                 <h:commandButton value="Ver detalles" 
                                                  styleClass="btn btn-walmart-secondary mb-2 w-100"
@@ -697,12 +686,12 @@
                             Renueva tu espacio con estilo y confort.
                         </p>
                     </div>
-                    <div class="col-md-4">
-                        <h5>Contáctanos</h5>
-                        <ul>
-                            <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
-                            <li>Teléfono: +1 800 123 4567</li>
-                            <li>Email: contacto@tienda.com</li>
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <h5>Mi cuenta</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="Pedido.xhtml" class="text-white-50">Mis pedidos</a></li>
+                            <li><a href="atencionCliente.xhtml" class="text-white-50">Mis devoluciones</a></li>
+                            <li><a href="EditProfile.xhtml" class="text-white-50">Configuración</a></li>
                         </ul>
                     </div>
                     <div class="col-md-4">
