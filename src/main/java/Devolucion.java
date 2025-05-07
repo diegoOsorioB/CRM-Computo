@@ -88,4 +88,8 @@ public class Devolucion implements Serializable {
                 ", razonCambioEstatus='" + razonCambioEstatus + '\'' +
                 '}';
     }
+
+    void setPedido(Pedido pedido) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
