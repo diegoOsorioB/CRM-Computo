@@ -1,3 +1,4 @@
+
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -25,6 +26,7 @@ import java.util.List;
 @Named
 @ViewScoped
 public class DevolucionBean implements Serializable {
+
     private List<Devolucion> listaDevoluciones;
     String token;
     @Inject
@@ -32,24 +34,25 @@ public class DevolucionBean implements Serializable {
     @Inject
     private EmailService emailService;
     @Inject
-    private APISController urlDB; 
+    private APISController urlDB;
 
     @PostConstruct
-    public void init() {        
+    public void init() {
         token = getToken();
         if (token == null) {
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                "Token no encontrado. Por favor, inicie sesión nuevamente.", ""));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Token no encontrado. Por favor, inicie sesión nuevamente.", ""));
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
         cargarDevoluciones();
     }
-    
+
     public String getToken() {
         return (String) session.getAttribute("authToken");
     }
@@ -57,11 +60,9 @@ public class DevolucionBean implements Serializable {
     private void cargarDevoluciones() {
         listaDevoluciones = new ArrayList<>();
         try {
-            String apiUrl = urlDB.getURLBD() + "/devoluciones"; // Usar APISController
-            System.out.println("URL de la API: " + apiUrl);
             System.out.println("Token: " + token);
-
-            URL url = new URL(apiUrl);
+            URL url = new URL(urlDB.getURLBD() + "/devoluciones");
+            System.out.println("URL de la API: " + url);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -118,6 +119,9 @@ public class DevolucionBean implements Serializable {
                 }
 
                 connection.disconnect();
+            } else if (responseCode == 204) {
+                System.out.println("No hay devoluciones registradas");
+                this.listaDevoluciones = new ArrayList<>();
             } else {
                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
                 StringBuilder errorResponse = new StringBuilder();
@@ -140,12 +144,12 @@ public class DevolucionBean implements Serializable {
         }
     }
 
-    public void actualizarEstatus(Devolucion devolucion) {    
+    public void actualizarEstatus(Devolucion devolucion) {
         FacesContext context = FacesContext.getCurrentInstance();
 
         if (devolucion.getRazonCambioEstatus() == null || devolucion.getRazonCambioEstatus().trim().isEmpty()) {
-            context.addMessage(null, 
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Debe ingresar una razón para actualizar el pedido " + devolucion.getPedido().getId(), ""));
             return;
         } else if (devolucion.getEstatus().equals(devolucion.getEstatusInicial())) {
@@ -165,8 +169,8 @@ public class DevolucionBean implements Serializable {
                 connection.setDoOutput(true);
 
                 // Crear el cuerpo JSON con los datos actualizados
-                String jsonBody = "{\"estatus\": \"" + devolucion.getEstatus() + "\", " +
-                                 "\"razonCambioEstatus\": \"" + devolucion.getRazonCambioEstatus() + "\"}";
+                String jsonBody = "{\"estatus\": \"" + devolucion.getEstatus() + "\", "
+                        + "\"razonCambioEstatus\": \"" + devolucion.getRazonCambioEstatus() + "\"}";
                 System.out.println("JSON enviado: " + jsonBody);
 
                 // Enviar el cuerpo JSON
@@ -181,10 +185,10 @@ public class DevolucionBean implements Serializable {
                 System.out.println("📡 Código de respuesta de la API: " + responseCode);
 
                 if (responseCode == 200 || responseCode == 204) { // 200 OK o 204 No Content son comunes para PUT exitoso
-                    context.addMessage(null, 
-                            new FacesMessage(FacesMessage.SEVERITY_INFO, 
-                                    "Estado actualizado: El pedido #" + devolucion.getPedido().getId() + 
-                                    " ahora está en estado: " + devolucion.getEstatus(), ""));
+                    context.addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                    "Estado actualizado: El pedido #" + devolucion.getPedido().getId()
+                                    + " ahora está en estado: " + devolucion.getEstatus(), ""));
                     System.out.println("Devolución #" + devolucion.getIdDevolucion() + " actualizada a " + devolucion.getEstatus());
 
                     // Enviar correo de notificación
@@ -195,7 +199,7 @@ public class DevolucionBean implements Serializable {
                             devolucion.getEstatus(),
                             devolucion.getRazonCambioEstatus()
                     );
-                    context.addMessage(null, 
+                    context.addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_INFO, "Correo enviado correctamente", ""));
 
                     // Recargar la lista de devoluciones para reflejar los cambios
@@ -211,8 +215,8 @@ public class DevolucionBean implements Serializable {
                     errorReader.close();
                     System.out.println("❌ Error al actualizar: " + connection.getResponseMessage());
                     System.out.println("Detalles del error: " + errorResponse.toString());
-                    context.addMessage(null, 
-                            new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                    context.addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
                                     "Error al actualizar la devolución: " + errorResponse.toString(), ""));
                 }
 
@@ -222,8 +226,8 @@ public class DevolucionBean implements Serializable {
                 context.getExternalContext().getFlash().setKeepMessages(false);
 
             } catch (Exception e) {
-                context.addMessage(null, 
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                context.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
                                 "No se pudo actualizar el estado del pedido o enviar el correo: " + e.getMessage(), ""));
                 e.printStackTrace();
             }
