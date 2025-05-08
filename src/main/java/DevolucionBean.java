@@ -134,7 +134,7 @@ public class DevolucionBean implements Serializable {
                 System.out.println("Detalles del error: " + errorResponse.toString());
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Error al cargar devoluciones: " + errorResponse.toString(), ""));
+                                "Error al cargar devoluciones desde la Base de Datos", ""));
             }
 
         } catch (Exception e) {
