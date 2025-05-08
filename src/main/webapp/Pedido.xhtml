@@ -15,32 +15,65 @@
             <p class="text-center text-danger">No tienes pedidos aún.</p>
         </h:panelGroup>
 
-       <h:dataTable value="#{pedidoBean.pedidos}" var="pedido" class="table table-bordered mt-4" rendered="#{not empty pedidoBean.pedidos}">
-    <h:column>
-        <f:facet name="header">ID Pedido</f:facet>
-        <span class="text-secondary">#{pedido.id}</span>
-    </h:column>
-    <h:column>
-        <f:facet name="header">Productos</f:facet>
-        <span class="text-secondary">#{pedido.items}</span>
-    </h:column>
-    <h:column>
-        <f:facet name="header">Total</f:facet>
-        <span class="text-success">$#{pedido.total}</span>
-    </h:column>
-    <h:column>
-        <f:facet name="header">Estatus</f:facet>
-        <span class="text-primary">#{pedido.estado}</span>
-    </h:column>
-    <h:column>
-        <f:facet name="header">Dirección de Entrega</f:facet>
-        <span class="text-info">#{pedido.direccion}</span>
-    </h:column>
-</h:dataTable>
+        <h:dataTable value="#{pedidoBean.pedidos}" var="pedido" class="table table-bordered mt-4" rendered="#{not empty pedidoBean.pedidos}">
+            <h:column>
+                <f:facet name="header">ID Pedido</f:facet>
+                <span class="text-secondary">#{pedido.id}</span>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Productos</f:facet>
+                <span class="text-secondary">#{pedido.items}</span>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Total</f:facet>
+                <span class="text-success">$#{pedido.total}</span>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Estatus</f:facet>
+                <span class="text-primary">#{pedido.estado}</span>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Dirección de Entrega</f:facet>
+                <span class="text-info">#{pedido.direccion}</span>
+            </h:column>
+        </h:dataTable>
 
 
 
         <h:button value="Volver a la tienda" outcome="Product.xhtml" class="btn btn-primary mt-4"/>
+        <footer class="bg-light p-4 mt-4">
+            <div class="container2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Sobre Nosotros</h5>
+                        <p>
+                            Encuentra todo lo que necesitas para tu hogar en nuestra tienda online.<br/>
+                            Ofrecemos una amplia selección de productos blancos de alta calidad, desde ropa de cama y toallas hasta electrodomésticos y decoración.<br/>
+                            Renueva tu espacio con estilo y confort.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Contáctanos</h5>
+                        <ul>
+                            <li>Dirección: Calle Ejemplo 123, Ciudad, País</li>
+                            <li>Teléfono: +1 800 123 4567</li>
+                            <li>Email: contacto@tienda.com</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Enlaces Rápidos</h5>
+                        <ul>
+                            <li><a href="Product.xhtml" style="color: #007BFF;">Inicio</a></li>
+                            <li><a href="Product.xhtml" style="color: #007BFF;">Productos</a></li>
+                            <li><a href="Carrito.xhtml" style="color: #007BFF;">Carrito</a></li>
+                            <li><a href="atencionCliente.xhtml" style="color: #007BFF;">Atención a Cliente</a></li>
+                            <li><a href="#" style="color: #007BFF;">Política de Privacidad</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </h:body>
 </html>
 

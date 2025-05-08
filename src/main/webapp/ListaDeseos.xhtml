@@ -159,8 +159,8 @@
 
                                 <!-- Mostrar solo si el usuario es administrador -->
                                 <c:if test="${sessionScope.userRole eq 'ADMIN'}">
-                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
-                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Administrador</a></li>
+                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Panel del gerente</a></li>
+                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Gerentes</a></li>
                                 </c:if>
                                 <li><a class="dropdown-item" href="HistorialCompra.xhtml">Historial de Compras</a></li>
                                 <c:if test="${sessionScope.userRole ne 'ADMIN'}">
