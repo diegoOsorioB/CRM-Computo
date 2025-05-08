@@ -215,9 +215,9 @@
             </h:dataTable>
         </h:panelGroup>
 
-        <h:panelGroup id="mensajeNoPedidos" rendered="#{empty pedidoB.pedidos}">
-            <h:outputText value="No se encontraron pedidos."/>
-        </h:panelGroup>
+        <h:panelGroup rendered="#{empty pedidoB.consultarPedidos()}">
+                    <p class="text-center text-danger">No hay productos en el carrito.</p>
+                </h:panelGroup>
     </h:form>
 
     <footer class="bg-light p-4 mt-4">

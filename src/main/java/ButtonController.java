@@ -222,7 +222,7 @@ public class ButtonController {
                 }
                 System.out.println("Error al registrar el usuario: " + response.statusCode());
                 System.out.println("Detalle: " + response.body());
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hubo un error al registrar al usuario", null));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hubo un error al registrar al usuario"+response.body(), null));
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error de conexión con la API: " + e.getMessage());
