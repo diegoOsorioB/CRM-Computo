@@ -112,6 +112,9 @@ public class PedidoBean implements Serializable {
                 reader.close();
                 connection.disconnect();
 
+            } else if (responseCode == 204) {
+                System.out.println("No hay pedidos registrados");
+                this.listaPedidos = new ArrayList<>();
             } else {
                 System.out.println("❌ Error: " + connection.getResponseMessage());
                 System.out.println("Código de respuesta: " + responseCode);
