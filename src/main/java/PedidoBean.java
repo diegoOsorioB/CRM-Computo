@@ -120,7 +120,7 @@ public class PedidoBean implements Serializable {
                 System.out.println("Código de respuesta: " + responseCode);
                 FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error al obtener los pedidos. Código de respuesta: " + responseCode, ""));
+                    "Error al cargar pedidos desde la Base de Datos", ""));
                 connection.disconnect();
             }
 
