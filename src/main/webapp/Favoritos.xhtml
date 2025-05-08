@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="jakarta.faces.core">
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 <h:head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -57,6 +58,7 @@
         footer ul li {
             margin-bottom: 5px;
         }
+        
     </style>
 </h:head>
 <h:body>
@@ -74,22 +76,27 @@
                     <li class="nav-item"><a class="nav-link" href="Product.xhtml" style="color: #FFFFFF;"><i class="bi bi-tag"></i> Inicio </a></li>
                 </ul>
             </div>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" 
-                       data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
-                        <i class="bi bi-person-circle fs-4 me-2"></i> <!-- Ícono de perfil -->
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="#">Ver Cuenta</a></li>
-                        <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
-                        <li><hr class="dropdown-divider"/></li>
-                        <li><a class="dropdown-item" href="login.xhtml">
-                            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a>
+            <ul class="navbar-nav">
+                        <li class="nav-item dropdown profile-dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+
+                                <!-- Mostrar solo si el usuario es administrador -->
+                                <c:if test="${sessionScope.userRole eq 'ADMIN'}">
+                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Panel del gerente</a></li>
+                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Gerentes</a></li>
+                                </c:if>
+                                <li><a class="dropdown-item" href="HistorialCompra.xhtml">Historial de Compras</a></li>
+                                <c:if test="${sessionScope.userRole ne 'ADMIN'}">
+                                <li><a class="dropdown-item" href="EditProfile.xhtml">Editar Perfil</a></li>
+                                </c:if>
+                                <li><hr class="dropdown-divider"/></li>
+                                <li><a class="dropdown-item" href="login.xhtml"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+                            </ul>
                         </li>
                     </ul>
-                </li>
-            </ul>
         </div>
     </nav>
     <h:form id="carritoForm">

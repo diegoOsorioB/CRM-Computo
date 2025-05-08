@@ -178,7 +178,13 @@
                 margin-bottom: 20px;
                 background-color: #f8f9fa;
             }
-            
+            .profile-dropdown .dropdown-toggle::after {
+                display: none;
+            }
+            .profile-dropdown .dropdown-menu {
+                right: 0;
+                left: auto;
+            }
             .modal-img-container img {
                 max-width: 100%;
                 max-height: 100%;
@@ -221,8 +227,8 @@
                             <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                                 <!-- Mostrar solo si el usuario es administrador -->
                                 <c:if test="${sessionScope.userRole eq 'ADMIN'}">
-                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Administrador</a></li>
-                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Administrador</a></li>
+                                    <li><a class="dropdown-item" href="ActualizarPedidos.xhtml">Panel del gerente</a></li>
+                                    <li><a class="dropdown-item" href="RegistrarAdministradores.xhtml">Registrar Gerentes</a></li>
                                 </c:if>
                                 <li><a class="dropdown-item" href="HistorialCompra.xhtml">Historial de Compras</a></li>
                                 <c:if test="${sessionScope.userRole ne 'ADMIN'}">
